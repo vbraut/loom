@@ -75,7 +75,7 @@ Skills do the work. Agents review it. Humans approve at gates.
 
 ## Project footprint
 
-Your project needs one file: `sdlc.config.yml`.
+Your project needs two files: `sdlc.config.yml` (Loom config) and `.mcp.json` (Backlog.md MCP server).
 Context (brand voice, design system) points to docs you already have.
 
 ## Development

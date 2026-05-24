@@ -20,11 +20,18 @@
           "description": "Absolute or ~-prefixed path to the Backlog.md repository. Must match the --cwd in .mcp.json."
         },
         "context": {
-          "type": "object",
-          "description": "Named context slots. Keys are slot names referenced by playbooks; values are file paths relative to the project root.",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "Named context slots. Keys are slot names referenced by playbooks; values are file paths relative to the project root.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     }

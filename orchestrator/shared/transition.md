@@ -39,8 +39,8 @@ The worktree and branch are preserved for the review step.
 ### 1. Execute successor actions
 
 For each confirmed successor from the plan-successors agent:
-- `create`: `task_create(title, description, labels=[type], ...)` with `--dep {ticket_id}` dependency
-- `update`: `task_edit(successor_id, ...)` with the specified changes
+- `create`: `task_create(title=..., description=..., labels=[type], dependencies=[ticket_id], ...)`
+- `update`: `task_edit(id=successor_id, ...)` with the specified changes
 
 ### 2. Transition ticket
 
@@ -79,7 +79,9 @@ The worktree is preserved — the next /loom:work run will reuse it and see the 
 
 On any failure during playbook execution (skill returns `STATUS: failed`, agent crashes, etc.):
 
-1. Release lock: `task_edit(ticket_id, assignee=["@released"])`
-2. Do NOT change ticket status — it stays in `active` (or `review` for review failures)
+1. Revert ticket status so dispatch can pick it up again:
+   - If working (`active`): `task_edit(ticket_id, status="todo")`
+   - If reviewing (`review`): status stays in `review` (already dispatchable)
+2. Release lock: `task_edit(ticket_id, assignee=["@released"])`
 3. Print the error and stop
 4. The worktree is preserved with whatever partial artifacts exist

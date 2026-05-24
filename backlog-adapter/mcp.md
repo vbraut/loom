@@ -2,24 +2,33 @@
 
 The orchestrator calls these MCP tools to manage ticket state. The MCP server must be configured in the project's `.mcp.json` pointing at the Backlog.md repo.
 
-## Operations
+## Tools used by Loom
 
-| Operation | MCP Tool | Caller | When |
-|-----------|----------|--------|------|
-| View ticket | `task_view(id)` | Orchestrator | Dispatch (read metadata), Initialize (read type/notes) |
-| Acquire lock | `task_edit(id, assignee=["@work-{ts}"])` | Orchestrator | Dispatch (after next-task.sh picks) |
-| Acquire review lock | `task_edit(id, assignee=["@review-{ts}"])` | Orchestrator | Review dispatch |
-| Release lock | `task_edit(id, assignee=["@released"])` | Orchestrator | Transition, rejection, failure |
-| Update status | `task_edit(id, status="active")` | Orchestrator | Dispatch (todo→active) |
-| Transition to review | `task_edit(id, status="review")` | Orchestrator | Post-playbook transition |
-| Transition to done | `task_edit(id, status="done")` | Orchestrator | Review approval |
-| Reject to todo | `task_edit(id, status="todo")` | Orchestrator | Review rejection |
-| Add reference | `task_edit(id, addReferences=[path])` | Orchestrator | After skill produces output |
-| Append feedback | `task_edit(id, notesAppend=["..."])` | Orchestrator | Review rejection |
-| Create ticket | `task_create(title, type, ...)` | Orchestrator | Successor creation |
-| List tickets | `task_list(status="todo")` | Orchestrator | Dispatch fallback |
-| List all tickets | `task_list()` | Orchestrator | Pre-fetch for plan-successors |
-| Search tickets | `task_search(query)` | Orchestrator | Ad-hoc lookups |
+Backlog.md MCP exposes 20 tools. Loom uses a subset:
+
+| Operation | MCP Tool | Parameters | Caller |
+|-----------|----------|------------|--------|
+| View ticket | `task_view` | `id` (string, required) | Orchestrator (dispatch, initialize) |
+| Acquire lock | `task_edit` | `id`, `assignee: ["@work-{ts}"]` | Orchestrator (dispatch) |
+| Release lock | `task_edit` | `id`, `assignee: ["@released"]` | Orchestrator (transition, failure) |
+| Update status | `task_edit` | `id`, `status: "active"` | Orchestrator (dispatch: todo→active) |
+| Add reference | `task_edit` | `id`, `addReferences: [path]` | Orchestrator (after skill output) |
+| Append feedback | `task_edit` | `id`, `notesAppend: ["..."]` | Orchestrator (rejection) |
+| Create successor | `task_create` | `title`, `labels: [type]`, `dependencies: [ticket_id]`, ... | Orchestrator (successor creation) |
+| List tickets | `task_list` | `status` (optional string) | Orchestrator (pre-fetch for plan-successors) |
+| Search tickets | `task_search` | `query` (optional string) | Orchestrator (ad-hoc lookups) |
+
+### Parameter details (from Backlog.md MCP schema)
+
+**`task_create`** — required: `title` (string). Optional: `description`, `status`, `priority`, `labels` (string[]), `assignee` (string[]), `dependencies` (string[]), `references` (string[]), `acceptanceCriteria` (string[]), and others. Ticket type is stored as a label, not a separate field.
+
+**`task_edit`** — required: `id` (string). All other fields optional. Supports both replace and append patterns: `notesAppend` (string[], appends), `notesSet` (string, replaces), `notesClear` (boolean). Same pattern for `references`/`addReferences`/`removeReferences`, `plan`, `finalSummary`, `acceptanceCriteria`.
+
+**`task_list`** — all optional: `status`, `assignee`, `milestone`, `labels` (string[]), `search`, `limit`.
+
+**`task_view`** — required: `id`. Returns full ticket metadata.
+
+**`task_search`** — all optional: `query`, `status`, `priority`, `modifiedFiles` (string[]), `limit`.
 
 ## Lock format
 
@@ -31,7 +40,7 @@ The orchestrator calls these MCP tools to manage ticket state. The MCP server mu
 ## Who calls what
 
 - **Only the orchestrator** calls MCP tools. Skills and agents never touch ticket state.
-- **Skills** produce artifacts in the worktree. The orchestrator registers them via `task_edit(addReferences=...)`.
+- **Skills** produce artifacts in the worktree. The orchestrator registers them via `task_edit(id, addReferences=[...])`.
 - **Agents** write reports to `output_path`. They never call MCP tools.
 
 ## MCP server setup
@@ -50,3 +59,7 @@ The project's `.mcp.json` must include the Backlog.md MCP server:
 ```
 
 The `--cwd` path must match `project.backlog_cwd` in `sdlc.config.yml`.
+
+## Status enum
+
+The MCP server reads valid statuses from the backlog repo's `backlog.config.yml`. After migration to the 5-stage model, the valid statuses are: `backlog`, `todo`, `active`, `review`, `done`.

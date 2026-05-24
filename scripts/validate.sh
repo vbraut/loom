@@ -48,11 +48,16 @@ for skill in work review; do
   skill_path="$LOOM_ROOT/skills/$skill/SKILL.md"
   if [ -f "$skill_path" ]; then
     if head -1 "$skill_path" | grep -q '^---$'; then
-      if grep -q '^name:' "$skill_path"; then
-        ok "skills/$skill/SKILL.md (has frontmatter)"
-      else
-        err "skills/$skill/SKILL.md missing 'name' in frontmatter"
-      fi
+      frontmatter=""
+      frontmatter=$(sed -n '2,/^---$/p' "$skill_path")
+      entry_ok=true
+      for field in name description; do
+        if ! echo "$frontmatter" | grep -q "^${field}:"; then
+          err "skills/$skill/SKILL.md missing '$field' in frontmatter"
+          entry_ok=false
+        fi
+      done
+      [ "$entry_ok" = true ] && ok "skills/$skill/SKILL.md (has frontmatter)"
     else
       err "skills/$skill/SKILL.md missing YAML frontmatter (must start with ---)"
     fi
@@ -91,23 +96,24 @@ for skill_md in "$LOOM_ROOT"/skills/*/*/SKILL.md; do
     continue
   fi
 
-  if ! grep -q '^name:' "$skill_md"; then
-    err "$rel_path missing 'name' in frontmatter"
-    continue
-  fi
+  fm=""
+  fm=$(sed -n '2,/^---$/p' "$skill_md")
+  skill_ok=true
 
-  if ! grep -q '^description:' "$skill_md"; then
-    err "$rel_path missing 'description' in frontmatter"
-    continue
-  fi
+  for field in name description; do
+    if ! echo "$fm" | grep -q "^${field}:"; then
+      err "$rel_path missing '$field' in frontmatter"
+      skill_ok=false
+    fi
+  done
 
   dir_name=$(basename "$(dirname "$skill_md")")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
     err "$rel_path directory name '$dir_name' is not kebab-case"
-    continue
+    skill_ok=false
   fi
 
-  ok "$rel_path"
+  [ "$skill_ok" = true ] && ok "$rel_path"
 done
 echo "  ($skill_count surgical skills found)"
 
@@ -127,19 +133,23 @@ for agent_md in "$LOOM_ROOT"/agents/*/AGENT.md; do
     continue
   fi
 
+  fm=""
+  fm=$(sed -n '2,/^---$/p' "$agent_md")
+  agent_ok=true
   for field in name description tools model; do
-    if ! grep -q "^${field}:" "$agent_md"; then
+    if ! echo "$fm" | grep -q "^${field}:"; then
       err "$rel_path missing '$field' in frontmatter"
+      agent_ok=false
     fi
   done
 
   dir_name=$(basename "$(dirname "$agent_md")")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
     err "$rel_path directory name '$dir_name' is not kebab-case"
-    continue
+    agent_ok=false
   fi
 
-  ok "$rel_path"
+  [ "$agent_ok" = true ] && ok "$rel_path"
 done
 echo "  ($agent_count agents found)"
 

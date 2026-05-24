@@ -13,12 +13,21 @@ Pick up a ticket in review, run pre-review agents, present artifacts for human a
 
 ---
 
+## Phase 0: LOAD CONFIG
+
+Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
+
+This gives you: `backlog_cwd`, `context` slots, `version`. If config loading fails, stop immediately.
+
+---
+
 ## Phase 1: DISPATCH
 
 Read `orchestrator/shared/dispatch.md` from the Loom plugin directory and follow it.
 
 - Mode: `review`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
+- `backlog_cwd`: from the config loaded in Phase 0
 
 If dispatch fails, stop.
 

@@ -22,21 +22,18 @@
 1. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
 2. Add the skill to the relevant playbook in `playbooks/`
 3. Run `scripts/validate.sh`
-4. Document in `docs/skills-reference.md`
 
 ## Adding an agent
 
 1. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
 2. Add the agent to the relevant playbook
 3. Run `scripts/validate.sh`
-4. Document in `docs/agents-reference.md`
 
 ## Adding a playbook
 
 1. Create `playbooks/<type>.md` with the step sequence in natural language
 2. Tickets with a matching label will automatically route to it
 3. Run `scripts/validate.sh`
-4. Document in `docs/workflows.md`
 
 ## Conventions
 
@@ -45,10 +42,9 @@
 - Playbook filenames match ticket type labels exactly
 - No project-specific content in the framework
 
-## Documentation co-change rule
+## Co-change rule
 
 When you add, rename, or remove a skill, agent, or config field:
-1. Update the corresponding reference doc
-2. Update the inventory table in README.md if ticket types changed
-3. Run `scripts/validate.sh`
-Treat doc updates as part of the change, not a follow-up task.
+1. Update the built-in ticket types table in README.md if ticket types changed
+2. Run `scripts/validate.sh`
+Treat these updates as part of the change, not a follow-up task.

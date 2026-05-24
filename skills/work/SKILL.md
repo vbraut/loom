@@ -13,12 +13,21 @@ Pick up a ticket, run its type's playbook, transition to review.
 
 ---
 
+## Phase 0: LOAD CONFIG
+
+Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
+
+This gives you: `backlog_cwd`, `context` slots, `version`. If config loading fails, stop immediately.
+
+---
+
 ## Phase 1: DISPATCH
 
 Read `orchestrator/shared/dispatch.md` from the Loom plugin directory and follow it.
 
 - Mode: `work`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
+- `backlog_cwd`: from the config loaded in Phase 0
 
 If dispatch fails (no tickets, lock contention), stop. Do not proceed.
 
@@ -48,8 +57,8 @@ Follow the playbook content you loaded in Phase 2. The playbook is a natural-lan
    - Include `## ticket_notes` with the ticket's notes (feedback context)
 3. Spawn the subagent with `cwd` set to the worktree path.
 4. Read the agent's text response. Check for `STATUS: complete` or `STATUS: failed — {reason}`.
-5. If failed: release lock, stop.
-6. If complete: verify the output file exists at `output_path`. Proceed to next step.
+5. If failed: revert status to `todo`, release lock, stop.
+6. If complete: verify the output file exists at `output_path`. Register it via MCP: `task_edit(ticket_id, addReferences=[output_path])`. Proceed to next step.
 
 ### For each agent step:
 
@@ -78,7 +87,8 @@ This commits all worktree changes, transitions the ticket to `review`, and relea
 ## Error handling
 
 If anything fails at any point:
-1. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
-2. Print the error clearly
-3. Stop — do not retry, do not append notes to the ticket
-4. The worktree is preserved with whatever artifacts exist
+1. Revert status so dispatch can re-pick: `task_edit(ticket_id, status="todo")`
+2. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
+3. Print the error clearly
+4. Stop — do not retry, do not append notes to the ticket
+5. The worktree is preserved with whatever artifacts exist

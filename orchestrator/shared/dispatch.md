@@ -33,6 +33,12 @@ Pick up the next ticket for processing.
    task_edit(id, status="active")
    ```
 
+5. Read full ticket metadata via MCP:
+   ```
+   task_view(ticket_id)
+   ```
+   Store the result as `ticket_data`.
+
 ## Manual pick flow (manual_id provided)
 
 1. Read ticket via MCP: `task_view(manual_id)`
