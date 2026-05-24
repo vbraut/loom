@@ -1,0 +1,54 @@
+# Loom — Development Rules
+
+## Architecture
+
+- Orchestrator entry points in `skills/work/` and `skills/review/` — state management only
+- Orchestrator shared modules in `orchestrator/shared/` — dispatch, config, worktree, transitions
+- Playbooks in `playbooks/` — declarative step sequences per ticket type
+- Skills in `skills/<domain>/<name>/SKILL.md` — one job each, no side effects on ticket state
+- Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects
+- Templates in `templates/` — universal methodology, not project-specific
+
+## Boundary rules
+
+1. Skills never invoke other skills. The orchestrator decides composition.
+2. Agents never write to the backlog. They write findings to `output_path` only.
+3. The orchestrator never does domain work. It dispatches skills and agents.
+4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
+5. Skills never run git state commands (commit, merge, checkout, worktree). Exception: ship skills.
+
+## Adding a skill
+
+1. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
+2. Add the skill to the relevant playbook in `playbooks/`
+3. Run `scripts/validate.sh`
+4. Document in `docs/skills-reference.md`
+
+## Adding an agent
+
+1. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
+2. Add the agent to the relevant playbook
+3. Run `scripts/validate.sh`
+4. Document in `docs/agents-reference.md`
+
+## Adding a playbook
+
+1. Create `playbooks/<type>.md` with the step sequence in natural language
+2. Tickets with a matching label will automatically route to it
+3. Run `scripts/validate.sh`
+4. Document in `docs/workflows.md`
+
+## Conventions
+
+- Kebab-case for all directories
+- `SKILL.md` and `AGENT.md` always uppercase
+- Playbook filenames match ticket type labels exactly
+- No project-specific content in the framework
+
+## Documentation co-change rule
+
+When you add, rename, or remove a skill, agent, or config field:
+1. Update the corresponding reference doc
+2. Update the inventory table in README.md if ticket types changed
+3. Run `scripts/validate.sh`
+Treat doc updates as part of the change, not a follow-up task.

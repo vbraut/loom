@@ -1,0 +1,19 @@
+# sdlc.config.yml — Loom project configuration
+#
+# Place this file in your project root. Loom reads it on every /loom:work
+# and /loom:review invocation to locate the backlog and project context.
+
+version: 1
+
+project:
+  # Path to the Backlog.md repository (absolute or ~/...).
+  # Must match the --cwd argument in your .mcp.json backlog server config.
+  backlog_cwd: ~/dev/my-project-backlog
+
+  # Named context slots. Playbooks reference these by key name.
+  # Values are file paths relative to this project's root.
+  # If a playbook references a slot that isn't defined here, it skips gracefully.
+  context:
+    # brand_voice: docs/brand/copy/brand-context.md
+    # design_system: src/app.css
+    # design_system_rules: src/lib/components/app/AI_USAGE.md
