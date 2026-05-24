@@ -2,12 +2,16 @@
 
 ## Architecture
 
-- Orchestrator entry points in `skills/work/` and `skills/review/` — state management only
+- Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
 - Orchestrator shared modules in `orchestrator/shared/` — config, dispatch, resolve, transition
 - Playbooks in `playbooks/` — declarative step sequences per ticket type
-- Skills in `skills/<domain>/<name>/SKILL.md` — one job each, no side effects on ticket state
+- Domain skills in `skills/<domain>/<name>/SKILL.md` — two levels deep, NOT discovered (orchestrator-only)
 - Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects
 - Templates in `templates/` — universal methodology, not project-specific
+- Backlog adapter in `backlog-adapter/` — MCP tool contract and dispatch script contract
+- Schema in `schema/` — JSON Schema for `sdlc.config.yml`
+- Scripts in `scripts/` — `validate.sh` (structural checks), `install-hooks.sh` (pre-commit hook)
+- Plugin manifest in `.claude-plugin/plugin.json`
 
 ## Boundary rules
 
@@ -17,11 +21,14 @@
 4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
 5. Skills never run git state commands (commit, merge, checkout, worktree). Only skills in `skills/ship/` may run `git push` and create PRs.
 
-## Adding a skill
+## Adding a domain skill
 
 1. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
-2. Add the skill to the relevant playbook in `playbooks/`
-3. Run `scripts/validate.sh`
+2. Directory name must be kebab-case and match the `name` field
+3. Add the skill to the relevant playbook in `playbooks/`
+4. Run `scripts/validate.sh`
+
+Note: entry-point skills (`skills/work/`, `skills/review/`) are one level deep and require extra frontmatter fields (`user-invocable`, `argument-hint`). These are not domain skills — do not add new entry points without updating `validate.sh`.
 
 ## Adding an agent
 

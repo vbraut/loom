@@ -2,7 +2,10 @@
 set -euo pipefail
 
 LOOM_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-HOOK="$LOOM_ROOT/.git/hooks/pre-commit"
+GIT_DIR="$(cd "$LOOM_ROOT" && git rev-parse --git-dir)"
+HOOK="$GIT_DIR/hooks/pre-commit"
+
+mkdir -p "$GIT_DIR/hooks"
 
 cat > "$HOOK" << 'HOOK_SCRIPT'
 #!/usr/bin/env bash

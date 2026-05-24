@@ -1,6 +1,6 @@
 # Transition
 
-Finalize after playbook execution completes.
+Finalize after playbook execution completes. Use the project's default branch from config (`default_branch`, defaults to `main`). All references to `main` below use this value.
 
 ## Work transition (after /loom:work playbook completes)
 
@@ -10,10 +10,13 @@ In the worktree directory, stage and commit all changes. The project's `.gitigno
 
 ```bash
 git add -A
-git commit -m "loom({ticket_id}): {ticket_title}"
+git commit -m "$(cat <<'EOF'
+loom({ticket_id}): {ticket_title}
+EOF
+)"
 ```
 
-Use the ticket title (from `ticket_data`) in the commit message so git history is readable.
+Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. Use the ticket title from `ticket_data` so git history is readable.
 
 If there are no changes to commit, skip this step (the playbook may have committed nothing, which is valid for research-only steps).
 
@@ -55,15 +58,18 @@ task_edit(ticket_id, assignee=["@released"])
 
 ### 3. Merge and cleanup
 
-Merge the worktree branch into main, then clean up:
+Merge the worktree branch into the default branch, then clean up. First verify the project root is on the default branch with a clean working tree:
+
 ```bash
-git checkout main
+git checkout {default_branch}
 git merge loom/{ticket_id_lowercase} --no-edit
 git worktree remove {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
 
-If the merge has conflicts, resolve them using the same strategy as `resolve.md` step 4 (prefer main for non-artifact files, prefer worktree for artifacts). If conflicts cannot be resolved, stop and let the human handle the merge manually — the ticket is already `done` and the branch is preserved.
+If `git checkout` fails (dirty working tree or wrong branch), stop and let the human resolve the project root state. The ticket is already `done` and the branch is preserved.
+
+If the merge has conflicts, resolve them using the same strategy as `resolve.md` step 4 (prefer default branch for non-artifact files, prefer worktree for artifacts). If conflicts cannot be resolved, stop and let the human handle the merge manually.
 
 ## Review rejection transition
 

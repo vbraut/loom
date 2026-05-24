@@ -10,6 +10,9 @@ project:
   # Must match the --cwd argument in your .mcp.json backlog server config.
   backlog_cwd: ~/dev/my-project-backlog
 
+  # Git default branch name. Omit to use "main".
+  # default_branch: main
+
   # Named context slots. Playbooks reference these by key name.
   # Values are file paths relative to this project's root.
   # If a playbook references a slot that isn't defined here, it skips gracefully.

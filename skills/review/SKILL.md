@@ -33,7 +33,7 @@ If dispatch fails, stop.
 
 ---
 
-## Phase 1b: RESOLVE
+## Phase 2: RESOLVE
 
 Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
 
@@ -43,27 +43,32 @@ If resolve fails, release the lock and stop.
 
 ---
 
-## Phase 2: PRE-REVIEW
+## Phase 3: PRE-REVIEW
 
-The playbook (loaded in Phase 1b) has a review section that specifies which agents to spawn for pre-review analysis.
+The playbook (loaded in Phase 2) has a review section that specifies which agents to spawn for pre-review analysis.
 
 If the playbook defines pre-review agents:
-1. Build context for each agent (artifact paths from the worktree, project context, `## output_path`, `## output_format`).
-2. Spawn all pre-review agents in parallel.
-3. Collect their reports (file paths) and verdicts.
+1. Read each agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If the agent directory does not exist, skip it and note the missing agent in the review summary.
+2. Build context for each found agent (artifact paths from the worktree, project context, `## output_path`, `## output_format`).
+3. Spawn all found pre-review agents in parallel.
+4. Collect their reports (file paths) and verdicts.
+
+If no pre-review agents are defined or all are missing, proceed directly to Phase 5 (PRESENT) with no agent reports.
 
 ---
 
-## Phase 2b: SUMMARIZE
+## Phase 4: SUMMARIZE + PLAN SUCCESSORS
 
-Spawn the `review-summarizer` agent:
+### 4a. Summarize
+
+If pre-review agents produced reports, spawn the `review-summarizer` agent:
 - Input: paths to all pre-review agent reports
 - Output: synthesized brief with key findings, risk areas, and recommendation
 - The summarizer writes its report to `output_path`
 
----
+If the `review-summarizer` agent does not exist, skip summarization. Present the individual agent reports directly in Phase 5.
 
-## Phase 3: PLAN SUCCESSORS
+### 4b. Plan successors
 
 1. Pre-fetch backlog state via MCP: `task_list()` — get the full ticket list.
 2. Spawn the `plan-successors` agent:
@@ -75,25 +80,27 @@ Spawn the `review-summarizer` agent:
    - The agent deduplicates against the backlog context.
    - The agent has NO MCP access — you control all input.
 
+If the `plan-successors` agent does not exist, skip successor planning. Present no proposed successors in Phase 5.
+
 ---
 
-## Phase 4: PRESENT
+## Phase 5: PRESENT
 
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
 2. **Artifacts**: list all files in the worktree with brief descriptions.
-3. **Review summary**: the review-summarizer's synthesized brief.
-4. **Pre-review findings**: link to each agent's report file.
-5. **Proposed successors**: list each proposed action with type, title, and reasoning.
+3. **Review summary**: the review-summarizer's synthesized brief (if available).
+4. **Pre-review findings**: link to each agent's report file (if any agents ran).
+5. **Proposed successors**: list each proposed action with type, title, and reasoning (if successor planning ran).
 
 Ask the human: **Approve or Reject?**
 
-If approving, also ask them to confirm, modify, or reject each proposed successor action.
+If approving and successors were proposed, also ask them to confirm, modify, or reject each proposed successor action.
 
 ---
 
-## Phase 5: ROUTE
+## Phase 6: ROUTE
 
 ### On approval:
 
@@ -119,3 +126,5 @@ If anything fails at any point:
 2. Print the error clearly
 3. Stop — do not retry, do not append notes to the ticket
 4. The worktree is preserved with whatever artifacts exist
+
+Status is NOT reverted — `review` is already a dispatchable status, so dispatch can re-pick the ticket without a status change.

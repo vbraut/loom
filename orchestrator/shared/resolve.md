@@ -35,14 +35,17 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 - Branch name: `loom/{ticket_id_lowercase}` (e.g., `loom/bl-042`)
 - Worktree path: `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`
 
+Use the project's default branch from config (`default_branch`, defaults to `main`). All references to `main` below use this value.
+
 **If the worktree already exists** (prior run, rejection, or review pickup):
-- Sync with main: `git -C {worktree_path} merge main --no-edit`
-- On merge conflict: prefer main's version for non-artifact files (config, dependencies, infrastructure). Prefer the worktree's version for artifact files (specs, plans, reviews, mocks — anything under `.claude/` or `.loom/`). For code files, apply a three-way merge and resolve conflicts inline, preserving both sides' intent.
+- Sync with default branch: `git -C {worktree_path} merge {default_branch} --no-edit`
+- On merge conflict: prefer the default branch's version for non-artifact files (config, dependencies, infrastructure). Prefer the worktree's version for artifact files (specs, plans, reviews, mocks — anything under `.claude/` or `.loom/`). For code files, apply a three-way merge and resolve conflicts inline, preserving both sides' intent.
 - If the merge cannot be resolved automatically, abort the merge (`git merge --abort`), report the conflict, and stop. The human investigates.
 - Existing artifacts from prior runs are preserved — skills decide what to do with them.
 
 **If no worktree exists:**
-- Create branch from main: `git branch loom/{ticket_id_lowercase}`
+- If the branch `loom/{ticket_id_lowercase}` already exists (orphaned from a prior failed cleanup), reuse it: `git worktree add {worktree_path} loom/{ticket_id_lowercase}`, then sync with default branch as above.
+- Otherwise create a new branch from the default branch: `git branch loom/{ticket_id_lowercase} {default_branch}`
 - Create worktree: `git worktree add {worktree_path} loom/{ticket_id_lowercase}`
 
 ## Output

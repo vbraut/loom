@@ -27,8 +27,10 @@ Within a mode, tickets are sorted by:
 
 ## Concurrency safety
 
+The script uses a **filesystem dispatch lock** (separate from ticket assignee locks) to prevent two sessions from claiming the same ticket simultaneously:
+
 - Filesystem lock at `backlog/.locks/dispatch/` (mkdir-based)
-- Stale lock detection: locks older than 10 minutes are removed
+- Stale lock detection: filesystem locks older than 10 minutes are removed (this is NOT the 12-hour ticket assignee stale threshold — that is a separate mechanism)
 - Retry: up to 10 attempts with 30-second waits
 
 ## Assignee format
@@ -44,6 +46,6 @@ The script checks sequence dependencies via `backlog sequence list`. A ticket is
 1. Orchestrator runs `next-task.sh <mode> "@{mode}-$(date +%s)"`
 2. Script prints claimed ticket ID to stdout (exit 0) or nothing (exit 1+)
 3. Orchestrator reads ticket ID from stdout
-4. Orchestrator transitions status via MCP (for work: `todo` → `active`)
+4. For work mode: orchestrator transitions status via MCP (`todo` → `active`). For review mode: skip (ticket is already in `review` status).
 5. Orchestrator reads ticket metadata via `task_view`
 6. Orchestrator proceeds with resolve

@@ -19,6 +19,11 @@
           "type": "string",
           "description": "Absolute or ~-prefixed path to the Backlog.md repository. Must match the --cwd in .mcp.json."
         },
+        "default_branch": {
+          "type": "string",
+          "default": "main",
+          "description": "The default branch name for git operations. Defaults to 'main' if omitted."
+        },
         "context": {
           "oneOf": [
             {

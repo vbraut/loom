@@ -8,7 +8,7 @@ Backlog.md MCP exposes 20 tools. Loom uses a subset:
 
 | Operation | MCP Tool | Parameters | Caller |
 |-----------|----------|------------|--------|
-| View ticket | `task_view` | `id` (string, required) | Orchestrator (dispatch, initialize) |
+| View ticket | `task_view` | `id` (string, required) | Orchestrator (dispatch, resolve) |
 | Acquire lock | `task_edit` | `id`, `assignee: ["@work-{ts}"]` | Orchestrator (dispatch) |
 | Release lock | `task_edit` | `id`, `assignee: ["@released"]` | Orchestrator (transition, failure) |
 | Update status | `task_edit` | `id`, `status: "active"` | Orchestrator (dispatch: todo→active) |
@@ -34,8 +34,8 @@ Backlog.md MCP exposes 20 tools. Loom uses a subset:
 
 - Work lock: `@work-{unix_timestamp}` (e.g., `@work-1716500000`)
 - Review lock: `@review-{unix_timestamp}`
-- Release: `@released`
-- Stale threshold: 12 hours (configurable)
+- Free states: empty, `@none`, `@released`
+- Stale threshold: 12 hours — locks older than this are treated as free (abandoned session)
 
 ## Who calls what
 
@@ -62,4 +62,4 @@ The `--cwd` path must match `project.backlog_cwd` in `sdlc.config.yml`.
 
 ## Status enum
 
-The MCP server reads valid statuses from the backlog repo's `backlog.config.yml`. After migration to the 5-stage model, the valid statuses are: `backlog`, `todo`, `active`, `review`, `done`.
+The MCP server reads valid statuses from the backlog repo's `backlog.config.yml`. Loom uses the 5-stage model: `backlog`, `todo`, `active`, `review`, `done`.

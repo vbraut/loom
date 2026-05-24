@@ -8,10 +8,15 @@ set -euo pipefail
 LOOM_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ERRORS=0
 
-# Allowed frontmatter fields per file type
+# Required frontmatter fields per file type (also used as allowlist — unknown fields are rejected)
 SKILL_ENTRY_FIELDS="name description user-invocable argument-hint"
 SKILL_DOMAIN_FIELDS="name description"
 AGENT_FIELDS="name description tools model"
+
+if ! command -v python3 &>/dev/null; then
+  echo "ERROR: python3 is required for JSON validation" >&2
+  exit 1
+fi
 
 err() {
   echo "FAIL: $1" >&2
@@ -23,10 +28,10 @@ ok() {
 }
 
 # Extract YAML frontmatter (between first and second ---) and check for unknown fields.
-# Usage: check_frontmatter <file> <allowed_fields_space_separated> <label>
+# Usage: check_frontmatter <file> <required_fields_space_separated> <label>
 check_frontmatter() {
   file="$1"
-  allowed="$2"
+  required="$2"
   label="$3"
 
   if ! head -1 "$file" | grep -q '^---$'; then
@@ -38,20 +43,22 @@ check_frontmatter() {
   fm_ok=true
 
   # Check required fields exist
-  for field in $allowed; do
+  for field in $required; do
     if ! echo "$fm" | grep -q "^${field}:"; then
       err "$label missing '$field' in frontmatter"
       fm_ok=false
     fi
   done
 
-  # Check for unknown fields
+  # Check for unknown fields (skip continuation lines that start with whitespace)
   while IFS= read -r line; do
     [ -z "$line" ] && continue
+    echo "$line" | grep -qE '^[a-zA-Z]' || continue
+    echo "$line" | grep -qE ':' || continue
     field_name=$(echo "$line" | sed 's/:.*//')
     found=false
-    for allowed_field in $allowed; do
-      if [ "$field_name" = "$allowed_field" ]; then
+    for required_field in $required; do
+      if [ "$field_name" = "$required_field" ]; then
         found=true
         break
       fi
@@ -73,8 +80,8 @@ echo ""
 echo "--- Plugin manifest ---"
 
 if [ -f "$LOOM_ROOT/.claude-plugin/plugin.json" ]; then
-  if python3 -c "import json; json.load(open('$LOOM_ROOT/.claude-plugin/plugin.json'))" 2>/dev/null; then
-    name=$(python3 -c "import json; print(json.load(open('$LOOM_ROOT/.claude-plugin/plugin.json')).get('name',''))")
+  if python3 -c "import json, sys; json.load(open(sys.argv[1]))" "$LOOM_ROOT/.claude-plugin/plugin.json" 2>/dev/null; then
+    name=$(python3 -c "import json, sys; print(json.load(open(sys.argv[1])).get('name',''))" "$LOOM_ROOT/.claude-plugin/plugin.json")
     if [ -n "$name" ]; then
       ok "plugin.json valid (name: $name)"
     else
@@ -133,8 +140,14 @@ for skill_md in "$LOOM_ROOT"/skills/*/*/SKILL.md; do
     continue
   fi
 
-  check_frontmatter "$skill_md" "$SKILL_DOMAIN_FIELDS" "$rel_path" && \
-    ok "$rel_path"
+  if check_frontmatter "$skill_md" "$SKILL_DOMAIN_FIELDS" "$rel_path"; then
+    fm_name=$(sed -n '2,/^---$/p' "$skill_md" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'")
+    if [ "$fm_name" != "$dir_name" ]; then
+      err "$rel_path frontmatter name '$fm_name' does not match directory name '$dir_name'"
+    else
+      ok "$rel_path"
+    fi
+  fi
 done
 echo "  ($skill_count domain skills found)"
 
@@ -155,8 +168,14 @@ for agent_md in "$LOOM_ROOT"/agents/*/AGENT.md; do
     continue
   fi
 
-  check_frontmatter "$agent_md" "$AGENT_FIELDS" "$rel_path" && \
-    ok "$rel_path"
+  if check_frontmatter "$agent_md" "$AGENT_FIELDS" "$rel_path"; then
+    fm_name=$(sed -n '2,/^---$/p' "$agent_md" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'")
+    if [ "$fm_name" != "$dir_name" ]; then
+      err "$rel_path frontmatter name '$fm_name' does not match directory name '$dir_name'"
+    else
+      ok "$rel_path"
+    fi
+  fi
 done
 echo "  ($agent_count agents found)"
 
@@ -188,7 +207,7 @@ echo "--- Schema ---"
 
 schema_path="$LOOM_ROOT/schema/sdlc.config.schema.json"
 if [ -f "$schema_path" ]; then
-  if python3 -c "import json; json.load(open('$schema_path'))" 2>/dev/null; then
+  if python3 -c "import json, sys; json.load(open(sys.argv[1]))" "$schema_path" 2>/dev/null; then
     ok "schema/sdlc.config.schema.json (valid JSON)"
   else
     err "schema/sdlc.config.schema.json is not valid JSON"
@@ -235,7 +254,7 @@ echo ""
 echo "--- Naming conventions ---"
 
 bad_dirs=0
-for dir in "$LOOM_ROOT"/skills/*/ "$LOOM_ROOT"/skills/*/*/ "$LOOM_ROOT"/agents/*/ "$LOOM_ROOT"/playbooks/; do
+for dir in "$LOOM_ROOT"/skills/*/ "$LOOM_ROOT"/skills/*/*/ "$LOOM_ROOT"/agents/*/; do
   [ -d "$dir" ] || continue
   dir_name=$(basename "$dir")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
