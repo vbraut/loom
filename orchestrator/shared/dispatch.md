@@ -23,7 +23,7 @@ Pick up the next ticket for processing.
    - **2**: Lock contention. Print `Dispatch lock contention — another session is claiming a ticket. Try again shortly.` and stop.
    - **3**: Usage error. This is a framework bug — halt with the error message.
 
-3. The dispatch script already sets the assignee. Confirm the lock via MCP:
+3. Set the timestamped lock via MCP (overwrites the script's assignee with a canonical timestamp):
    ```
    task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
    ```
