@@ -64,7 +64,7 @@ Skills do the work. Agents review it. Humans approve at gates.
 
 ## Planned ticket types
 
-The following playbooks are being implemented incrementally (see §10 in the design doc):
+The following playbooks are being implemented incrementally:
 
 | Type | Description | Step |
 |------|-------------|------|

@@ -17,7 +17,7 @@ Pick up a ticket in review, run pre-review agents, present artifacts for human a
 
 Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
 
-This gives you: `backlog_cwd`, `context` slots, `version`. If config loading fails, stop immediately.
+This gives you: `backlog_cwd`, `default_branch`, `context` slots, `version`. If config loading fails, stop immediately.
 
 ---
 
@@ -37,7 +37,7 @@ If dispatch fails, stop.
 
 Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
 
-This gives you: ticket type, playbook content, ticket notes, worktree path. The worktree already exists from the `/loom:work` run — resolve finds it and syncs it with main.
+This gives you: ticket type, playbook content, ticket notes, worktree path. The worktree already exists from the `/loom:work` run — resolve finds it and syncs it with the default branch.
 
 If resolve fails, release the lock and stop.
 
@@ -107,7 +107,7 @@ If approving and successors were proposed, also ask them to confirm, modify, or 
 Read `orchestrator/shared/transition.md` and follow the "Review approval transition" section:
 1. Execute confirmed successor actions via MCP (create tickets with dependencies, update existing tickets).
 2. Transition: `task_edit(ticket_id, status="done")`, release lock.
-3. Cleanup: merge branch into main, delete worktree and branch.
+3. Cleanup: merge branch into the default branch, delete worktree and branch.
 
 ### On rejection:
 

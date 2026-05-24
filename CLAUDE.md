@@ -33,8 +33,9 @@ Note: entry-point skills (`skills/work/`, `skills/review/`) are one level deep a
 ## Adding an agent
 
 1. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
-2. Add the agent to the relevant playbook
-3. Run `scripts/validate.sh`
+2. Directory name must be kebab-case and match the `name` field
+3. Add the agent to the relevant playbook
+4. Run `scripts/validate.sh`
 
 ## Adding a playbook
 

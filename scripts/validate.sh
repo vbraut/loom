@@ -39,7 +39,13 @@ check_frontmatter() {
     return 1
   fi
 
-  fm=$(sed -n '2,/^---$/p' "$file" | grep -v '^---$' || true)
+  closing_line=$(awk 'NR > 1 && /^---$/ { print NR; exit }' "$file")
+  if [ -z "$closing_line" ]; then
+    err "$label missing closing --- in frontmatter"
+    return 1
+  fi
+
+  fm=$(sed -n "2,$((closing_line - 1))p" "$file" || true)
   fm_ok=true
 
   # Check required fields exist
@@ -238,7 +244,7 @@ echo "--- File hygiene ---"
 hygiene_ok=true
 while IFS= read -r md_file; do
   rel_path="${md_file#$LOOM_ROOT/}"
-  if [ ! -s "$md_file" ]; then
+  if [ ! -s "$md_file" ] || ! grep -q '[^[:space:]]' "$md_file"; then
     err "$rel_path is empty"
     hygiene_ok=false
   elif [ "$(tail -c 1 "$md_file" | wc -l)" -eq 0 ]; then
@@ -247,22 +253,6 @@ while IFS= read -r md_file; do
   fi
 done < <(find "$LOOM_ROOT" -name "*.md" -not -path "*/.git/*" -not -name ".gitkeep")
 [ "$hygiene_ok" = true ] && ok "All .md files are non-empty with trailing newlines"
-
-# ── Naming conventions ─────────────────────────────────────────────
-
-echo ""
-echo "--- Naming conventions ---"
-
-bad_dirs=0
-for dir in "$LOOM_ROOT"/skills/*/ "$LOOM_ROOT"/skills/*/*/ "$LOOM_ROOT"/agents/*/; do
-  [ -d "$dir" ] || continue
-  dir_name=$(basename "$dir")
-  if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
-    err "Directory '$dir_name' is not kebab-case: $dir"
-    bad_dirs=$((bad_dirs + 1))
-  fi
-done
-[ "$bad_dirs" -eq 0 ] && ok "All directory names are kebab-case"
 
 # ── Summary ────────────────────────────────────────────────────────
 

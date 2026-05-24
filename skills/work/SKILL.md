@@ -17,7 +17,7 @@ Pick up a ticket, run its type's playbook, transition to review.
 
 Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
 
-This gives you: `backlog_cwd`, `context` slots, `version`. If config loading fails, stop immediately.
+This gives you: `backlog_cwd`, `default_branch`, `context` slots, `version`. If config loading fails, stop immediately.
 
 ---
 

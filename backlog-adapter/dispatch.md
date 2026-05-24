@@ -43,9 +43,4 @@ The script checks sequence dependencies via `backlog sequence list`. A ticket is
 
 ## Integration with orchestrator
 
-1. Orchestrator runs `next-task.sh <mode> "@{mode}-$(date +%s)"`
-2. Script prints claimed ticket ID to stdout (exit 0) or nothing (exit 1+)
-3. Orchestrator reads ticket ID from stdout
-4. For work mode: orchestrator transitions status via MCP (`todo` → `active`). For review mode: skip (ticket is already in `review` status).
-5. Orchestrator reads ticket metadata via `task_view`
-6. Orchestrator proceeds with resolve
+See `orchestrator/shared/dispatch.md` for the full orchestrator-side flow (exit code handling, status transitions, metadata fetch).
