@@ -1,5 +1,34 @@
 # Loom
 
+```
+         .:|||:.                    .:|||:.
+       .:|     |:.                .:|     |:.
+      :|  SKILL  |:.  ─ warp ─ .:|  SKILL  |:
+      ':|       |:'    thread    ':|       |:'
+        ':|||:'                    ':|||:'
+            \\_______      _______//
+                     \\  //
+              ╔═══════╧╧═══════╗
+              ║   T H E        ║
+              ║   L O O M      ║
+              ╠════════════════╣
+              ║  ┌──────────┐  ║
+              ║  │ playbook │  ║        ┌─ ─ ─ ─ ─ ─ ─┐
+              ║  └─────┬────┘  ║           A G E N T S
+              ║     dispatch   ║──weft──│               │
+              ║     resolve    ║          panel-reviewer
+              ║     execute    ║──weft──│ edge-case-hunter
+              ║     transition ║          plan-successors
+              ║  ┌─────┴────┐  ║        │               │
+              ║  │ worktree  │  ║        └─ ─ ─ ─ ─ ─ ─┘
+              ║  └──────────┘  ║
+              ╚═══╤════════╤═══╝
+             todo │        │ review
+          ┄┄┄┄┄┄┄┄┤        ├┄┄┄┄┄┄┄┄
+          backlog │ ticket │ done
+          ┄┄┄┄┄┄┄┄┴────────┴┄┄┄┄┄┄┄┄
+```
+
 AI-driven SDLC framework for Claude Code. One plugin, any project.
 
 Loom weaves skills (surgical playbooks) and agents (independent reviewers)
