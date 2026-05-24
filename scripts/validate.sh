@@ -8,6 +8,11 @@ set -euo pipefail
 LOOM_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ERRORS=0
 
+# Allowed frontmatter fields per file type
+SKILL_ENTRY_FIELDS="name description user-invocable argument-hint"
+SKILL_DOMAIN_FIELDS="name description"
+AGENT_FIELDS="name description tools model"
+
 err() {
   echo "FAIL: $1" >&2
   ERRORS=$((ERRORS + 1))
@@ -15,6 +20,49 @@ err() {
 
 ok() {
   echo "  OK: $1"
+}
+
+# Extract YAML frontmatter (between first and second ---) and check for unknown fields.
+# Usage: check_frontmatter <file> <allowed_fields_space_separated> <label>
+check_frontmatter() {
+  file="$1"
+  allowed="$2"
+  label="$3"
+
+  if ! head -1 "$file" | grep -q '^---$'; then
+    err "$label missing YAML frontmatter (must start with ---)"
+    return 1
+  fi
+
+  fm=$(sed -n '2,/^---$/p' "$file" | grep -v '^---$' || true)
+  fm_ok=true
+
+  # Check required fields exist
+  for field in $allowed; do
+    if ! echo "$fm" | grep -q "^${field}:"; then
+      err "$label missing '$field' in frontmatter"
+      fm_ok=false
+    fi
+  done
+
+  # Check for unknown fields
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    field_name=$(echo "$line" | sed 's/:.*//')
+    found=false
+    for allowed_field in $allowed; do
+      if [ "$field_name" = "$allowed_field" ]; then
+        found=true
+        break
+      fi
+    done
+    if [ "$found" = false ]; then
+      err "$label has unknown frontmatter field '$field_name'"
+      fm_ok=false
+    fi
+  done <<< "$fm"
+
+  [ "$fm_ok" = true ] && return 0 || return 1
 }
 
 echo "=== Loom Structure Validation ==="
@@ -47,20 +95,8 @@ echo "--- User-invocable skills ---"
 for skill in work review; do
   skill_path="$LOOM_ROOT/skills/$skill/SKILL.md"
   if [ -f "$skill_path" ]; then
-    if head -1 "$skill_path" | grep -q '^---$'; then
-      frontmatter=""
-      frontmatter=$(sed -n '2,/^---$/p' "$skill_path")
-      entry_ok=true
-      for field in name description; do
-        if ! echo "$frontmatter" | grep -q "^${field}:"; then
-          err "skills/$skill/SKILL.md missing '$field' in frontmatter"
-          entry_ok=false
-        fi
-      done
-      [ "$entry_ok" = true ] && ok "skills/$skill/SKILL.md (has frontmatter)"
-    else
-      err "skills/$skill/SKILL.md missing YAML frontmatter (must start with ---)"
-    fi
+    check_frontmatter "$skill_path" "$SKILL_ENTRY_FIELDS" "skills/$skill/SKILL.md" && \
+      ok "skills/$skill/SKILL.md (has frontmatter)"
   else
     err "skills/$skill/SKILL.md not found"
   fi
@@ -71,7 +107,7 @@ done
 echo ""
 echo "--- Orchestrator shared modules ---"
 
-for module in config dispatch initialize transition; do
+for module in config dispatch resolve transition; do
   module_path="$LOOM_ROOT/orchestrator/shared/$module.md"
   if [ -f "$module_path" ]; then
     ok "orchestrator/shared/$module.md"
@@ -80,10 +116,10 @@ for module in config dispatch initialize transition; do
   fi
 done
 
-# ── Surgical skills (domain skills, two levels deep) ──────────────
+# ── Domain skills (two levels deep under skills/) ─────────────────
 
 echo ""
-echo "--- Surgical skills ---"
+echo "--- Domain skills ---"
 
 skill_count=0
 for skill_md in "$LOOM_ROOT"/skills/*/*/SKILL.md; do
@@ -91,31 +127,16 @@ for skill_md in "$LOOM_ROOT"/skills/*/*/SKILL.md; do
   skill_count=$((skill_count + 1))
   rel_path="${skill_md#$LOOM_ROOT/}"
 
-  if ! head -1 "$skill_md" | grep -q '^---$'; then
-    err "$rel_path missing YAML frontmatter"
-    continue
-  fi
-
-  fm=""
-  fm=$(sed -n '2,/^---$/p' "$skill_md")
-  skill_ok=true
-
-  for field in name description; do
-    if ! echo "$fm" | grep -q "^${field}:"; then
-      err "$rel_path missing '$field' in frontmatter"
-      skill_ok=false
-    fi
-  done
-
   dir_name=$(basename "$(dirname "$skill_md")")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
     err "$rel_path directory name '$dir_name' is not kebab-case"
-    skill_ok=false
+    continue
   fi
 
-  [ "$skill_ok" = true ] && ok "$rel_path"
+  check_frontmatter "$skill_md" "$SKILL_DOMAIN_FIELDS" "$rel_path" && \
+    ok "$rel_path"
 done
-echo "  ($skill_count surgical skills found)"
+echo "  ($skill_count domain skills found)"
 
 # ── Agents ─────────────────────────────────────────────────────────
 
@@ -128,28 +149,14 @@ for agent_md in "$LOOM_ROOT"/agents/*/AGENT.md; do
   agent_count=$((agent_count + 1))
   rel_path="${agent_md#$LOOM_ROOT/}"
 
-  if ! head -1 "$agent_md" | grep -q '^---$'; then
-    err "$rel_path missing YAML frontmatter"
-    continue
-  fi
-
-  fm=""
-  fm=$(sed -n '2,/^---$/p' "$agent_md")
-  agent_ok=true
-  for field in name description tools model; do
-    if ! echo "$fm" | grep -q "^${field}:"; then
-      err "$rel_path missing '$field' in frontmatter"
-      agent_ok=false
-    fi
-  done
-
   dir_name=$(basename "$(dirname "$agent_md")")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
     err "$rel_path directory name '$dir_name' is not kebab-case"
-    agent_ok=false
+    continue
   fi
 
-  [ "$agent_ok" = true ] && ok "$rel_path"
+  check_frontmatter "$agent_md" "$AGENT_FIELDS" "$rel_path" && \
+    ok "$rel_path"
 done
 echo "  ($agent_count agents found)"
 
@@ -204,13 +211,31 @@ for doc in mcp dispatch; do
   fi
 done
 
+# ── File hygiene ───────────────────────────────────────────────────
+
+echo ""
+echo "--- File hygiene ---"
+
+hygiene_ok=true
+while IFS= read -r md_file; do
+  rel_path="${md_file#$LOOM_ROOT/}"
+  if [ ! -s "$md_file" ]; then
+    err "$rel_path is empty"
+    hygiene_ok=false
+  elif [ "$(tail -c 1 "$md_file" | wc -l)" -eq 0 ]; then
+    err "$rel_path missing trailing newline"
+    hygiene_ok=false
+  fi
+done < <(find "$LOOM_ROOT" -name "*.md" -not -path "*/.git/*" -not -name ".gitkeep")
+[ "$hygiene_ok" = true ] && ok "All .md files are non-empty with trailing newlines"
+
 # ── Naming conventions ─────────────────────────────────────────────
 
 echo ""
 echo "--- Naming conventions ---"
 
 bad_dirs=0
-for dir in "$LOOM_ROOT"/skills/*/  "$LOOM_ROOT"/skills/*/*/ "$LOOM_ROOT"/agents/*/; do
+for dir in "$LOOM_ROOT"/skills/*/ "$LOOM_ROOT"/skills/*/*/ "$LOOM_ROOT"/agents/*/ "$LOOM_ROOT"/playbooks/; do
   [ -d "$dir" ] || continue
   dir_name=$(basename "$dir")
   if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then

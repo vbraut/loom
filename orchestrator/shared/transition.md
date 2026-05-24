@@ -6,11 +6,14 @@ Finalize after playbook execution completes.
 
 ### 1. Commit worktree changes
 
-In the worktree directory:
+In the worktree directory, stage and commit all changes. The project's `.gitignore` applies — it prevents secrets, binaries, and OS metadata from being staged.
+
 ```bash
 git add -A
-git commit -m "loom({ticket_id}): {ticket_type} complete"
+git commit -m "loom({ticket_id}): {ticket_title}"
 ```
+
+Use the ticket title (from `ticket_data`) in the commit message so git history is readable.
 
 If there are no changes to commit, skip this step (the playbook may have committed nothing, which is valid for research-only steps).
 
@@ -50,12 +53,17 @@ task_edit(ticket_id, status="done")
 task_edit(ticket_id, assignee=["@released"])
 ```
 
-### 3. Cleanup worktree
+### 3. Merge and cleanup
 
+Merge the worktree branch into main, then clean up:
 ```bash
+git checkout main
+git merge loom/{ticket_id_lowercase} --no-edit
 git worktree remove {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
+
+If the merge has conflicts, resolve them using the same strategy as `resolve.md` step 4 (prefer main for non-artifact files, prefer worktree for artifacts). If conflicts cannot be resolved, stop and let the human handle the merge manually — the ticket is already `done` and the branch is preserved.
 
 ## Review rejection transition
 
@@ -84,4 +92,5 @@ On any failure during playbook execution (skill returns `STATUS: failed`, agent 
    - If reviewing (`review`): status stays in `review` (already dispatchable)
 2. Release lock: `task_edit(ticket_id, assignee=["@released"])`
 3. Print the error and stop
-4. The worktree is preserved with whatever partial artifacts exist
+4. Do not append notes or error details to the ticket — the human sees the failure in the terminal
+5. The worktree is preserved with whatever partial artifacts exist

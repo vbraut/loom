@@ -33,9 +33,7 @@ Within a mode, tickets are sorted by:
 
 ## Assignee format
 
-The script claims the ticket by setting the assignee. The orchestrator then re-sets it via MCP with a timestamped lock:
-- Script sets: the `<assignee>` argument value
-- Orchestrator overrides: `@work-{ts}` or `@review-{ts}` via MCP
+The orchestrator passes a timestamped session lock as the `<assignee>` argument: `@work-{ts}` or `@review-{ts}`. The script sets this value atomically during the claim — no subsequent MCP override is needed.
 
 ## Dependency checking
 
@@ -43,8 +41,9 @@ The script checks sequence dependencies via `backlog sequence list`. A ticket is
 
 ## Integration with orchestrator
 
-1. Orchestrator runs `next-task.sh <mode> <session-id>`
+1. Orchestrator runs `next-task.sh <mode> "@{mode}-$(date +%s)"`
 2. Script prints claimed ticket ID to stdout (exit 0) or nothing (exit 1+)
 3. Orchestrator reads ticket ID from stdout
-4. Orchestrator acquires its own timestamped lock via MCP (overriding the script's claim)
-5. Orchestrator proceeds with dispatch
+4. Orchestrator transitions status via MCP (for work: `todo` → `active`)
+5. Orchestrator reads ticket metadata via `task_view`
+6. Orchestrator proceeds with resolve

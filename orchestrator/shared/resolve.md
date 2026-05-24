@@ -1,6 +1,8 @@
-# Initialize
+# Resolve
 
-Set up the execution context after dispatch has claimed a ticket.
+Resolve a claimed ticket into an actionable execution context: type, playbook, notes, worktree.
+
+Called by both `/loom:work` and `/loom:review` after dispatch.
 
 ## Inputs
 
@@ -28,21 +30,24 @@ Extract the notes field from `ticket_data`. If the ticket has been rejected befo
 
 ### 4. Ensure worktree
 
-Check if a worktree already exists for this ticket:
+Worktree path is relative to the **project root** (the directory containing `sdlc.config.yml`).
+
 - Branch name: `loom/{ticket_id_lowercase}` (e.g., `loom/bl-042`)
-- Worktree path: `.loom/worktrees/{ticket_id_lowercase}/`
+- Worktree path: `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`
 
-If the worktree exists (from a prior run or rejection):
-- Sync it: `git -C {worktree_path} merge main` (resolve conflicts if needed)
-- The existing artifacts from prior runs are preserved — skills decide what to do with them.
+**If the worktree already exists** (prior run, rejection, or review pickup):
+- Sync with main: `git -C {worktree_path} merge main --no-edit`
+- On merge conflict: prefer main's version for non-artifact files (config, dependencies, infrastructure). Prefer the worktree's version for artifact files (specs, plans, reviews, mocks — anything under `.claude/` or `.loom/`). For code files, apply a three-way merge and resolve conflicts inline, preserving both sides' intent.
+- If the merge cannot be resolved automatically, abort the merge (`git merge --abort`), report the conflict, and stop. The human investigates.
+- Existing artifacts from prior runs are preserved — skills decide what to do with them.
 
-If no worktree exists:
+**If no worktree exists:**
 - Create branch from main: `git branch loom/{ticket_id_lowercase}`
 - Create worktree: `git worktree add {worktree_path} loom/{ticket_id_lowercase}`
 
 ## Output
 
-After initialization:
+After resolve completes:
 - `ticket_type` — the matched playbook name
 - `playbook_content` — full playbook text (in context)
 - `ticket_notes` — feedback/notes from ticket (may be empty)

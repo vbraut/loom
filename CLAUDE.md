@@ -3,7 +3,7 @@
 ## Architecture
 
 - Orchestrator entry points in `skills/work/` and `skills/review/` — state management only
-- Orchestrator shared modules in `orchestrator/shared/` — dispatch, config, worktree, transitions
+- Orchestrator shared modules in `orchestrator/shared/` — config, dispatch, resolve, transition
 - Playbooks in `playbooks/` — declarative step sequences per ticket type
 - Skills in `skills/<domain>/<name>/SKILL.md` — one job each, no side effects on ticket state
 - Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects
@@ -15,7 +15,7 @@
 2. Agents never write to the backlog. They write findings to `output_path` only.
 3. The orchestrator never does domain work. It dispatches skills and agents.
 4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
-5. Skills never run git state commands (commit, merge, checkout, worktree). Exception: ship skills.
+5. Skills never run git state commands (commit, merge, checkout, worktree). Only skills in `skills/ship/` may run `git push` and create PRs.
 
 ## Adding a skill
 

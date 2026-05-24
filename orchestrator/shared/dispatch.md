@@ -12,28 +12,26 @@ Pick up the next ticket for processing.
 
 1. Run the dispatch script:
    ```bash
-   BACKLOG_CWD="{backlog_cwd}" {loom_plugin_dir}/scripts/next-task.sh {mode} "@{mode}-$(date +%s)"
+   BACKLOG_CWD="{backlog_cwd}" "{loom_plugin_dir}/scripts/next-task.sh" {mode} "@{mode}-$(date +%s)"
    ```
    - `{loom_plugin_dir}` is the absolute path to the Loom plugin directory.
-   - The assignee argument is a timestamped session ID.
+   - The assignee argument is a timestamped session lock (`@work-{ts}` or `@review-{ts}`).
+   - The script handles dispatch locking, sequence dependencies, priority sort, and sets the assignee atomically.
 
 2. Check exit code:
    - **0**: Read ticket ID from stdout. Proceed.
    - **1**: No eligible tickets. Print `No eligible tickets for /loom:{mode}. Nothing to do.` and stop.
    - **2**: Lock contention. Print `Dispatch lock contention — another session is claiming a ticket. Try again shortly.` and stop.
    - **3**: Usage error. This is a framework bug — halt with the error message.
+   - **Any other code** (e.g., 127 = script not found): Print the error and stop.
 
-3. Set the timestamped lock via MCP (overwrites the script's assignee with a canonical timestamp):
-   ```
-   task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
-   ```
-
-4. If mode is `work`, transition status:
+3. If mode is `work`, transition status via MCP:
    ```
    task_edit(id, status="active")
    ```
+   For `review` mode, skip — the ticket is already in `review` status.
 
-5. Read full ticket metadata via MCP:
+4. Read full ticket metadata via MCP:
    ```
    task_view(ticket_id)
    ```
@@ -51,7 +49,12 @@ Pick up the next ticket for processing.
    - Assignee must be empty, `@none`, `@released`, or a stale timestamp (>12h old).
    - If locked by another active session: `ERROR: Ticket {id} is locked by {assignee}. Wait for the other session to finish or check if it crashed.`
 
-4. Acquire lock and transition (same as auto-pick steps 3-4).
+4. Acquire lock via MCP:
+   ```
+   task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
+   ```
+
+5. Transition status and read metadata (same as auto-pick steps 3-4).
 
 ## Output
 

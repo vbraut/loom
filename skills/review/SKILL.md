@@ -33,12 +33,22 @@ If dispatch fails, stop.
 
 ---
 
+## Phase 1b: RESOLVE
+
+Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
+
+This gives you: ticket type, playbook content, ticket notes, worktree path. The worktree already exists from the `/loom:work` run — resolve finds it and syncs it with main.
+
+If resolve fails, release the lock and stop.
+
+---
+
 ## Phase 2: PRE-REVIEW
 
-Read the ticket's playbook (same resolution as /loom:work — match label to `playbooks/{type}.md`). Each playbook has a review section that specifies which agents to spawn for pre-review analysis.
+The playbook (loaded in Phase 1b) has a review section that specifies which agents to spawn for pre-review analysis.
 
 If the playbook defines pre-review agents:
-1. Build context for each agent (artifact paths, project context, `## output_path`, `## output_format`).
+1. Build context for each agent (artifact paths from the worktree, project context, `## output_path`, `## output_format`).
 2. Spawn all pre-review agents in parallel.
 3. Collect their reports (file paths) and verdicts.
 
@@ -90,7 +100,7 @@ If approving, also ask them to confirm, modify, or reject each proposed successo
 Read `orchestrator/shared/transition.md` and follow the "Review approval transition" section:
 1. Execute confirmed successor actions via MCP (create tickets with dependencies, update existing tickets).
 2. Transition: `task_edit(ticket_id, status="done")`, release lock.
-3. Cleanup: delete worktree and branch.
+3. Cleanup: merge branch into main, delete worktree and branch.
 
 ### On rejection:
 
@@ -104,4 +114,8 @@ Read `orchestrator/shared/transition.md` and follow the "Review rejection transi
 
 ## Error handling
 
-Same as /loom:work: release lock, print error, stop. No retries.
+If anything fails at any point:
+1. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
+2. Print the error clearly
+3. Stop — do not retry, do not append notes to the ticket
+4. The worktree is preserved with whatever artifacts exist

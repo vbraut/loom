@@ -33,19 +33,19 @@ If dispatch fails (no tickets, lock contention), stop. Do not proceed.
 
 ---
 
-## Phase 2: INITIALIZE
+## Phase 2: RESOLVE
 
-Read `orchestrator/shared/initialize.md` from the Loom plugin directory and follow it.
+Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
 
 This gives you: ticket type, playbook content, ticket notes (feedback), worktree path.
 
-If initialization fails (no matching playbook, worktree error), release the lock via `task_edit(ticket_id, assignee=["@released"])` and stop.
+If resolve fails (no matching playbook, worktree error), revert status to `todo`, release the lock via `task_edit(ticket_id, assignee=["@released"])`, and stop.
 
 ---
 
 ## Phase 3: EXECUTE PLAYBOOK
 
-Follow the playbook content you loaded in Phase 2. The playbook is a natural-language step sequence — read it and execute each step in order.
+Follow the playbook content you loaded in Phase 2 (resolve). The playbook is a natural-language step sequence — read it and execute each step in order.
 
 ### For each skill step:
 
@@ -72,7 +72,7 @@ Follow the playbook content you loaded in Phase 2. The playbook is a natural-lan
 
 - **Never read output file contents.** Pass output paths to downstream steps. Read only the verdict from the agent's text response.
 - **Never do domain work.** You don't write specs, review code, or evaluate quality. Skills and agents do that.
-- **Never run git state commands** (commit, merge, checkout, worktree) during playbook execution. Only transition.md does that at the end. Exception: ship skills (open-pr, finalize-artifacts) may push and create PRs.
+- **Never run git state commands** (commit, merge, checkout, worktree) during playbook execution. Only transition.md does that at the end. Exception: skills in `skills/ship/` may run `git push` and create PRs. No other skills may run any git commands.
 
 ---
 
