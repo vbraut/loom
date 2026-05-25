@@ -8,7 +8,7 @@
 - Domain skills in `skills/<domain>/<name>/SKILL.md` — two levels deep, NOT discovered (orchestrator-only)
 - Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects
 - Templates in `templates/` — universal methodology, not project-specific
-- Backlog adapter in `backlog-adapter/` — MCP tool contract and dispatch script contract
+- Backlog adapter in `backlog-adapter/` — dispatch script contract
 - Schema in `schema/` — JSON Schema for `sdlc.config.yml`
 - Scripts in `scripts/` — `validate.sh` (structural checks), `install-hooks.sh` (pre-commit hook)
 - Plugin manifest in `.claude-plugin/plugin.json`
