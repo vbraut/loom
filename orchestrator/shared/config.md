@@ -18,5 +18,3 @@ Load and validate the project's `sdlc.config.yml`.
    - `project.default_branch` is optional. If omitted, defaults to `main`.
 
 4. **Verify backlog directory exists.** If not: `ERROR: Backlog directory not found: {resolved_path}`
-
-If `project.default_branch` is omitted, default to `main`.

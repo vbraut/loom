@@ -9,17 +9,13 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 Pick up a ticket, run its type's playbook, transition to review.
 
-**You are the orchestrator.** You manage state (status, locks, worktrees). You compose skills and agents. You never do domain work — skills produce artifacts, agents review them. You read verdicts, count convergence, route steps. That is your job.
-
----
+You are the orchestrator — you manage state, compose skills and agents, and route steps, but you produce no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
 
 Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
 
-This gives you: `backlog_cwd`, `default_branch`, `context` slots, `version`. If config loading fails, stop immediately.
-
----
+If config loading fails, stop immediately.
 
 ## Phase 1: DISPATCH
 
@@ -27,25 +23,25 @@ Read `orchestrator/shared/dispatch.md` from the Loom plugin directory and follow
 
 - Mode: `work`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
-- `backlog_cwd`: from the config loaded in Phase 0
+- `backlog_cwd`: from config
 
-If dispatch fails (no tickets, lock contention), stop. Do not proceed.
-
----
+If dispatch fails (no tickets, lock contention), stop.
 
 ## Phase 2: RESOLVE
 
 Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
 
-This gives you: ticket type, playbook content, ticket notes (feedback), worktree path.
-
 If resolve fails (no matching playbook, worktree error), revert status to `todo`, release the lock via `task_edit(ticket_id, assignee=["@released"])`, and stop.
-
----
 
 ## Phase 3: EXECUTE PLAYBOOK
 
-Follow the playbook content you loaded in Phase 2 (resolve). The playbook is a natural-language step sequence — read it and execute each step in order.
+Follow the playbook content loaded in Phase 2. The playbook is a natural-language step sequence — execute each step in order.
+
+### Constraints
+
+- Route work to skills and agents; read their verdicts and output paths (the orchestrator evaluates nothing itself — skills produce artifacts, agents judge quality)
+- Pass output paths to downstream steps instead of reading file contents (downstream skills need the path, not a summary filtered through the orchestrator's interpretation)
+- Leave all git state commands to transition.md (committing mid-playbook creates partial commits that break review). Exception: skills in `skills/ship/` may run `git push` and create PRs.
 
 ### For each skill step:
 
@@ -68,21 +64,9 @@ Follow the playbook content you loaded in Phase 2 (resolve). The playbook is a n
 4. For convergence: follow the playbook's convergence rules (max rounds, pass criteria). If needs-work, route to the playbook's fix skill, then re-run the agents.
 5. If the playbook's convergence cap is reached without passing, add findings to an Open Questions section and proceed.
 
-### Rules:
-
-- **Never read output file contents.** Pass output paths to downstream steps. Read only the verdict from the agent's text response.
-- **Never do domain work.** You don't write specs, review code, or evaluate quality. Skills and agents do that.
-- **Never run git state commands** (commit, merge, checkout, worktree) during playbook execution. Only transition.md does that at the end. Exception: skills in `skills/ship/` may run `git push` and create PRs. No other skills may run any git commands.
-
----
-
 ## Phase 4: TRANSITION
 
 Read `orchestrator/shared/transition.md` from the Loom plugin directory and follow the "Work transition" section.
-
-This commits all worktree changes, transitions the ticket to `review`, and releases the lock.
-
----
 
 ## Error handling
 
@@ -90,5 +74,5 @@ If anything fails at any point:
 1. Revert status so dispatch can re-pick: `task_edit(ticket_id, status="todo")`
 2. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
 3. Print the error clearly
-4. Stop — do not retry, do not append notes to the ticket
+4. Stop — the human sees the failure in the terminal, so skip appending notes to the ticket (it would duplicate what they already see and clutter the ticket for the next run)
 5. The worktree is preserved with whatever artifacts exist

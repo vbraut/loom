@@ -2,14 +2,6 @@
 
 Resolve a claimed ticket into an actionable execution context: type, playbook, notes, worktree.
 
-Called by both `/loom:work` and `/loom:review` after dispatch.
-
-## Inputs
-
-- `ticket_id` — from dispatch
-- `ticket_data` — from dispatch (full task_view response)
-- `config` — from config loader
-
 ## Steps
 
 ### 1. Determine ticket type
@@ -18,15 +10,15 @@ Read the ticket's labels from `ticket_data`. Match each label against playbook f
 
 - **Zero matches**: `ERROR: No playbook found for ticket {ticket_id}. Labels: [{labels}]. Available playbooks: [{playbook_files}]. Add a label matching a playbook name.`
 - **Multiple matches**: `ERROR: Ticket {ticket_id} has multiple labels matching playbooks: [{matches}]. One ticket, one type — remove extra labels.`
-- **One match**: This is the ticket type. Store it.
+- **One match**: This is the ticket type.
 
 ### 2. Read playbook
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` in full. This is the step sequence to execute. Keep it in context — the orchestrator follows it inline.
+Read `{loom_plugin_dir}/playbooks/{type}.md` in full.
 
-### 3. Read ticket notes (feedback context)
+### 3. Read ticket notes
 
-Extract the notes field from `ticket_data`. If the ticket has been rejected before, notes will contain feedback from prior review cycles. Pass these notes as context to every step in the playbook — skills and agents receive them alongside their other context fields.
+Extract the notes field from `ticket_data`. Pass notes as context to every playbook step — they contain feedback from prior review cycles.
 
 ### 4. Ensure worktree
 
@@ -35,23 +27,13 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 - Branch name: `loom/{ticket_id_lowercase}` (e.g., `loom/bl-042`)
 - Worktree path: `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`
 
-Use the project's default branch from config (`default_branch`, defaults to `main`). All references to `main` below use this value.
+Use the project's `default_branch` from config (defaults to `main`).
 
 **If the worktree already exists** (prior run, rejection, or review pickup):
-- Sync with default branch: `git -C {worktree_path} merge {default_branch} --no-edit`
-- On merge conflict: prefer the default branch's version for non-artifact files (config, dependencies, infrastructure). Prefer the worktree's version for artifact files (specs, plans, reviews, mocks — anything under `.claude/` or `.loom/`). For code files, apply a three-way merge and resolve conflicts inline, preserving both sides' intent.
-- If the merge cannot be resolved automatically, abort the merge (`git merge --abort`), report the conflict, and stop. The human investigates.
-- Existing artifacts from prior runs are preserved — skills decide what to do with them.
+- Sync: `git -C {worktree_path} merge {default_branch} --no-edit`
+- On merge conflict: prefer default branch for non-artifact files — config, dependencies, infrastructure (conflicts here break builds/deploys). Prefer worktree for artifact files — specs, plans, reviews, mocks under `.claude/` or `.loom/` (these represent the ticket's work-in-progress). For code files, three-way merge preserving both sides' intent.
+- If unresolvable: `git merge --abort`, report the conflict, stop.
 
 **If no worktree exists:**
-- If the branch `loom/{ticket_id_lowercase}` already exists (orphaned from a prior failed cleanup), reuse it: `git worktree add {worktree_path} loom/{ticket_id_lowercase}`, then sync with default branch as above.
-- Otherwise create a new branch from the default branch: `git branch loom/{ticket_id_lowercase} {default_branch}`
-- Create worktree: `git worktree add {worktree_path} loom/{ticket_id_lowercase}`
-
-## Output
-
-After resolve completes:
-- `ticket_type` — the matched playbook name
-- `playbook_content` — full playbook text (in context)
-- `ticket_notes` — feedback/notes from ticket (may be empty)
-- `worktree_path` — absolute path to the worktree
+- If branch `loom/{ticket_id_lowercase}` already exists (orphaned): `git worktree add {worktree_path} loom/{ticket_id_lowercase}`, then sync as above.
+- Otherwise: `git branch loom/{ticket_id_lowercase} {default_branch}`, then `git worktree add {worktree_path} loom/{ticket_id_lowercase}`

@@ -21,19 +21,21 @@
 
 ## Adding a domain skill
 
-1. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
-2. Directory name must be kebab-case and match the `name` field
-3. Add the skill to the relevant playbook in `playbooks/`
-4. Run `scripts/validate.sh`
+1. Read `templates/skill-authoring.md` for structure and principles
+2. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
+3. Directory name must be kebab-case and match the `name` field
+4. Add the skill to the relevant playbook in `playbooks/`
+5. Run `scripts/validate.sh`
 
 Note: entry-point skills (`skills/work/`, `skills/review/`) are one level deep and require extra frontmatter fields (`user-invocable`, `argument-hint`). These are not domain skills — do not add new entry points without updating `validate.sh`.
 
 ## Adding an agent
 
-1. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
-2. Directory name must be kebab-case and match the `name` field
-3. Add the agent to the relevant playbook
-4. Run `scripts/validate.sh`
+1. Read `templates/skill-authoring.md` for structure and principles
+2. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
+3. Directory name must be kebab-case and match the `name` field
+4. Add the agent to the relevant playbook
+5. Run `scripts/validate.sh`
 
 ## Adding a playbook
 
@@ -47,6 +49,7 @@ Note: entry-point skills (`skills/work/`, `skills/review/`) are one level deep a
 - `SKILL.md` and `AGENT.md` always uppercase
 - Playbook filenames match ticket type labels exactly
 - No project-specific content in the framework
+- All skill/agent authoring follows `templates/skill-authoring.md` — concise, positive-framed, specificity matched to fragility
 
 ## Co-change rule
 
