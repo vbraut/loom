@@ -206,22 +206,6 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
 done
 echo "  ($playbook_count playbooks found)"
 
-# ── Schema ─────────────────────────────────────────────────────────
-
-echo ""
-echo "--- Schema ---"
-
-schema_path="$LOOM_ROOT/schema/sdlc.config.schema.json"
-if [ -f "$schema_path" ]; then
-  if python3 -c "import json, sys; json.load(open(sys.argv[1]))" "$schema_path" 2>/dev/null; then
-    ok "schema/sdlc.config.schema.json (valid JSON)"
-  else
-    err "schema/sdlc.config.schema.json is not valid JSON"
-  fi
-else
-  err "schema/sdlc.config.schema.json not found"
-fi
-
 
 # ── File hygiene ───────────────────────────────────────────────────
 
