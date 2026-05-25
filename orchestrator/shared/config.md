@@ -17,16 +17,6 @@ Load and validate the project's `sdlc.config.yml`.
    - `project.backlog_cwd` must be present and non-empty. If missing: `ERROR: project.backlog_cwd is required in sdlc.config.yml`
    - `project.default_branch` is optional. If omitted, defaults to `main`.
 
-4. **Resolve paths.**
-   - Verify the backlog directory exists. If not: `ERROR: Backlog directory not found: {resolved_path}`
-   - For each entry in `project.context`, resolve the path relative to the project root. Do NOT verify context files exist at config-load time — playbooks handle missing context gracefully.
+4. **Verify backlog directory exists.** If not: `ERROR: Backlog directory not found: {resolved_path}`
 
-5. **Store config.** Keep the parsed config in memory for the rest of the session. Reference it as "the config" in subsequent modules.
-
-## Output
-
-After this module completes, the following are available:
-- `backlog_cwd` — resolved absolute path to the backlog repo
-- `default_branch` — git default branch name (from config, or `main`)
-- `context` — map of slot name → resolved file path (may be empty)
-- `version` — config schema version (always 1)
+If `project.default_branch` is omitted, default to `main`.
