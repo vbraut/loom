@@ -41,6 +41,4 @@ Pick up the next ticket for processing.
    task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
    ```
 
-   Steps 3-4 are not atomic — another session could lock between check and acquire. Known MCP limitation (no compare-and-set). Low risk for manual picks.
-
 5. Transition status and read metadata (same as auto-pick steps 3-4).
