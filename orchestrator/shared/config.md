@@ -18,7 +18,6 @@ Load and validate the project's `sdlc.config.yml`.
    - `project.default_branch` is optional. If omitted, defaults to `main`.
 
 4. **Resolve paths.**
-   - Expand `~` in `project.backlog_cwd` to the home directory.
    - Verify the backlog directory exists. If not: `ERROR: Backlog directory not found: {resolved_path}`
    - For each entry in `project.context`, resolve the path relative to the project root. Do NOT verify context files exist at config-load time — playbooks handle missing context gracefully.
 
