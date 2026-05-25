@@ -222,17 +222,6 @@ else
   err "schema/sdlc.config.schema.json not found"
 fi
 
-# ── Backlog adapter ────────────────────────────────────────────────
-
-echo ""
-echo "--- Backlog adapter ---"
-
-doc_path="$LOOM_ROOT/backlog-adapter/dispatch.md"
-if [ -f "$doc_path" ]; then
-  ok "backlog-adapter/dispatch.md"
-else
-  err "backlog-adapter/dispatch.md not found"
-fi
 
 # ── File hygiene ───────────────────────────────────────────────────
 
