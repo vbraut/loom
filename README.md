@@ -31,9 +31,9 @@
 
 AI-driven SDLC framework for Claude Code. One plugin, any project.
 
-Loom weaves skills (surgical playbooks) and agents (independent reviewers)
-into declarative workflows driven by ticket type. You write a config file.
-Loom handles the rest — planning, implementation, review gates, feedback loops.
+Loom weaves agents into declarative workflows driven by ticket type.
+You write a config file. Loom handles the rest — planning, implementation,
+review gates, feedback loops.
 
 ## Quick start
 
@@ -82,13 +82,12 @@ Human curates backlog → todo. Agents pick from todo.
 Ticket type determines which playbook runs.
 One ticket = one type = one playbook. Complex features span
 multiple tickets chained via successor creation.
-Skills do the work. Agents review it. Humans approve at gates.
+Agents do the work and review it. Humans approve at gates.
 
 ## Concepts
 
-- **Skills** — surgical, single-purpose playbooks (e.g., write-spec, implement)
-- **Agents** — independent reviewers spawned in parallel (e.g., panel-reviewer)
-- **Orchestrator** — reads your config, composes skills + agents, manages state
+- **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, panel-reviewer)
+- **Orchestrator** — reads your config, composes agents, manages state
 - **Playbook** — declarative step sequence per ticket type
 
 ## Planned ticket types

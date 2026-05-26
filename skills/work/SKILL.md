@@ -7,7 +7,7 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 # /loom:work — Autonomous SDLC Worker
 
-You are the orchestrator — you manage state, compose skills and agents, and route steps, but you produce no artifacts yourself.
+You are the orchestrator — you manage state, compose agents, and route steps, but you produce no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
 
@@ -37,30 +37,23 @@ Follow the playbook content loaded in Phase 2. The playbook is a natural-languag
 
 ### Constraints
 
-- Route work to skills and agents; read their verdicts and output paths (the orchestrator evaluates nothing itself — skills produce artifacts, agents judge quality)
-- Pass output paths to downstream steps instead of reading file contents (downstream skills need the path, not a summary filtered through the orchestrator's interpretation)
+- Route work to agents; read their verdicts and output paths (the orchestrator evaluates nothing itself)
+- Pass output paths to downstream steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
 - Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review).
 
-### For each skill step:
+### For each step:
 
-1. Read the skill's `SKILL.md` from the Loom plugin (path given in playbook). If not found: `ERROR: Skill not found at {path}.`
+1. Read the agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
 2. Build the Agent tool prompt:
-   - Include the SKILL.md content
+   - Include the AGENT.md content
    - Add curated `## field` context blocks as specified by the playbook
-   - Always include `## output_path` pointing to where the skill should write
+   - Always include `## output_path` pointing to where the agent should write
    - Include `## ticket_notes` with the ticket's notes (feedback context)
-3. Spawn the subagent with `cwd` set to the worktree path.
-4. Read the agent's text response. Check for `STATUS: complete` or `STATUS: failed — {reason}`.
+3. Spawn the subagent with `cwd` set to the worktree path. When the playbook specifies multiple agents for a step, spawn all in parallel via multiple Agent tool calls.
+4. Read each agent's text response. Check for `STATUS: complete`, `STATUS: failed — {reason}`, or `STATUS: complete — VERDICT: pass|needs-work`.
 5. If failed: revert status to `todo`, release lock, stop.
-6. If complete: verify the output file exists at `output_path`. Register it via MCP: `task_edit(ticket_id, addReferences=[output_path])`. Proceed to next step.
-
-### For each agent step:
-
-1. Build context for each agent (curated `## field` blocks + `## output_path` + `## output_format`).
-2. Spawn all agents in parallel via multiple Agent tool calls.
-3. Read each agent's text response. Extract the status/verdict line: `STATUS: complete — VERDICT: pass|needs-work`.
-4. For convergence: follow the playbook's convergence rules (max rounds, pass criteria). If needs-work, route to the playbook's fix skill, then re-run the agents.
-5. If the playbook's convergence cap is reached without passing, add findings to an Open Questions section and proceed.
+6. If complete without verdict: verify the output file exists at `output_path`. Register it via MCP: `task_edit(ticket_id, addReferences=[output_path])`. Proceed to next step.
+7. For convergence (verdict-bearing steps): follow the playbook's convergence rules (max rounds, pass criteria). If needs-work, route to the playbook's fix agent, then re-run. If the convergence cap is reached without passing, add findings to an Open Questions section and proceed.
 
 ## Phase 4: TRANSITION
 

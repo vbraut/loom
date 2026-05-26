@@ -5,37 +5,28 @@
 - Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
 - Shared modules in `shared/` — config, dispatch, resolve, transition
 - Playbooks in `playbooks/` — declarative step sequences per ticket type
-- Domain skills in `skills/<domain>/<name>/SKILL.md` — two levels deep, NOT discovered (orchestrator-only)
-- Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects
+- Agents in `agents/<name>/AGENT.md` — subagents spawned by the orchestrator (doers and reviewers alike)
 - Templates in `templates/` — universal methodology, not project-specific
 - Scripts in `scripts/` — `validate.sh` (structural checks), `install-hooks.sh` (pre-commit hook)
 - Plugin manifest in `.claude-plugin/plugin.json`
 
 ## Boundary rules
 
-1. Skills never invoke other skills. The orchestrator decides composition.
-2. Agents never write to the backlog. They write findings to `output_path` only.
-3. The orchestrator never does domain work. It dispatches skills and agents.
+1. Agents never invoke other agents. The orchestrator decides composition.
+2. Agents write to `output_path` only — no backlog writes, no git operations.
+3. The orchestrator never does domain work. It dispatches agents.
 4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
-5. Skills never run git commands. All git operations (commit, push, merge, PR creation) are handled by transition.md.
-
-## Adding a domain skill
-
-1. Read `templates/skill-authoring.md` for structure and principles
-2. Create `skills/<domain>/<name>/SKILL.md` with YAML frontmatter (`name`, `description`)
-3. Directory name must be kebab-case and match the `name` field
-4. Add the skill to the relevant playbook in `playbooks/`
-5. Run `scripts/validate.sh`
-
-Note: entry-point skills (`skills/work/`, `skills/review/`) are one level deep and require extra frontmatter fields (`user-invocable`, `argument-hint`). These are not domain skills — do not add new entry points without updating `validate.sh`.
+5. All git operations (commit, push, merge, PR creation) are handled by transition.md.
 
 ## Adding an agent
 
 1. Read `templates/skill-authoring.md` for structure and principles
-2. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
+2. Create `agents/<name>/AGENT.md` with YAML frontmatter (`name`, `description`, and optionally `tools`, `model`)
 3. Directory name must be kebab-case and match the `name` field
-4. Add the agent to the relevant playbook
+4. Add the agent to the relevant playbook in `playbooks/`
 5. Run `scripts/validate.sh`
+
+Note: entry-point skills (`skills/work/`, `skills/review/`) are orchestrators, not agents. Do not add new entry points without updating `validate.sh`.
 
 ## Adding a playbook
 

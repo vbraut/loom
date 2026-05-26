@@ -1,6 +1,6 @@
 # Skill & Agent Authoring Guide
 
-How to write skills and agents for Loom. Follow this when creating new files in `skills/` or `agents/`.
+How to write agents for Loom. Follow this when creating new files in `agents/`.
 
 ## Core principles
 
@@ -29,34 +29,37 @@ How to write skills and agents for Loom. Follow this when creating new files in 
 
 11. **Explain WHY for non-obvious constraints.** "Prefer default branch for non-artifact files during merge conflicts" is a rule. Adding "(config/dependency conflicts break deploys)" makes it a generalizable principle.
 
-12. **Line budgets.** SKILL.md under 300 lines, AGENT.md under 150 lines. If approaching the limit, split reference material into a separate file that the skill reads on demand.
+12. **Line budgets.** AGENT.md under 200 lines, entry-point SKILL.md under 300 lines. If approaching the limit, split reference material into a separate file that the agent reads on demand.
 
-## Domain skill template
+## Agent template
 
-Domain skills live at `skills/<domain>/<name>/SKILL.md`. They are spawned as subagents by the orchestrator with curated context.
+Agents live at `agents/<name>/AGENT.md`. The orchestrator spawns them as subagents with curated context. Some produce artifacts (doers), others evaluate and judge (reviewers) — the playbook decides role and execution order.
 
 ```markdown
 ---
 name: kebab-case-name
 description: "What it does and when to use it, in third person. State triggers, not process — if the description summarizes the workflow, the model may follow the summary instead of reading the full skill."
+tools: [Read, Bash, Grep]  # optional — omit if defaults suffice
+model: sonnet              # optional — omit to inherit from caller
 ---
 
-# Skill Name
+# Agent Name
 
-{1-2 sentences: what this skill produces and for whom.}
+{1-2 sentences: what this agent produces or evaluates.}
 
 ## Constraints
 
 {3-7 rules. Hardest/most-critical first. Positive framing.
  Each gets a WHY in parentheses when the reason isn't obvious.}
 
-- Produce X before Y (Y depends on X for validation)
-- Use exact terminology from the ticket description (downstream agents match on these terms)
 - Write to output_path only — no side effects outside that file
+- Use exact terminology from the ticket description (downstream agents match on these terms)
 
 ## Process
 
-{Numbered steps. Imperative voice. Match specificity to fragility.}
+{Numbered steps. Imperative voice. Match specificity to fragility.
+ For reviewer agents, this section becomes "Evaluation criteria" — what to look for,
+ not step-by-step procedure.}
 
 1. Read the upstream artifact at `{artifact_path}`.
 2. Evaluate against the criteria in ticket notes.
@@ -67,64 +70,24 @@ description: "What it does and when to use it, in third person. State triggers, 
 {Exact format ONLY when the orchestrator or downstream steps parse it.
  Omit this section entirely for free-form output.}
 
-The last line of your response must be:
+The last line of your response must be one of:
 STATUS: complete
+STATUS: complete — VERDICT: pass
+STATUS: complete — VERDICT: needs-work
+STATUS: failed — {reason}
+
+Use the verdict form when the playbook specifies convergence on this agent.
 
 ## Examples
 
-{1-3 input/output pairs ONLY for judgment-heavy skills where output
- quality varies significantly without them. Omit for procedural skills.
+{1-3 input/output pairs ONLY for judgment-heavy agents where output
+ quality varies significantly without them. Omit for procedural agents.
  Diverse cases — cover the edge, not just the happy path.}
 
 ### Example: edge case — spec with ambiguous scope
 
 Input: ...
 Output: ...
-```
-
-## Agent template
-
-Agents live at `agents/<name>/AGENT.md`. They are independent reviewers spawned in parallel. They produce a verdict and a report. They have no side effects.
-
-```markdown
----
-name: kebab-case-name
-description: "What it evaluates and what verdict it produces. Triggers, not process."
-tools: [Read, Bash, Grep]
-model: sonnet
----
-
-# Agent Name
-
-{One sentence: what perspective this agent brings to a review.}
-
-## Verdict
-
-The last line of your response must be exactly one of:
-STATUS: complete — VERDICT: pass
-STATUS: complete — VERDICT: needs-work
-
-## Evaluation criteria
-
-{What to look for. Positive framing. Hardest/most-violated criteria first.
- Use contrast examples sparingly — "X not Y" — to disambiguate judgment calls.}
-
-- Every acceptance criterion has a corresponding test (not just happy-path coverage)
-- Error messages include enough context for the user to self-diagnose (not just "something went wrong")
-- API contracts match the engineering spec exactly (field names, types, nullability)
-
-## Report format
-
-{Structure for the written report. Keep minimal — the orchestrator reads
- the verdict line; humans read the report.}
-
-Write your findings as:
-
-### Summary
-{2-3 sentences: overall assessment}
-
-### Findings
-{Bulleted list. Each finding: what's wrong, where, and what "fixed" looks like.}
 ```
 
 ## Shared module style

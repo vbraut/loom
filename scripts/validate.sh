@@ -10,8 +10,8 @@ ERRORS=0
 
 # Required frontmatter fields per file type (also used as allowlist — unknown fields are rejected)
 SKILL_ENTRY_FIELDS="name description user-invocable argument-hint"
-SKILL_DOMAIN_FIELDS="name description"
-AGENT_FIELDS="name description tools model"
+AGENT_REQUIRED_FIELDS="name description"
+AGENT_ALLOWED_FIELDS="name description tools model"
 
 if ! command -v python3 &>/dev/null; then
   echo "ERROR: python3 is required for JSON validation" >&2
@@ -33,6 +33,7 @@ check_frontmatter() {
   file="$1"
   required="$2"
   label="$3"
+  allowed="${4:-$required}"
 
   if ! head -1 "$file" | grep -q '^---$'; then
     err "$label missing YAML frontmatter (must start with ---)"
@@ -63,8 +64,8 @@ check_frontmatter() {
     echo "$line" | grep -qE ':' || continue
     field_name=$(echo "$line" | sed 's/:.*//')
     found=false
-    for required_field in $required; do
-      if [ "$field_name" = "$required_field" ]; then
+    for allowed_field in $allowed; do
+      if [ "$field_name" = "$allowed_field" ]; then
         found=true
         break
       fi
@@ -129,34 +130,6 @@ for module in config dispatch resolve transition; do
   fi
 done
 
-# ── Domain skills (two levels deep under skills/) ─────────────────
-
-echo ""
-echo "--- Domain skills ---"
-
-skill_count=0
-for skill_md in "$LOOM_ROOT"/skills/*/*/SKILL.md; do
-  [ -f "$skill_md" ] || continue
-  skill_count=$((skill_count + 1))
-  rel_path="${skill_md#$LOOM_ROOT/}"
-
-  dir_name=$(basename "$(dirname "$skill_md")")
-  if ! echo "$dir_name" | grep -qE '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
-    err "$rel_path directory name '$dir_name' is not kebab-case"
-    continue
-  fi
-
-  if check_frontmatter "$skill_md" "$SKILL_DOMAIN_FIELDS" "$rel_path"; then
-    fm_name=$(sed -n '2,/^---$/p' "$skill_md" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'")
-    if [ "$fm_name" != "$dir_name" ]; then
-      err "$rel_path frontmatter name '$fm_name' does not match directory name '$dir_name'"
-    else
-      ok "$rel_path"
-    fi
-  fi
-done
-echo "  ($skill_count domain skills found)"
-
 # ── Agents ─────────────────────────────────────────────────────────
 
 echo ""
@@ -174,7 +147,7 @@ for agent_md in "$LOOM_ROOT"/agents/*/AGENT.md; do
     continue
   fi
 
-  if check_frontmatter "$agent_md" "$AGENT_FIELDS" "$rel_path"; then
+  if check_frontmatter "$agent_md" "$AGENT_REQUIRED_FIELDS" "$rel_path" "$AGENT_ALLOWED_FIELDS"; then
     fm_name=$(sed -n '2,/^---$/p' "$agent_md" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'")
     if [ "$fm_name" != "$dir_name" ]; then
       err "$rel_path frontmatter name '$fm_name' does not match directory name '$dir_name'"
