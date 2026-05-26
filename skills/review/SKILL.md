@@ -33,19 +33,19 @@ If resolve fails, release the lock and stop.
 
 ## Phase 3: EXECUTE PLAYBOOK
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow its review section. The playbook defines which agents to spawn for pre-review analysis, summarization, successor planning, and any other review steps.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
 
 ### Constraints
 
-- Route domain work to agents (the orchestrator assembles context and manages flow, but evaluates no artifacts)
-- Pass output paths between steps instead of reading file contents
+- Pass output paths between steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
+- Leave all git operations to transition.md
 
 ### Agent invocation
 
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool: include AGENT.md content, context blocks from the playbook, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
+2. Spawn via Agent tool: include AGENT.md content, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.

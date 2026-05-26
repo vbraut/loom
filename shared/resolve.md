@@ -6,11 +6,11 @@ Resolve a claimed ticket into an actionable execution context: type, notes, work
 
 ### 1. Determine ticket type
 
-Read the ticket's labels from `ticket_data`. Match each label against playbook files in `{loom_plugin_dir}/playbooks/`. A playbook file is `playbooks/{name}.md` — the label must match `{name}` exactly.
+Read the `type:` label from `ticket_data` (e.g., `type:code-fix` → type is `code-fix`).
 
-- **Zero matches**: `ERROR: No playbook found for ticket {ticket_id}. Labels: [{labels}]. Available playbooks: [{playbook_files}]. Add a label matching a playbook name.`
-- **Multiple matches**: `ERROR: Ticket {ticket_id} has multiple labels matching playbooks: [{matches}]. One ticket, one type — remove extra labels.`
-- **One match**: This is the ticket type.
+- **No `type:` label**: `ERROR: Ticket {ticket_id} has no type: label.`
+- **Multiple `type:` labels**: `ERROR: Ticket {ticket_id} has multiple type: labels: [{values}].`
+- **Playbook missing**: verify `{loom_plugin_dir}/playbooks/{type}.md` exists. If not: `ERROR: No playbook for type '{type}'.`
 
 ### 2. Read ticket notes
 

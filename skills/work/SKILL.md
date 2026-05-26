@@ -33,11 +33,10 @@ If resolve fails (no matching playbook, worktree error), revert status to `todo`
 
 ## Phase 3: EXECUTE PLAYBOOK
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow its steps. The playbook is the authority on what happens — which agents to invoke, in what order, with what context.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
 
 ### Constraints
 
-- Route domain work to agents (the orchestrator assembles context and manages flow, but produces no artifacts)
 - Pass output paths to downstream steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
 - Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review)
 
@@ -46,7 +45,7 @@ Read `{loom_plugin_dir}/playbooks/{type}.md` and follow its steps. The playbook 
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool: include AGENT.md content, context blocks from the playbook, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
+2. Spawn via Agent tool: include AGENT.md content, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
