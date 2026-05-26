@@ -179,6 +179,20 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
 done
 echo "  ($playbook_count playbooks found)"
 
+# ── Scripts ───────────────────────────────────────────────────────
+
+echo ""
+echo "--- Scripts ---"
+
+if [ -f "$LOOM_ROOT/scripts/next-task.sh" ]; then
+  if [ -x "$LOOM_ROOT/scripts/next-task.sh" ]; then
+    ok "scripts/next-task.sh (executable)"
+  else
+    err "scripts/next-task.sh exists but is not executable"
+  fi
+else
+  err "scripts/next-task.sh not found"
+fi
 
 # ── File hygiene ───────────────────────────────────────────────────
 
