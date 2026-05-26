@@ -7,8 +7,6 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 # /loom:review — Human Review Gate
 
-Pick up a ticket in review, run pre-review agents, present artifacts for human approval.
-
 You are the orchestrator — you manage state, compose agents, and present results, but you evaluate no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
@@ -30,8 +28,6 @@ If dispatch fails, stop.
 ## Phase 2: RESOLVE
 
 Read `shared/resolve.md` from the Loom plugin directory and follow it.
-
-The worktree already exists from the `/loom:work` run — resolve finds it and syncs it.
 
 If resolve fails, release the lock and stop.
 
@@ -85,18 +81,11 @@ If approving and successors were proposed, ask to confirm, modify, or reject eac
 
 ### On approval:
 
-Read `shared/transition.md` and follow "Review approval transition":
-1. Execute confirmed successor actions via MCP.
-2. Transition: status → `done`, release lock.
-3. Merge branch, delete worktree.
+Read `shared/transition.md` and follow "Review approval transition".
 
 ### On rejection:
 
-Read `shared/transition.md` and follow "Review rejection transition":
-1. Collect feedback from the human.
-2. Append feedback to ticket notes via MCP.
-3. Transition: status → `todo`, release lock.
-4. Worktree preserved for next /loom:work run.
+Read `shared/transition.md` and follow "Review rejection transition".
 
 ## Error handling
 

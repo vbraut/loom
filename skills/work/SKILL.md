@@ -7,8 +7,6 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 # /loom:work — Autonomous SDLC Worker
 
-Pick up a ticket, run its type's playbook, transition to review.
-
 You are the orchestrator — you manage state, compose skills and agents, and route steps, but you produce no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
