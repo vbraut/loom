@@ -13,13 +13,13 @@ You are the orchestrator — you manage state, compose skills and agents, and ro
 
 ## Phase 0: LOAD CONFIG
 
-Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
+Read `shared/config.md` from the Loom plugin directory and follow it.
 
 If config loading fails, stop immediately.
 
 ## Phase 1: DISPATCH
 
-Read `orchestrator/shared/dispatch.md` from the Loom plugin directory and follow it.
+Read `shared/dispatch.md` from the Loom plugin directory and follow it.
 
 - Mode: `work`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
@@ -29,7 +29,7 @@ If dispatch fails (no tickets, lock contention), stop.
 
 ## Phase 2: RESOLVE
 
-Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
+Read `shared/resolve.md` from the Loom plugin directory and follow it.
 
 If resolve fails (no matching playbook, worktree error), revert status to `todo`, release the lock via `task_edit(ticket_id, assignee=["@released"])`, and stop.
 
@@ -66,7 +66,7 @@ Follow the playbook content loaded in Phase 2. The playbook is a natural-languag
 
 ## Phase 4: TRANSITION
 
-Read `orchestrator/shared/transition.md` from the Loom plugin directory and follow the "Work transition" section.
+Read `shared/transition.md` from the Loom plugin directory and follow the "Work transition" section.
 
 ## Error handling
 

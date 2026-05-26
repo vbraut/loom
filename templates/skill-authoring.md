@@ -19,13 +19,17 @@ How to write skills and agents for Loom. Follow this when creating new files in 
 
 6. **Examples for style, rules for behavior.** If the desired output format or quality varies without guidance, show 1-3 diverse examples. For behavioral constraints, state the rule with its rationale. Don't use examples for mechanical procedures.
 
-7. **No repeated context.** Orchestrator modules build on each other sequentially. Never restate what a prior phase produced — the AI already has it. No "Inputs" sections listing what the caller already passed.
+7. **One term per concept.** Pick one word and use it throughout: "ticket" or "task", not both. Inconsistent terminology forces the model to infer synonymy instead of following instructions.
 
-8. **One-sentence role, not a persona.** "You are a senior engineer evaluating spec completeness" focuses behavior. Multi-paragraph persona descriptions waste tokens without improving output.
+8. **No repeated context.** Orchestrator modules build on each other sequentially. Never restate what a prior phase produced — the AI already has it. No "Inputs" sections listing what the caller already passed.
 
-9. **Reserve emphasis for invariants.** MUST/NEVER/CRITICAL only for safety or correctness invariants. Normal prose for everything else. Claude 4.x overtriggers on emphatic language — it interprets "NEVER" as more absolute than you intend, causing refusals or rigid behavior where judgment was needed.
+9. **One-sentence role, not a persona.** "You are a senior engineer evaluating spec completeness" focuses behavior. Multi-paragraph persona descriptions waste tokens without improving output.
 
-10. **Explain WHY for non-obvious constraints.** "Prefer default branch for non-artifact files during merge conflicts" is a rule. Adding "(config/dependency conflicts break deploys)" makes it a generalizable principle.
+10. **Reserve emphasis for invariants.** MUST/NEVER/CRITICAL only for safety or correctness invariants. Normal prose for everything else. Claude 4.x overtriggers on emphatic language — it interprets "NEVER" as more absolute than you intend, causing refusals or rigid behavior where judgment was needed.
+
+11. **Explain WHY for non-obvious constraints.** "Prefer default branch for non-artifact files during merge conflicts" is a rule. Adding "(config/dependency conflicts break deploys)" makes it a generalizable principle.
+
+12. **Line budgets.** SKILL.md under 300 lines, AGENT.md under 150 lines. If approaching the limit, split reference material into a separate file that the skill reads on demand.
 
 ## Domain skill template
 
@@ -34,7 +38,7 @@ Domain skills live at `skills/<domain>/<name>/SKILL.md`. They are spawned as sub
 ```markdown
 ---
 name: kebab-case-name
-description: "What it does and when to use it, in third person"
+description: "What it does and when to use it, in third person. State triggers, not process — if the description summarizes the workflow, the model may follow the summary instead of reading the full skill."
 ---
 
 # Skill Name
@@ -85,7 +89,7 @@ Agents live at `agents/<name>/AGENT.md`. They are independent reviewers spawned 
 ```markdown
 ---
 name: kebab-case-name
-description: "What it evaluates and what verdict it produces"
+description: "What it evaluates and what verdict it produces. Triggers, not process."
 tools: [Read, Bash, Grep]
 model: sonnet
 ---
@@ -123,9 +127,9 @@ Write your findings as:
 {Bulleted list. Each finding: what's wrong, where, and what "fixed" looks like.}
 ```
 
-## Orchestrator module style
+## Shared module style
 
-Orchestrator modules at `orchestrator/shared/*.md` are read sequentially within a single session. They are imperative checklists, not standalone documents.
+Shared modules at `shared/*.md` are read sequentially within a single session. They are imperative checklists, not standalone documents.
 
 - No preamble beyond a one-line purpose statement
 - No Inputs/Output sections (the AI has context from prior phases)

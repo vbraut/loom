@@ -3,7 +3,7 @@
 ## Architecture
 
 - Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
-- Orchestrator shared modules in `orchestrator/shared/` — config, dispatch, resolve, transition
+- Shared modules in `shared/` — config, dispatch, resolve, transition
 - Playbooks in `playbooks/` — declarative step sequences per ticket type
 - Domain skills in `skills/<domain>/<name>/SKILL.md` — two levels deep, NOT discovered (orchestrator-only)
 - Agents in `agents/<name>/AGENT.md` — structured input, structured output, no side effects

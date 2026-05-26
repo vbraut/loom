@@ -13,13 +13,13 @@ You are the orchestrator — you manage state, compose agents, and present resul
 
 ## Phase 0: LOAD CONFIG
 
-Read `orchestrator/shared/config.md` from the Loom plugin directory and follow it.
+Read `shared/config.md` from the Loom plugin directory and follow it.
 
 If config loading fails, stop immediately.
 
 ## Phase 1: DISPATCH
 
-Read `orchestrator/shared/dispatch.md` from the Loom plugin directory and follow it.
+Read `shared/dispatch.md` from the Loom plugin directory and follow it.
 
 - Mode: `review`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
@@ -29,7 +29,7 @@ If dispatch fails, stop.
 
 ## Phase 2: RESOLVE
 
-Read `orchestrator/shared/resolve.md` from the Loom plugin directory and follow it.
+Read `shared/resolve.md` from the Loom plugin directory and follow it.
 
 The worktree already exists from the `/loom:work` run — resolve finds it and syncs it.
 
@@ -85,14 +85,14 @@ If approving and successors were proposed, ask to confirm, modify, or reject eac
 
 ### On approval:
 
-Read `orchestrator/shared/transition.md` and follow "Review approval transition":
+Read `shared/transition.md` and follow "Review approval transition":
 1. Execute confirmed successor actions via MCP.
 2. Transition: status → `done`, release lock.
 3. Merge branch, delete worktree.
 
 ### On rejection:
 
-Read `orchestrator/shared/transition.md` and follow "Review rejection transition":
+Read `shared/transition.md` and follow "Review rejection transition":
 1. Collect feedback from the human.
 2. Append feedback to ticket notes via MCP.
 3. Transition: status → `todo`, release lock.

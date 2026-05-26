@@ -38,7 +38,7 @@ Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}
 
 ### 1. Execute successor actions
 
-For each confirmed successor from the plan-successors agent:
+For each successor action the human approved:
 - `create`: `task_create(title=..., description=..., labels=[type], dependencies=[ticket_id], ...)`
 - `update`: `task_edit(id=successor_id, ...)` with the specified changes
 
@@ -62,7 +62,7 @@ git branch -d loom/{ticket_id_lowercase}
 
 If `git checkout` fails (dirty working tree), stop. The ticket is already `done` and the branch is preserved.
 
-If merge conflicts, resolve using the same strategy as `resolve.md` step 4. If unresolvable, stop and let the human merge manually.
+If merge conflicts, resolve using the strategy in `resolve.md` step 4. If unresolvable, stop and let the human merge manually.
 
 ## Review rejection transition
 

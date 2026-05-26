@@ -115,17 +115,17 @@ for skill in work review; do
   fi
 done
 
-# ── Orchestrator shared modules ────────────────────────────────────
+# ── Shared modules ────────────────────────────────────────────────
 
 echo ""
-echo "--- Orchestrator shared modules ---"
+echo "--- Shared modules ---"
 
 for module in config dispatch resolve transition; do
-  module_path="$LOOM_ROOT/orchestrator/shared/$module.md"
+  module_path="$LOOM_ROOT/shared/$module.md"
   if [ -f "$module_path" ]; then
-    ok "orchestrator/shared/$module.md"
+    ok "shared/$module.md"
   else
-    err "orchestrator/shared/$module.md not found"
+    err "shared/$module.md not found"
   fi
 done
 
