@@ -92,34 +92,6 @@ get_assignee() {
   echo "$val"
 }
 
-# Get the status of a task (single CLI call, cached).
-# Returns __ERROR__ sentinel on CLI failure.
-declare -A STATUS_CACHE=()
-get_status() {
-  local tid="$1"
-  if [[ -n "${STATUS_CACHE[$tid]+x}" ]]; then
-    echo "${STATUS_CACHE[$tid]}"
-    return
-  fi
-  local raw
-  if ! raw=$(timeout 60 backlog task "$tid" --plain 2>/dev/null); then
-    STATUS_CACHE[$tid]="__ERROR__"
-    echo "__ERROR__"
-    return
-  fi
-  local val
-  val=$(echo "$raw" | grep "^Status:" | sed 's/^Status: [^ ]* //' || true)
-  STATUS_CACHE[$tid]="$val"
-  echo "$val"
-}
-
-# Extract parent ID from a child ticket ID (ABC-049.01 -> ABC-049). Empty if not a child.
-get_parent_id() {
-  local tid="$1"
-  if [[ "$tid" =~ ^([A-Z]+-[0-9]+)\.[0-9]+$ ]]; then
-    echo "${BASH_REMATCH[1]}"
-  fi
-}
 
 # ── Dispatch lock ───────────────────────────────────────────────────
 
@@ -281,26 +253,6 @@ pick_task() {
     if [[ "$check_sequences" == "true" ]]; then
       if ! echo "$unblocked" | grep -qxF "$tid"; then
         continue
-      fi
-    fi
-
-    # Child tickets are blocked unless parent is in split status (or parent doesn't exist)
-    local parent_id
-    parent_id=$(get_parent_id "$tid")
-    if [[ -n "$parent_id" ]]; then
-      local parent_status
-      parent_status=$(get_status "$parent_id")
-      if [[ "$parent_status" == "__ERROR__" ]]; then
-        log "Warning: could not fetch parent $parent_id status; skipping $tid"
-        continue
-      fi
-      if [[ "$parent_status" != "split" ]]; then
-        # Check if parent exists in the parsed list at all
-        if echo "$parsed" | grep -q " $parent_id$"; then
-          continue
-        fi
-        # Parent not in backlog — orphaned child, allow with warning
-        log "Warning: parent $parent_id not found in backlog; allowing orphaned child $tid"
       fi
     fi
 
