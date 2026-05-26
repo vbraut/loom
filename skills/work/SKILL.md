@@ -39,7 +39,7 @@ Follow the playbook content loaded in Phase 2. The playbook is a natural-languag
 
 - Route work to skills and agents; read their verdicts and output paths (the orchestrator evaluates nothing itself — skills produce artifacts, agents judge quality)
 - Pass output paths to downstream steps instead of reading file contents (downstream skills need the path, not a summary filtered through the orchestrator's interpretation)
-- Leave all git state commands to transition.md (committing mid-playbook creates partial commits that break review). Exception: skills in `skills/ship/` may run `git push` and create PRs.
+- Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review).
 
 ### For each skill step:
 
@@ -63,6 +63,8 @@ Follow the playbook content loaded in Phase 2. The playbook is a natural-languag
 5. If the playbook's convergence cap is reached without passing, add findings to an Open Questions section and proceed.
 
 ## Phase 4: TRANSITION
+
+- `create_pr`: `true` if the playbook declares `pr: true`, otherwise `false`
 
 Read `shared/transition.md` from the Loom plugin directory and follow the "Work transition" section.
 

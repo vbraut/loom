@@ -17,7 +17,7 @@
 2. Agents never write to the backlog. They write findings to `output_path` only.
 3. The orchestrator never does domain work. It dispatches skills and agents.
 4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
-5. Skills never run git state commands (commit, merge, checkout, worktree). Only skills in `skills/ship/` may run `git push` and create PRs.
+5. Skills never run git commands. All git operations (commit, push, merge, PR creation) are handled by transition.md.
 
 ## Adding a domain skill
 

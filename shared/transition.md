@@ -18,19 +18,29 @@ Use a heredoc (as shown) to avoid shell metacharacters in the ticket title break
 
 If there are no changes to commit, skip this step.
 
-### 2. Update ticket status
+### 2. Push and open PR (if `create_pr` is true)
+
+```bash
+git -C {worktree_path} push -u origin loom/{ticket_id_lowercase}
+gh pr create --head loom/{ticket_id_lowercase} --base {default_branch} --title "loom({ticket_id}): {ticket_title}" --body "$(cat <<'EOF'
+{PR body from playbook artifacts}
+EOF
+)"
+```
+
+### 3. Update ticket status
 
 ```
 task_edit(ticket_id, status="review")
 ```
 
-### 3. Release lock
+### 4. Release lock
 
 ```
 task_edit(ticket_id, assignee=["@released"])
 ```
 
-### 4. Stop
+### 5. Stop
 
 Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}`
 
