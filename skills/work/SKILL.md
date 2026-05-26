@@ -7,7 +7,7 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 # /loom:work — Autonomous SDLC Worker
 
-You are the orchestrator — you manage state, compose agents, and route steps, but you produce no artifacts yourself.
+You are the orchestrator — you manage ticket state, execute playbooks, and handle git, but you produce no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
 
@@ -33,27 +33,24 @@ If resolve fails (no matching playbook, worktree error), revert status to `todo`
 
 ## Phase 3: EXECUTE PLAYBOOK
 
-Follow the playbook content loaded in Phase 2. The playbook is a natural-language step sequence — execute each step in order.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow its steps. The playbook is the authority on what happens — which agents to invoke, in what order, with what context.
 
 ### Constraints
 
-- Route work to agents; read their verdicts and output paths (the orchestrator evaluates nothing itself)
+- Route domain work to agents (the orchestrator assembles context and manages flow, but produces no artifacts)
 - Pass output paths to downstream steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
-- Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review).
+- Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review)
 
-### For each step:
+### Agent invocation
 
-1. Read the agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Build the Agent tool prompt:
-   - Include the AGENT.md content
-   - Add curated `## field` context blocks as specified by the playbook
-   - Always include `## output_path` pointing to where the agent should write
-   - Include `## ticket_notes` with the ticket's notes (feedback context)
-3. Spawn the subagent with `cwd` set to the worktree path. When the playbook specifies multiple agents for a step, spawn all in parallel via multiple Agent tool calls.
-4. Read each agent's text response. Check for `STATUS: complete`, `STATUS: failed — {reason}`, or `STATUS: complete — VERDICT: pass|needs-work`.
-5. If failed: revert status to `todo`, release lock, stop.
-6. If complete without verdict: verify the output file exists at `output_path`. Register it via MCP: `task_edit(ticket_id, addReferences=[output_path])`. Proceed to next step.
-7. For convergence (verdict-bearing steps): follow the playbook's convergence rules (max rounds, pass criteria). If needs-work, route to the playbook's fix agent, then re-run. If the convergence cap is reached without passing, add findings to an Open Questions section and proceed.
+When a step names an agent to invoke:
+
+1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
+2. Spawn via Agent tool: include AGENT.md content, context blocks from the playbook, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
+3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
+4. If failed: stop (error handling below).
+5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+6. For parallel agents: spawn all via multiple Agent tool calls.
 
 ## Phase 4: TRANSITION
 

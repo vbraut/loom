@@ -1,6 +1,6 @@
 # Resolve
 
-Resolve a claimed ticket into an actionable execution context: type, playbook, notes, worktree.
+Resolve a claimed ticket into an actionable execution context: type, notes, worktree.
 
 ## Steps
 
@@ -12,15 +12,11 @@ Read the ticket's labels from `ticket_data`. Match each label against playbook f
 - **Multiple matches**: `ERROR: Ticket {ticket_id} has multiple labels matching playbooks: [{matches}]. One ticket, one type — remove extra labels.`
 - **One match**: This is the ticket type.
 
-### 2. Read playbook
-
-Read `{loom_plugin_dir}/playbooks/{type}.md` in full.
-
-### 3. Read ticket notes
+### 2. Read ticket notes
 
 Extract the notes field from `ticket_data`. Pass notes as context to every playbook step — they contain feedback from prior review cycles.
 
-### 4. Ensure worktree
+### 3. Ensure worktree
 
 Worktree path is relative to the **project root** (the directory containing `sdlc.config.yml`).
 

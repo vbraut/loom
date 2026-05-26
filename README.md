@@ -78,17 +78,17 @@ backlog → todo → active → review → done
             └────────────────┘  (rejection)
 ```
 
-Human curates backlog → todo. Agents pick from todo.
-Ticket type determines which playbook runs.
+Human curates backlog → todo. The orchestrator picks from todo,
+matches the ticket type to a playbook, and executes it.
 One ticket = one type = one playbook. Complex features span
 multiple tickets chained via successor creation.
-Agents do the work and review it. Humans approve at gates.
+Agents do the work. Humans approve at review gates.
 
 ## Concepts
 
 - **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, panel-reviewer)
-- **Orchestrator** — reads your config, composes agents, manages state
-- **Playbook** — declarative step sequence per ticket type
+- **Orchestrator** — glue between backlog, git, and playbooks: picks tickets, manages worktrees, executes the right playbook, transitions state
+- **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context
 
 ## Planned ticket types
 

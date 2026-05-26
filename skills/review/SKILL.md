@@ -7,7 +7,7 @@ argument-hint: "[BL-NNN ticket ID, or leave empty to auto-pick]"
 
 # /loom:review — Human Review Gate
 
-You are the orchestrator — you manage state, compose agents, and present results, but you evaluate no artifacts yourself.
+You are the orchestrator — you manage ticket state, execute playbooks, and present results, but you evaluate no artifacts yourself.
 
 ## Phase 0: LOAD CONFIG
 
@@ -31,53 +31,39 @@ Read `shared/resolve.md` from the Loom plugin directory and follow it.
 
 If resolve fails, release the lock and stop.
 
-## Phase 3: PRE-REVIEW
+## Phase 3: EXECUTE PLAYBOOK
 
-The playbook (loaded in Phase 2) has a review section specifying which agents to spawn.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow its review section. The playbook defines which agents to spawn for pre-review analysis, summarization, successor planning, and any other review steps.
 
-If the playbook defines pre-review agents:
-1. Read each agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If the agent directory does not exist: `ERROR: Agent '{name}' not found at {path}.`
-2. Build context for each found agent (artifact paths, project context, `## output_path`, `## output_format`).
-3. Spawn all found pre-review agents in parallel.
-4. Collect their reports (file paths) and verdicts.
+### Constraints
 
-If the playbook does not define pre-review agents, proceed directly to Phase 5.
+- Route domain work to agents (the orchestrator assembles context and manages flow, but evaluates no artifacts)
+- Pass output paths between steps instead of reading file contents
 
-## Phase 4: SUMMARIZE + PLAN SUCCESSORS
+### Agent invocation
 
-### 4a. Summarize
+When a step names an agent to invoke:
 
-If pre-review agents produced reports, spawn the `review-summarizer` agent:
-- Input: paths to all pre-review agent reports
-- Output: synthesized brief with key findings, risk areas, and recommendation
+1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
+2. Spawn via Agent tool: include AGENT.md content, context blocks from the playbook, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
+3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
+4. If failed: stop (error handling below).
+5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+6. For parallel agents: spawn all via multiple Agent tool calls.
 
-If the `review-summarizer` agent does not exist: `ERROR: Agent 'review-summarizer' not found.`
-
-### 4b. Plan successors
-
-1. Pre-fetch backlog state via MCP: `task_list()`
-2. Spawn the `plan-successors` agent:
-   - Input: completed ticket artifacts + full backlog state (passed as context — the agent receives all input from you, not from MCP, so it can only propose actions without executing them)
-   - Output: proposed actions list (`create`, `update`, or `skip` with reasoning)
-   - The agent deduplicates against the backlog context
-
-If the `plan-successors` agent does not exist: `ERROR: Agent 'plan-successors' not found.`
-
-## Phase 5: PRESENT
+## Phase 4: HUMAN GATE
 
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
-2. **Artifacts**: list all files in the worktree with brief descriptions.
-3. **Review summary**: the review-summarizer's brief (if available).
-4. **Pre-review findings**: link to each agent's report file (if any).
-5. **Proposed successors**: list each proposed action with type, title, and reasoning (if any).
+2. **Artifacts**: list all output files produced during playbook execution.
+3. **Agent findings**: reports or summaries from Phase 3.
 
 Ask: **Approve or Reject?**
 
-If approving and successors were proposed, ask to confirm, modify, or reject each.
+If the playbook included a successor-planning step and proposals exist, ask the human to confirm, modify, or reject each.
 
-## Phase 6: ROUTE
+## Phase 5: ROUTE
 
 ### On approval:
 
