@@ -14,9 +14,7 @@
 
 1. Agents never invoke other agents. The orchestrator decides composition.
 2. Agents write to `output_path` only — no backlog writes, no git operations.
-3. The orchestrator never does domain work. It dispatches agents.
-4. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
-5. All git operations (commit, push, merge, PR creation) are handled by transition.md.
+3. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
 
 ## Adding an agent
 
@@ -30,17 +28,14 @@ Note: entry-point skills (`skills/work/`, `skills/review/`) are orchestrators, n
 
 ## Adding a playbook
 
-1. Create `playbooks/<type>.md` with the step sequence in natural language
-2. Tickets with a matching label will automatically route to it
-3. Run `scripts/validate.sh`
+1. Create `playbooks/<type>.md` — filename must match the `type:` label value (e.g., `type:code-fix` → `playbooks/code-fix.md`)
+2. Run `scripts/validate.sh`
 
 ## Conventions
 
 - Kebab-case for all directories
 - `SKILL.md` and `AGENT.md` always uppercase
-- Playbook filenames match ticket type labels exactly
 - No project-specific content in the framework
-- All skill/agent authoring follows `templates/skill-authoring.md` — concise, positive-framed, specificity matched to fragility
 
 ## Co-change rule
 

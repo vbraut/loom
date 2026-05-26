@@ -25,8 +25,6 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 
 ## Phase 2: EXECUTE PLAYBOOK
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
-
 ### Constraints
 
 - Pass output paths to downstream steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
@@ -42,6 +40,8 @@ When a step names an agent to invoke:
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
 6. For parallel agents: spawn all via multiple Agent tool calls.
+
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
 
 ## Phase 3: TRANSITION
 
