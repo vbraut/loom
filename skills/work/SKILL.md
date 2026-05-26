@@ -43,7 +43,7 @@ Follow the playbook content loaded in Phase 2. The playbook is a natural-languag
 
 ### For each skill step:
 
-1. Read the skill's `SKILL.md` from the Loom plugin (path given in playbook).
+1. Read the skill's `SKILL.md` from the Loom plugin (path given in playbook). If not found: `ERROR: Skill not found at {path}.`
 2. Build the Agent tool prompt:
    - Include the SKILL.md content
    - Add curated `## field` context blocks as specified by the playbook

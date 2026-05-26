@@ -36,12 +36,12 @@ If resolve fails, release the lock and stop.
 The playbook (loaded in Phase 2) has a review section specifying which agents to spawn.
 
 If the playbook defines pre-review agents:
-1. Read each agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If the agent directory does not exist, skip it and note the missing agent.
+1. Read each agent's `AGENT.md` from `{loom_plugin_dir}/agents/{name}/AGENT.md`. If the agent directory does not exist: `ERROR: Agent '{name}' not found at {path}.`
 2. Build context for each found agent (artifact paths, project context, `## output_path`, `## output_format`).
 3. Spawn all found pre-review agents in parallel.
 4. Collect their reports (file paths) and verdicts.
 
-If no pre-review agents are defined or all are missing, proceed directly to Phase 5.
+If the playbook does not define pre-review agents, proceed directly to Phase 5.
 
 ## Phase 4: SUMMARIZE + PLAN SUCCESSORS
 
@@ -51,7 +51,7 @@ If pre-review agents produced reports, spawn the `review-summarizer` agent:
 - Input: paths to all pre-review agent reports
 - Output: synthesized brief with key findings, risk areas, and recommendation
 
-If the `review-summarizer` agent does not exist, skip — present individual agent reports directly.
+If the `review-summarizer` agent does not exist: `ERROR: Agent 'review-summarizer' not found.`
 
 ### 4b. Plan successors
 
@@ -61,7 +61,7 @@ If the `review-summarizer` agent does not exist, skip — present individual age
    - Output: proposed actions list (`create`, `update`, or `skip` with reasoning)
    - The agent deduplicates against the backlog context
 
-If the `plan-successors` agent does not exist, skip.
+If the `plan-successors` agent does not exist: `ERROR: Agent 'plan-successors' not found.`
 
 ## Phase 5: PRESENT
 
