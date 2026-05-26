@@ -121,7 +121,7 @@ done
 echo ""
 echo "--- Shared modules ---"
 
-for module in config dispatch resolve transition; do
+for module in config claim transition; do
   module_path="$LOOM_ROOT/shared/$module.md"
   if [ -f "$module_path" ]; then
     ok "shared/$module.md"

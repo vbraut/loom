@@ -15,23 +15,15 @@ Read `shared/config.md` from the Loom plugin directory and follow it.
 
 If config loading fails, stop immediately.
 
-## Phase 1: DISPATCH
+## Phase 1: CLAIM
 
-Read `shared/dispatch.md` from the Loom plugin directory and follow it.
+Read `shared/claim.md` from the Loom plugin directory and follow it.
 
 - Mode: `work`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
 - `backlog_cwd`: from config
 
-If dispatch fails (no tickets, lock contention), stop.
-
-## Phase 2: RESOLVE
-
-Read `shared/resolve.md` from the Loom plugin directory and follow it.
-
-If resolve fails (no matching playbook, worktree error), revert status to `todo`, release the lock via `task_edit(ticket_id, assignee=["@released"])`, and stop.
-
-## Phase 3: EXECUTE PLAYBOOK
+## Phase 2: EXECUTE PLAYBOOK
 
 Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
 
@@ -51,7 +43,7 @@ When a step names an agent to invoke:
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
 6. For parallel agents: spawn all via multiple Agent tool calls.
 
-## Phase 4: TRANSITION
+## Phase 3: TRANSITION
 
 - `create_pr`: `true` if the playbook declares `pr: true`, otherwise `false`
 
@@ -60,7 +52,7 @@ Read `shared/transition.md` from the Loom plugin directory and follow the "Work 
 ## Error handling
 
 If anything fails at any point:
-1. Revert status so dispatch can re-pick: `task_edit(ticket_id, status="todo")`
+1. Revert status so the ticket is re-claimable: `task_edit(ticket_id, status="todo")`
 2. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
 3. Print the error clearly
 4. Stop — the human sees the failure in the terminal, so skip appending notes to the ticket (it would duplicate what they already see and clutter the ticket for the next run)

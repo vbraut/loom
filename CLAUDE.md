@@ -3,7 +3,7 @@
 ## Architecture
 
 - Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
-- Shared modules in `shared/` — config, dispatch, resolve, transition
+- Shared modules in `shared/` — config, claim, transition
 - Playbooks in `playbooks/` — declarative step sequences per ticket type
 - Agents in `agents/<name>/AGENT.md` — subagents spawned by the orchestrator (doers and reviewers alike)
 - Templates in `templates/` — universal methodology, not project-specific

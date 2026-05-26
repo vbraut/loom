@@ -15,23 +15,15 @@ Read `shared/config.md` from the Loom plugin directory and follow it.
 
 If config loading fails, stop immediately.
 
-## Phase 1: DISPATCH
+## Phase 1: CLAIM
 
-Read `shared/dispatch.md` from the Loom plugin directory and follow it.
+Read `shared/claim.md` from the Loom plugin directory and follow it.
 
 - Mode: `review`
 - Manual ID: `$ARGUMENTS` if the user provided one, otherwise empty (auto-pick)
 - `backlog_cwd`: from config
 
-If dispatch fails, stop.
-
-## Phase 2: RESOLVE
-
-Read `shared/resolve.md` from the Loom plugin directory and follow it.
-
-If resolve fails, release the lock and stop.
-
-## Phase 3: EXECUTE PLAYBOOK
+## Phase 2: EXECUTE PLAYBOOK
 
 Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
 
@@ -51,19 +43,19 @@ When a step names an agent to invoke:
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
 6. For parallel agents: spawn all via multiple Agent tool calls.
 
-## Phase 4: HUMAN GATE
+## Phase 3: HUMAN GATE
 
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
 2. **Artifacts**: list all output files produced during playbook execution.
-3. **Agent findings**: reports or summaries from Phase 3.
+3. **Agent findings**: reports or summaries from Phase 2.
 
 Ask: **Approve or Reject?**
 
 If the playbook included a successor-planning step and proposals exist, ask the human to confirm, modify, or reject each.
 
-## Phase 5: ROUTE
+## Phase 4: ROUTE
 
 ### On approval:
 
