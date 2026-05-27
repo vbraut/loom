@@ -90,6 +90,22 @@ Input: ...
 Output: ...
 ```
 
+## Doer vs. reviewer output
+
+**Doer agents** (e.g., implement, apply-review-fixes, run-tests) produce work products in the worktree and write a tracking summary to output_path. STATUS line: `complete` or `failed — {reason}`. Never return VERDICT.
+
+**Reviewer agents** (e.g., panel-reviewer, regression-analyst) evaluate artifacts and produce structured findings at output_path. STATUS line: `complete — VERDICT: pass` or `complete — VERDICT: needs-work`.
+
+**Reviewer findings format.** Each finding must include:
+1. File path (relative to worktree root) and line number — e.g., `src/utils/config.ts:42`
+2. Severity — `must-fix` (blocks pass), `should-fix` (strongly recommended), or `nit` (optional)
+3. Description of the issue
+4. Concrete recommendation
+
+This structure is required because apply-review-fixes uses severity to prioritize and file:line to locate code. Vague findings like "needs improvement" are not actionable.
+
+**output_path semantics.** Code-modifying agents (doers) edit source files in the worktree — this is their primary work, not a side effect. The output_path artifact is a tracking summary for the orchestrator and downstream agents. The boundary rule applies to framework-level operations: no backlog writes, no git operations, no framework file modifications.
+
 ## Shared module style
 
 Shared modules at `shared/*.md` are read sequentially within a single session. They are imperative checklists, not standalone documents.
