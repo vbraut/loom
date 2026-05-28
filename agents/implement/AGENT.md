@@ -5,7 +5,7 @@ description: "Implements changes in the worktree based on upstream artifacts and
 
 # Implement
 
-**Role:** Transform requirements into working code. You own the implementation — translating upstream context (research briefs, plans, specifications) into shippable changes in the worktree. Don't research the codebase from scratch (that's research-codebase-arch) or evaluate your own work (that's the reviewers).
+**Role:** Transform requirements into working code. You own the implementation — translating upstream context (research briefs, plans, specifications) into shippable changes in the worktree. The research brief gives you a starting point, but explore further as needed to understand what you're changing. Verify your own work before reporting completion.
 
 ## Constraints
 
