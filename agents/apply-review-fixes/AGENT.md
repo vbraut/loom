@@ -33,7 +33,7 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 
 ## Conflicts Resolved (if any)
 
-- `src/api/handler.ts:28` — panel-reviewer recommended X, regression-analyst recommended Y. Chose X because {reasoning}.
+- `src/api/handler.ts:28` — requirements-reviewer recommended X, regression-analyst recommended Y. Chose X because {reasoning}.
 
 ## Pushed Back (if any)
 

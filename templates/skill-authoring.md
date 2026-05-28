@@ -94,7 +94,7 @@ Output: ...
 
 **Doer agents** (e.g., implement, apply-review-fixes, run-tests) produce work products in the worktree and write a tracking summary to output_path. STATUS line: `complete` or `failed — {reason}`. Never return VERDICT.
 
-**Reviewer agents** (e.g., panel-reviewer, regression-analyst) evaluate artifacts and produce structured findings at output_path. STATUS line: `complete — VERDICT: pass` or `complete — VERDICT: needs-work`.
+**Reviewer agents** (e.g., requirements-reviewer, regression-analyst) evaluate artifacts and produce structured findings at output_path. STATUS line: `complete — VERDICT: pass` or `complete — VERDICT: needs-work`.
 
 **Reviewer findings format.** Each finding must include:
 1. File path (relative to worktree root) and line number — e.g., `src/utils/config.ts:42`

@@ -16,7 +16,7 @@
               ║  │ playbook │  ║        ┌─ ─ ─ ─ ─ ─ ─┐
               ║  └─────┬────┘  ║           A G E N T S
               ║     claim      ║──weft──│               │
-              ║     execute    ║          panel-reviewer
+              ║     execute    ║          requirements-reviewer
               ║     transition ║──weft──│ edge-case-hunter
               ║  ┌─────┴────┐  ║        │               │
               ║  │ worktree  │  ║        └─ ─ ─ ─ ─ ─ ─┘
@@ -85,7 +85,7 @@ Agents do the work. Humans approve at review gates.
 
 ## Concepts
 
-- **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, panel-reviewer)
+- **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, requirements-reviewer)
 - **Orchestrator** — glue between backlog, git, and playbooks: picks tickets, manages worktrees, executes the right playbook, transitions state
 - **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context
 

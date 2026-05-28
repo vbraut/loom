@@ -23,7 +23,7 @@ Fix the bug in the worktree. Write a change summary to the output path.
 
 ## Convergence
 
-**Agents:** panel-reviewer, regression-analyst, simplification-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
 **Verdict logic:** AND
 **Max rounds:** 3
 **On needs-work:** apply-review-fixes
@@ -35,7 +35,7 @@ Fix the bug in the worktree. Write a change summary to the output path.
 - `.loom/artifacts/{ticket_id}/changes.md`
 
 **Reviewer output paths:**
-- panel-reviewer: `.loom/artifacts/{ticket_id}/panel-review-r{N}.md`
+- requirements-reviewer: `.loom/artifacts/{ticket_id}/requirements-review-r{N}.md`
 - regression-analyst: `.loom/artifacts/{ticket_id}/regression-r{N}.md`
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
 
