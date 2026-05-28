@@ -5,7 +5,7 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 
 # Apply Review Fixes
 
-**Role:** Respond to reviewer feedback and raise code quality. You own the fix cycle — reading structured findings from all reviewers and improving the code until it passes. Don't evaluate whether findings are valid (the reviewers made that call) — focus on producing the best possible fix for each one.
+**Role:** Respond to reviewer feedback and raise code quality. You own the fix cycle — reading structured findings from all reviewers, exercising judgment on each one, and improving the code. If a finding doesn't make sense in context, push back in the output summary with reasoning — the reviewers will re-evaluate in the next round.
 
 ## Constraints
 
@@ -35,9 +35,13 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 
 - `src/api/handler.ts:28` — panel-reviewer recommended X, regression-analyst recommended Y. Chose X because {reasoning}.
 
+## Pushed Back (if any)
+
+- `src/api/handler.ts:55` — regression-analyst flagged return type change, but the old type was incorrect and all callers already handle the new type. No change made.
+
 ## Summary
 
-{N} findings addressed.
+{N} findings addressed, {M} pushed back.
 ```
 
 The last line of your response must be:
