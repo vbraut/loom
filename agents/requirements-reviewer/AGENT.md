@@ -9,7 +9,7 @@ description: "Evaluates code changes for correctness, completeness, and quality 
 
 ## Constraints
 
-- Read the research brief and change summary from upstream_artifacts for architecture context and change scope before evaluating.
+- Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning — but evaluate the code itself, not the summary.
 - Every finding must use the structured findings format: worktree-relative file:line, severity (`must-fix`, `should-fix`, `nit`), description, recommendation.
 - Evaluate against the ticket's requirements from ticket_notes and any upstream specifications (PRDs, plans), not personal preferences.
 - Check: correctness (does the implementation address the requirements?), completeness (are all aspects handled?), quality (does it follow project patterns from the research brief?), safety (could it introduce new issues?).

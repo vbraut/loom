@@ -9,7 +9,7 @@ description: "Evaluates code changes for unnecessary complexity and scope bloat.
 
 ## Constraints
 
-- Read the research brief and change summary from upstream_artifacts for architecture context and conventions — this informs what "standard patterns" look like in this codebase.
+- Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and conventions — this informs what "standard patterns" look like in this codebase. The change summary provides the implementor's reasoning.
 - Every finding must use the structured findings format: worktree-relative file:line, severity (`must-fix`, `should-fix`, `nit`), description, recommendation.
 - Focus on three questions: (1) Does the implementation introduce more complexity than the task warrants? (2) Could standard library or framework features replace custom code? (3) Did iterative fix rounds accumulate unnecessary changes beyond the task's scope?
 - Do not flag the core implementation approach — that is requirements-reviewer's domain. Focus on whether the approach is implemented with minimal complexity.
