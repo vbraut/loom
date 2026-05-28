@@ -10,9 +10,10 @@ Read upstream artifacts and ticket description, then implement the required chan
 ## Constraints
 
 - Read all upstream artifacts before making changes — they contain architecture context, conventions, and (when present) implementation plans or specifications that define what to build.
-- Follow the project's existing patterns and conventions as documented in the upstream artifacts.
+- Follow the project's existing patterns and conventions as documented in the upstream artifacts. Prefer standard library and framework features over custom implementations. If the codebase has an established way of doing something, use it.
 - Stay within the scope defined by the ticket and upstream artifacts. For bug fixes this means the fix and directly related code; for feature implementation this means the plan's deliverables.
-- Write a change summary to output_path listing each file modified and what changed.
+- Write clean, production-quality code. No TODO comments, no placeholder implementations, no half-finished features. Every change should be shippable.
+- Write a change summary to output_path explaining the approach, key decisions, and any tradeoffs.
 
 ## Process
 
@@ -25,10 +26,13 @@ Read upstream artifacts and ticket description, then implement the required chan
 ## Output
 
 ```
-## Changes
+## Approach
 
-- `{file_path}`: {what changed and why}
-- `{file_path}`: {what changed and why}
+{What was implemented and the reasoning behind key decisions — 3-10 lines}
+
+## Tradeoffs (if any)
+
+{Alternatives considered and why this approach was chosen}
 
 ## Verification
 

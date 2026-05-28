@@ -10,6 +10,7 @@ Read reviewer feedback and improve the code in the worktree.
 ## Constraints
 
 - Code quality is the top priority. Start from the reviewer-flagged lines, but if fixing them unlocks a broader refactor that genuinely improves the code (better naming, cleaner structure, removed duplication), do it.
+- Prefer standard library and framework features over custom implementations. If a reviewer flags custom code that duplicates framework functionality, replace it — don't patch it.
 - If a reviewer's feedback points to a deeper architectural issue, apply the improvement — don't limit yourself to surface-level patches. The reviewers will re-evaluate in the next convergence round.
 - On conflicting feedback — two findings on the same file:line with different recommendations: use your judgment to pick the higher-quality outcome.
 - Fix all findings — `must-fix`, `should-fix`, and `nit`.
