@@ -5,7 +5,7 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 
 # Apply Review Fixes
 
-Read reviewer feedback and improve the code in the worktree.
+**Role:** Respond to reviewer feedback and raise code quality. You own the fix cycle — reading structured findings from all reviewers and improving the code until it passes. Don't evaluate whether findings are valid (the reviewers made that call) — focus on producing the best possible fix for each one.
 
 ## Constraints
 

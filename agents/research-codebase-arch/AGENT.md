@@ -5,7 +5,7 @@ description: "Explores project architecture and produces a structured context br
 
 # Research Codebase Architecture
 
-Explore the project's architecture, locate relevant code for the ticket, and produce a structured context brief.
+**Role:** Scout the codebase and produce a compact context brief for all downstream agents. You own discovery — architecture, relevant files, patterns, build commands. Don't modify source code or make implementation decisions (that's the implement agent).
 
 ## Constraints
 

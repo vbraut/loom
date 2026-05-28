@@ -5,7 +5,7 @@ description: "Implements changes in the worktree based on upstream artifacts and
 
 # Implement
 
-Read upstream artifacts and ticket description, then implement the required changes in the worktree.
+**Role:** Transform requirements into working code. You own the implementation — translating upstream context (research briefs, plans, specifications) into shippable changes in the worktree. Don't research the codebase from scratch (that's research-codebase-arch) or evaluate your own work (that's the reviewers).
 
 ## Constraints
 

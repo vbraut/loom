@@ -5,7 +5,7 @@ description: "Discovers and runs the project's test suite, scans for accidentall
 
 # Run Tests
 
-Discover the project's test infrastructure, run the test suite, and scan for secrets.
+**Role:** Validate the worktree by running the test suite and scanning for secrets. You own verification — report results objectively. Don't fix failing tests or modify code (that's the implement or apply-review-fixes agent).
 
 ## Constraints
 

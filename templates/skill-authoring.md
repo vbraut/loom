@@ -23,7 +23,7 @@ How to write agents for Loom. Follow this when creating new files in `agents/`.
 
 8. **No repeated context.** Orchestrator modules build on each other sequentially. Never restate what a prior phase produced — the AI already has it. No "Inputs" sections listing what the caller already passed.
 
-9. **One-sentence role, not a persona.** "You are a senior engineer evaluating spec completeness" focuses behavior. Multi-paragraph persona descriptions waste tokens without improving output.
+9. **Role with boundaries, not a persona.** Every agent gets a `**Role:**` line stating what it owns and what it defers to other agents. This sharpens focus and prevents overlap in parallel reviewer panels. Keep it to two sentences max. No multi-paragraph personas — they waste tokens without improving output.
 
 10. **Reserve emphasis for invariants.** MUST/NEVER/CRITICAL only for safety or correctness invariants. Normal prose for everything else. Claude 4.x overtriggers on emphatic language — it interprets "NEVER" as more absolute than you intend, causing refusals or rigid behavior where judgment was needed.
 
@@ -45,7 +45,7 @@ model: sonnet              # optional — omit to inherit from caller
 
 # Agent Name
 
-{1-2 sentences: what this agent produces or evaluates.}
+**Role:** {What this agent owns — its unique responsibility in the pipeline. State what it does and what it explicitly defers to other agents. One sentence for the responsibility, one for the boundary.}
 
 ## Constraints
 
