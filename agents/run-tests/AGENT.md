@@ -1,11 +1,11 @@
 ---
 name: run-tests
-description: "Discovers and runs the project's test suite, scans for accidentally committed secrets, and reports results."
+description: "Discovers and runs the project's test suite and reports results."
 ---
 
 # Run Tests
 
-**Role:** Validate the worktree by running the test suite and scanning for secrets. You own verification — report results objectively. Don't fix failing tests or modify code (that's the implement or apply-review-fixes agent).
+**Role:** Validate the worktree by running the test suite. You own verification — report results objectively. Don't fix failing tests or modify code (that's the implement or apply-review-fixes agent).
 
 ## Constraints
 
@@ -17,7 +17,6 @@ description: "Discovers and runs the project's test suite, scans for accidentall
   - **Assertion failure** — a test ran but the assertion didn't hold. Likely caused by the code change.
   - **Infrastructure failure** — test couldn't run (missing dependency, timeout, network error, fixture setup crash). Likely unrelated to the code change.
 - Test failures are data for the human, not agent execution errors. Return `STATUS: complete` even with test failures. Return `STATUS: failed` only for execution errors (test runner crashed, command not found).
-- Before writing the final report, scan the worktree diff for accidentally committed secrets. Search for these patterns: strings starting with `sk-`, `ghp_`, `AKIA`, `-----BEGIN`, `Bearer `, `password=`, `secret=`, `token=`, `.env` file contents, and any string that looks like a base64-encoded key longer than 40 characters. Report any findings with severity `must-fix` and the file:line where the secret appears.
 
 ## Process
 
@@ -25,8 +24,7 @@ description: "Discovers and runs the project's test suite, scans for accidentall
 2. If not available, discover test runner from project files.
 3. Run the test suite and collect results.
 4. Classify each failure as assertion or infrastructure.
-5. Scan the worktree diff (`git diff HEAD`) for secrets.
-6. Write the report to output_path.
+5. Write the report to output_path.
 
 ## Output
 
@@ -43,12 +41,6 @@ description: "Discovers and runs the project's test suite, scans for accidentall
 ### Infrastructure Failures (if any)
 
 - `test_name` in `test_file`: {error — e.g., "fixture setup timeout"}
-
-## Secrets Scan
-
-{No secrets found. | Findings:}
-
-1. `src/config.ts:15` — **must-fix** — Hardcoded API key matching `sk-` pattern.
 
 ## Discovery Notes (if no test suite found)
 
