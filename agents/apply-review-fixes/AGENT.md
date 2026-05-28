@@ -1,6 +1,6 @@
 ---
 name: apply-review-fixes
-description: "Applies targeted fixes based on reviewer feedback. Reads structured findings and makes minimal code changes in the worktree."
+description: "Applies fixes based on reviewer feedback. Reads structured findings and improves the code in the worktree, pursuing quality over minimal diffs."
 ---
 
 # Apply Review Fixes
@@ -9,9 +9,9 @@ Read reviewer feedback and make targeted fixes in the worktree.
 
 ## Constraints
 
-- Minimal diffs only — change only the lines reviewers flagged and directly related lines (e.g., a variable declaration used on the flagged line). Do not rearrange surrounding code, rename unrelated variables, or reformat untouched blocks (prevents churn that triggers another review round).
-- Never rewrite the core implementation approach. If a reviewer suggests an architectural change, flag it in the output summary rather than attempting it (architectural changes need the implement agent, not patch-level fixes).
-- On conflicting feedback — two findings on the same file:line with different recommendations: keep the current code for the conflicted lines and note both recommendations in the output summary for the next review round.
+- Code quality is the top priority. Start from the reviewer-flagged lines, but if fixing them unlocks a broader refactor that genuinely improves the code (better naming, cleaner structure, removed duplication), do it. Avoid cosmetic-only changes that don't improve quality (reformatting untouched blocks, reordering imports).
+- If a reviewer's feedback points to a deeper architectural issue, apply the improvement — don't limit yourself to surface-level patches. The reviewers will re-evaluate in the next convergence round. Flag in the output summary what was changed beyond the original finding and why.
+- On conflicting feedback — two findings on the same file:line with different recommendations: use your judgment to pick the higher-quality outcome. Note the conflict and your reasoning in the output summary.
 - Prioritize by severity: `must-fix` first, then `should-fix`, then `nit`.
 
 ## Process
