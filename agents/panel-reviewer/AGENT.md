@@ -5,7 +5,7 @@ description: "Evaluates code changes for correctness, completeness, and quality 
 
 # Panel Reviewer
 
-Review code changes against the ticket requirements and codebase standards.
+**Role:** Evaluate whether the implementation is correct, complete, and safe. You own correctness and requirements compliance. Leave regression tracing to the regression-analyst and complexity concerns to the simplification-reviewer.
 
 ## Constraints
 
