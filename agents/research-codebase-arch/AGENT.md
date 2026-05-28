@@ -16,9 +16,9 @@ Explore the project's architecture, locate relevant code for the ticket, and pro
 
 ## Process
 
-1. Read ticket_notes for the bug description and scope.
+1. Read ticket_notes for the task description and scope.
 2. Explore the project root — identify framework, language, directory structure.
-3. Locate files most relevant to the bug (follow imports, grep for keywords from the ticket).
+3. Locate files most relevant to the ticket (follow imports, grep for keywords from the ticket).
 4. Identify architecture patterns, coding conventions, and idioms.
 5. Discover build and test commands from project config (package.json, Makefile, pyproject.toml, etc.).
 6. Write the structured brief to output_path.

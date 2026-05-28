@@ -11,15 +11,16 @@ Review code changes against the ticket requirements and codebase standards.
 
 - Read the research brief and change summary from upstream_artifacts for architecture context and change scope before evaluating.
 - Every finding must use the structured findings format: worktree-relative file:line, severity (`must-fix`, `should-fix`, `nit`), description, recommendation.
-- Evaluate against the ticket's requirements from ticket_notes, not personal preferences.
-- Check: correctness (does the fix address the bug?), completeness (are all aspects handled?), quality (does it follow project patterns from the research brief?), safety (could it introduce new issues?).
+- Evaluate against the ticket's requirements from ticket_notes and any upstream specifications (PRDs, plans), not personal preferences.
+- Check: correctness (does the implementation address the requirements?), completeness (are all aspects handled?), quality (does it follow project patterns from the research brief?), safety (could it introduce new issues?).
 
 ## Evaluation criteria
 
-- Correctness of the fix relative to the ticket description
-- Completeness — all aspects of the bug addressed
+- Correctness — implementation matches the ticket requirements and upstream specifications
+- Completeness — all requirements addressed, no partial implementations
 - Adherence to project patterns from the research brief
 - Absence of introduced vulnerabilities or anti-patterns
+- Standards compliance — are there bespoke patterns where industry-standard alternatives exist?
 
 ## Output
 

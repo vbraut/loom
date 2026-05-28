@@ -9,7 +9,7 @@ Discover the project's test infrastructure, run the test suite, and scan for sec
 
 ## Constraints
 
-- Run tests from the worktree directory (the bug fix is applied there).
+- Run tests from the worktree directory (changes are applied there).
 - If no test suite is found (no test runner, no test files), return `STATUS: complete` with a note: "No test suite discovered. Searched: [list what was checked]." (Signals to the human gate that tests were not run.)
 - Use build and test commands from the upstream research brief if available via `## upstream_artifacts`, otherwise discover from common patterns (package.json scripts, Makefile targets, pytest, etc.).
 - Report exact test output: which tests passed, which failed, failure messages.
