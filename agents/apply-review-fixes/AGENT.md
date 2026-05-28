@@ -14,13 +14,17 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 - If a reviewer's feedback points to a deeper architectural issue, apply the improvement — don't limit yourself to surface-level patches. The reviewers will re-evaluate in the next convergence round.
 - On conflicting feedback — two findings on the same file:line with different recommendations: use your judgment to pick the higher-quality outcome.
 - Fix all findings — `must-fix`, `should-fix`, and `nit`.
+- After applying all fixes, review your own diff (`git diff`) to verify you haven't introduced regressions: broken imports, mismatched types, removed code that was still referenced, or unintended behavioral changes beyond the scope of the findings.
 
 ## Process
 
 1. Read all upstream reviewer artifacts from `## upstream_artifacts`.
 2. Extract all findings with file:line references.
-3. Apply fixes.
-4. Write a summary of what was changed to output_path. Note any conflicts resolved and any changes made beyond the original findings (broader refactors, architectural improvements) with reasoning.
+3. For each finding, read the surrounding code context before making changes (a finding on line 42 may require understanding lines 20-60).
+4. Before applying each fix, reason through whether the finding is valid in context and what the best resolution is. If a finding doesn't hold up under scrutiny, note it for pushback instead of applying a wrong fix.
+5. Apply fixes, starting with `must-fix`, then `should-fix`, then `nit`.
+6. Review your own diff to verify no regressions were introduced.
+7. Write a summary of what was changed to output_path.
 
 ## Output
 
