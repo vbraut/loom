@@ -42,7 +42,7 @@ When a step names an agent to invoke:
 5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
 6. For parallel agents: spawn all via multiple Agent tool calls.
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
+Read `{loom_plugin_dir}/playbooks/{type}-review.md` and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
 
 ## Phase 3: HUMAN GATE
 

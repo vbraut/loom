@@ -202,6 +202,39 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
 done
 [ "$crosscheck_ok" = true ] && ok "All playbook-referenced agents have AGENT.md files"
 
+# ── Work/review playbook pairing ─────────────────────────────────
+
+echo ""
+echo "--- Work/review playbook pairing ---"
+
+pairing_ok=true
+for playbook in "$LOOM_ROOT"/playbooks/*.md; do
+  [ -f "$playbook" ] || continue
+  base_name=$(basename "$playbook" .md)
+
+  # Skip review playbooks (checked from the work side)
+  echo "$base_name" | grep -q '\-review$' && continue
+
+  review_playbook="$LOOM_ROOT/playbooks/${base_name}-review.md"
+  if [ ! -f "$review_playbook" ]; then
+    err "playbooks/${base_name}.md has no corresponding playbooks/${base_name}-review.md"
+    pairing_ok=false
+  fi
+done
+
+for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
+  [ -f "$playbook" ] || continue
+  base_name=$(basename "$playbook" .md)
+  work_name="${base_name%-review}"
+
+  work_playbook="$LOOM_ROOT/playbooks/${work_name}.md"
+  if [ ! -f "$work_playbook" ]; then
+    err "playbooks/${base_name}.md has no corresponding playbooks/${work_name}.md"
+    pairing_ok=false
+  fi
+done
+[ "$pairing_ok" = true ] && ok "All work playbooks have matching review playbooks"
+
 # ── Scripts ───────────────────────────────────────────────────────
 
 echo ""

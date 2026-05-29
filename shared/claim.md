@@ -51,7 +51,10 @@ Read the `type:` label from `ticket_data` (e.g., `type:code-fix` → type is `co
 
 - **No `type:` label**: `ERROR: Ticket {ticket_id} has no type: label.`
 - **Multiple `type:` labels**: `ERROR: Ticket {ticket_id} has multiple type: labels: [{values}].`
-- **Playbook missing**: verify `{loom_plugin_dir}/playbooks/{type}.md` exists. If not: `ERROR: No playbook for type '{type}'.`
+- **Playbook missing**: resolve the playbook filename based on mode:
+  - `work` mode: `{type}.md`
+  - `review` mode: `{type}-review.md`
+  Verify `{loom_plugin_dir}/playbooks/{resolved_filename}` exists. If not: `ERROR: No playbook for type '{type}' in {mode} mode (expected: playbooks/{resolved_filename})`
 
 ## 3. Ensure worktree
 
