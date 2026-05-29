@@ -35,13 +35,14 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool: include AGENT.md content, `## output_path`, and `## ticket_notes`. Set `cwd` to the worktree.
+2. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). All paths passed to agents must be absolute, resolved from the worktree root. Set `cwd` to the worktree.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
 6. For parallel agents: spawn all via multiple Agent tool calls.
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
 
 ## Phase 3: HUMAN GATE
 

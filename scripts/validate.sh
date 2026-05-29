@@ -121,7 +121,7 @@ done
 echo ""
 echo "--- Shared modules ---"
 
-for module in config claim transition; do
+for module in config claim transition convergence; do
   module_path="$LOOM_ROOT/shared/$module.md"
   if [ -f "$module_path" ]; then
     ok "shared/$module.md"
@@ -178,6 +178,29 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
   ok "$rel_path"
 done
 echo "  ($playbook_count playbooks found)"
+
+# ── Playbook-agent cross-check ───────────────────────────────────
+
+echo ""
+echo "--- Playbook-agent cross-check ---"
+
+crosscheck_ok=true
+for playbook in "$LOOM_ROOT"/playbooks/*.md; do
+  [ -f "$playbook" ] || continue
+  rel_path="${playbook#$LOOM_ROOT/}"
+
+  for agent_dir in "$LOOM_ROOT"/agents/*/; do
+    [ -d "$agent_dir" ] || continue
+    agent_name=$(basename "$agent_dir")
+    if grep -qw "$agent_name" "$playbook"; then
+      if [ ! -f "$agent_dir/AGENT.md" ]; then
+        err "$rel_path references agent '$agent_name' but agents/$agent_name/AGENT.md not found"
+        crosscheck_ok=false
+      fi
+    fi
+  done
+done
+[ "$crosscheck_ok" = true ] && ok "All playbook-referenced agents have AGENT.md files"
 
 # ── Scripts ───────────────────────────────────────────────────────
 
