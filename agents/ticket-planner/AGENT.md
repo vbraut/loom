@@ -12,7 +12,7 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 - When a backlog snapshot is available, check every proposal against it for duplicates — same title, overlapping scope, or subsumed by existing ticket. When the snapshot is unavailable, proceed without dedup and note this in the output.
 - Each proposal must be independently actionable — a fresh `/loom:work` run should be able to pick it up without needing context from this ticket beyond what's in the proposal description.
 - Prefer fewer high-quality proposals over many shallow ones. Three solid proposals beat ten vague ones.
-- Include a `target` field per proposal: `project` (default) for the current project's backlog, `framework` for Loom framework improvements discovered during this ticket's work.
+- All proposals target the current project's backlog.
 - If no follow-ups are needed, write a brief note explaining why the ticket is self-contained. Output an empty `## Proposals` section with no `### N` subsections.
 
 ## Process
@@ -35,7 +35,6 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ### 1
 - **Title:** {Short, actionable title}
 - **Type:** {Ticket type matching an existing playbook — e.g., code-fix, code-implementation}
-- **Target:** {project or framework}
 - **Description:** {What needs to be done and why. Enough context for a fresh agent to pick this up independently.}
 - **Rationale:** {How this was discovered — which review finding, test failure, or analysis surfaced it.}
 
@@ -53,14 +52,12 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ### 1
 - **Title:** Add user invitation database schema and API endpoint
 - **Type:** code-implementation
-- **Target:** project
 - **Description:** Create the `invitations` table (inviter_id FK, invitee_email, token, status enum [pending/accepted/expired], created_at, expires_at) and POST /api/invitations endpoint that generates a token, stores the row, and returns the invite link. Validate: invitee not already a member, inviter has permission, rate limit 10/hour per inviter. See PRD sections BS-1 through BS-3.
 - **Rationale:** Foundation for the invitation flow — all other tickets (email delivery, acceptance UI, admin dashboard) depend on this schema and endpoint existing.
 
 ### 2
 - **Title:** Invitation email delivery with expiration
 - **Type:** code-implementation
-- **Target:** project
 - **Description:** When an invitation is created, send a branded email via the existing EmailService with the invite link. Include inviter name, org name, and 72h expiration notice. Handle EmailService failures by marking the invitation as `delivery_failed` and surfacing in admin dashboard. See PRD sections BS-4, BS-5.
 - **Rationale:** Depends on ticket #1 (schema + endpoint). Isolated because email delivery has its own failure modes and testing surface.
 ```
@@ -71,7 +68,6 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ### 1
 - **Title:** Add retry logic to payment webhook handler
 - **Type:** code-fix
-- **Target:** project
 - **Description:** The payment webhook handler at src/webhooks/payment.ts drops events silently when the downstream service is temporarily unavailable. Add exponential backoff retry (3 attempts, 1s/2s/4s) with dead-letter logging after final failure. The existing retry utility at src/utils/retry.ts can be reused.
 - **Rationale:** Regression-analyst flagged the missing error handling in round 2 of convergence. The fix was out of scope for BL-042 (auth middleware) but affects the same service boundary.
 ```

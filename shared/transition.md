@@ -16,7 +16,7 @@ EOF
 
 Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command.
 
-If there are no changes to commit, skip this step.
+If there are no changes to commit, skip this step. `git add -A` relies on the project's `.gitignore` — ensure it covers build artifacts, logs, and credentials.
 
 ### 2. Push and open PR (if `create_pr` is true)
 
@@ -59,7 +59,7 @@ task_create(
 )
 ```
 
-If the human modified a proposal before approving, use their modified values. The `Target` field determines which backlog receives the ticket — `project` (default) uses `backlog_cwd` from config, `framework` targets the Loom plugin's own backlog.
+If the human modified a proposal before approving, use their modified values.
 
 ### 2. Transition ticket
 
@@ -88,8 +88,10 @@ If merge conflicts: prefer default branch for non-artifact files (config, depend
 ### 1. Append feedback
 
 ```
-task_edit(ticket_id, notesAppend=["{feedback_text}"])
+task_edit(ticket_id, notesAppend=["--- REVIEW REJECTION ---\n{feedback_text}"])
 ```
+
+Use the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review.
 
 ### 2. Transition ticket
 

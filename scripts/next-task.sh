@@ -10,7 +10,7 @@ set -euo pipefail
 #   ./next-task.sh review <assignee>  # pick next review task
 #
 # Requires: BACKLOG_CWD env var pointing to the backlog directory.
-# Exit codes: 0=claimed, 1=no eligible tasks, 2=lock failed, 3=usage error
+# Exit codes: 0=claimed, 1=no eligible tasks, 2=lock failed, 3=usage error, 4=claim failed
 
 # ── Constants ───────────────────────────────────────────────────────
 
@@ -308,7 +308,7 @@ fi
 # Claim the task
 EDIT_ERR=$(timeout 60 backlog task edit "$PICKED" -a "$ASSIGNEE" --plain 2>&1 >/dev/null) || {
   log "Failed to claim $PICKED: $EDIT_ERR"
-  exit 1
+  exit 4
 }
 
 echo "$PICKED"
