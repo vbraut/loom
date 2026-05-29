@@ -7,9 +7,10 @@ Review playbook for code-fix tickets. Runs before the human gate.
 ### 1. Summarize
 
 **Agent:** review-summarizer
+**Upstream:** all ticket references registered during the work phase (retrieve via MCP `task_view`, pass each reference path that exists and is non-empty)
 **Output path:** `.loom/artifacts/{ticket_id}/review-summary.md`
 
-Synthesize work-phase artifacts into a structured brief. Pass the ticket's references list (all work-phase artifacts, verified to exist) and ticket_notes as upstream.
+Synthesize work-phase artifacts into a structured brief.
 
 ### 2. Propose tickets
 

@@ -46,11 +46,20 @@ Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}
 
 ## Review approval transition (after /loom:review approves)
 
-### 1. Execute successor actions
+### 1. Create approved tickets
 
-For each successor action the human approved:
-- `create`: `task_create(title=..., description=..., labels=[type], dependencies=[ticket_id], ...)`
-- `update`: `task_edit(id=successor_id, ...)` with the specified changes
+For each proposal the human approved from the ticket-planner output:
+
+```
+task_create(
+  title={Title},
+  description={Description},
+  labels=["type:{Type}"],
+  dependencies=[ticket_id]
+)
+```
+
+If the human modified a proposal before approving, use their modified values. The `Target` field determines which backlog receives the ticket — `project` (default) uses `backlog_cwd` from config, `framework` targets the Loom plugin's own backlog.
 
 ### 2. Transition ticket
 
@@ -72,7 +81,7 @@ git branch -d loom/{ticket_id_lowercase}
 
 If `git checkout` fails (dirty working tree), stop. The ticket is already `done` and the branch is preserved.
 
-If merge conflicts, resolve using the strategy in `resolve.md` step 4. If unresolvable, stop and let the human merge manually.
+If merge conflicts: prefer default branch for non-artifact files (config, dependencies, infrastructure — conflicts here break builds/deploys). Prefer worktree for artifact files (specs, plans, reviews, mocks under `.claude/` or `.loom/`). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
 
 ## Review rejection transition
 

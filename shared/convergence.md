@@ -4,7 +4,7 @@ Handle convergence loops declared in playbooks.
 
 ## Steps
 
-1. **Parse the `## Convergence` section** from the playbook. Extract:
+1. **Parse the convergence fields** from the current playbook step. Extract:
    - **Agents** — names and `(parallel)` flag
    - **Verdict logic** — `AND` (all must pass) or `OR` (at least one must pass)
    - **Max rounds** — integer

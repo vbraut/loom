@@ -43,5 +43,8 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 ```
 
 The last line of your response must be one of:
-STATUS: complete
+STATUS: complete — VERDICT: pass
+STATUS: complete — VERDICT: needs-work
 STATUS: failed — {reason}
+
+Return `pass` when all requirements are covered or manual. Return `needs-work` when any requirement has status `gap` or `partial`.

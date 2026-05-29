@@ -41,8 +41,9 @@ When a step names an agent to invoke:
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
 5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
 6. For parallel agents: spawn all via multiple Agent tool calls.
+7. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
-Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
+Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step.
 
 ## Phase 3: TRANSITION
 

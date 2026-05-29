@@ -21,9 +21,7 @@ Fix the bug in the worktree. Write a change summary to the output path.
 
 If this step is a retry after test failure (see step 4), the test results artifact is included in upstream. Fix the failing tests based on the failure context.
 
-### 3. Review
-
-## Convergence
+### 3. Converge
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
 **Verdict logic:** AND
@@ -45,24 +43,23 @@ If this step is a retry after test failure (see step 4), the test results artifa
 
 ### 4. Verify
 
-**Agents (parallel):**
+**Agents:** run-tests, test-coverage (parallel)
 
-- **run-tests**
-  **Output path:** `.loom/artifacts/{ticket_id}/test-results.md`
-  Run the project's test suite.
+**Agent output paths:**
+- run-tests: `.loom/artifacts/{ticket_id}/test-results.md`
+- test-coverage: `.loom/artifacts/{ticket_id}/test-coverage.md`
 
-- **test-coverage**
-  **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
-  **Output path:** `.loom/artifacts/{ticket_id}/test-coverage.md`
-  Map ticket requirements to test cases and identify coverage gaps.
+**Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
-**On failure:** If run-tests reports assertion failures or test-coverage reports gaps, retry from step 2 with both artifacts added to implement's upstream. Retry once — if failures or gaps persist after the second pass, proceed to completion and append to ticket_notes: "Verify issues after retry — see test-results.md and test-coverage.md."
+run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
+
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream. Skip step 3 (convergence) on retry — the fixes are scoped to test gaps, not behavioral changes. On the retry verify pass, also include the prior test-coverage artifact in test-coverage's upstream so it can compare which gaps were addressed. Retry once — if failures or gaps persist after the second pass, proceed to completion and append to ticket_notes: "Verify issues after retry — see test-results.md and test-coverage.md."
 
 ### 5. Completion
 
 `pr: true`
 
-## Pre-completion checklist
+## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
 - [ ] implement produced output and modified worktree
