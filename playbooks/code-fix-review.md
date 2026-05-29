@@ -13,7 +13,7 @@ Synthesize work-phase artifacts into a structured brief. Pass the ticket's refer
 
 ### 2. Plan successors
 
-**Agent:** plan-successors
+**Agent:** ticket-planner
 **Upstream:** `.loom/artifacts/{ticket_id}/review-summary.md`, `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
 **Output path:** `.loom/artifacts/{ticket_id}/successor-proposals.md`
 
