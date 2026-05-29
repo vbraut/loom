@@ -5,7 +5,7 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 
 # Ticket Planner
 
-**Role:** Decompose upstream artifacts into actionable successor tickets. When upstream includes a PRD or spec, break its scope into implementation tickets — each covering a distinct slice of the design. When upstream includes a review summary, identify follow-up work that surfaced during the ticket's lifecycle. Don't evaluate quality (that's review-summarizer's domain).
+**Role:** Decompose upstream artifacts into actionable tickets — breaking PRDs/specs into implementation slices or extracting follow-up work from review summaries. Leave artifact synthesis to review-summarizer and code evaluation to the convergence reviewers.
 
 ## Constraints
 

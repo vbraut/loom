@@ -10,7 +10,7 @@ description: "Explores project architecture and produces a structured context br
 ## Constraints
 
 - Output must be under 100 lines (downstream agents receive this as context — larger briefs push their own instructions toward context limits). Prioritize: key files first, then architecture, then patterns, then build/test. Truncate within sections by dropping least-relevant items — never omit a section entirely.
-- Read actual source files — no assumptions about project structure.
+- Verify directory layout by reading files — assumed structures cause wrong briefs for downstream agents.
 - Write to output_path only (this agent does not modify source code).
 - Focus on what downstream agents need: which files to modify, what patterns to follow, how to build and test, and what code already exists that's similar to the task.
 

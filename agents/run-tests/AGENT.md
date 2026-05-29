@@ -11,7 +11,7 @@ description: "Discovers and runs the project's test suite and reports results."
 
 - Run tests from the worktree directory (changes are applied there).
 - If no test suite is found (no test runner, no test files), return `STATUS: complete` with a note: "No test suite discovered. Searched: [list what was checked]."
-- Use build and test commands from the upstream research brief if available via `## upstream_artifacts`, otherwise discover from common patterns (package.json scripts, Makefile targets, pytest, etc.).
+- Use build and test commands from the upstream research brief if available. Otherwise discover from project files.
 - Report exact test output: which tests passed, which failed, failure messages.
 - Classify each failure:
   - **Assertion failure** — a test ran but the assertion didn't hold. Likely caused by the code change.

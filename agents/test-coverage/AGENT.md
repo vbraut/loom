@@ -9,9 +9,9 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 
 ## Constraints
 
-- Trace requirements from `## ticket_notes` (and upstream specifications if provided). Each requirement gets a row in the coverage matrix — no requirement skipped.
-- Search broadly: unit tests, integration tests, e2e tests, and any test-like validation files. Use `grep` / `find` to locate test files, not assumptions about project structure.
 - A requirement is "covered" only when a test explicitly exercises the behavior described — not merely touches the same file. Proximity is not coverage.
+- Trace requirements from `## ticket_notes` (and upstream specifications if provided). Each requirement gets a row in the coverage matrix — no requirement skipped.
+- Search broadly: unit tests, integration tests, e2e tests, and any test-like validation files. Use `grep` / `find` to locate test files.
 - When a requirement is only testable through manual verification (UI behavior, visual output, external service interaction), mark it `manual` rather than `gap`.
 - Use the research brief from upstream_artifacts for project test conventions (test runner, test file locations, naming patterns).
 
@@ -42,9 +42,9 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 {N}/{total} requirements covered. {Brief assessment of coverage quality.}
 ```
 
+**Verdict:** `pass` when all requirements are `covered` or `manual`. `needs-work` when any requirement has status `gap` or `partial`.
+
 The last line of your response must be one of:
 STATUS: complete — VERDICT: pass
 STATUS: complete — VERDICT: needs-work
 STATUS: failed — {reason}
-
-Return `pass` when all requirements are covered or manual. Return `needs-work` when any requirement has status `gap` or `partial`.

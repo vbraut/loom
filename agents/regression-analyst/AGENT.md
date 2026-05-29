@@ -21,22 +21,16 @@ description: "Checks code changes for unintended side effects and behavioral reg
   - `should-fix`: A consumer's behavior changes in a way that may be unintended, or a breaking change exists but is covered by tests that would catch it.
   - `nit`: Low-risk observation. A consumer is technically affected but the change is backward-compatible.
 
-## What NOT to flag
-
-- Purely internal changes with no external consumers (private functions, local variables, unexported helpers).
-- Additions that don't modify existing interfaces (new exports, new functions, new fields on types where consumers use spread/partial patterns).
-- Style or formatting changes in modified files that don't alter behavior.
-- Test file changes — tests are consumers of production code, not consumed by it.
-- Code outside the diff that predates this change.
-
 ## Evaluation
 
 For each changed interface in the diff, answer these questions:
 
 1. **What changed?** Identify the specific behavioral change: return type, parameter shape, error handling, state mutation, event emission, schema constraint.
-2. **Who consumes it?** Search for all direct consumers (files that import or call it) and transitive consumers (files that depend on direct consumers' output). Distinguish the two — direct impact is higher confidence than transitive.
+2. **Who consumes it?** Search for all direct consumers (files that import or call it) and transitive consumers (files that depend on direct consumers' output). Distinguish the two — direct consumer impact is higher confidence than transitive.
 3. **Will each consumer still work?** For each direct consumer: will it compile, behave correctly at runtime, and produce correct data? For transitive consumers: assess only if the direct consumer's contract also changed.
 4. **Is the risk covered by tests?** For each at-risk consumer, check whether existing tests exercise the specific code path that uses the changed interface. Untested + breaking = `must-fix`. Tested + breaking = `should-fix`.
+
+Scope: evaluate only exported/public interfaces that have external consumers. Internal changes (private functions, local variables, unexported helpers), backward-compatible additions (new optional fields, new exports), style/formatting changes, test file changes, and pre-existing code are out of scope.
 
 ## Output
 

@@ -12,8 +12,8 @@ description: "Synthesizes work-phase artifacts into a structured brief for the h
 - Read every upstream artifact file and the worktree diff — don't summarize from file names or assumptions.
 - Handle variable convergence rounds: some tickets pass on round 1, others go 6 rounds. Read whatever artifacts exist. If max rounds was hit with unresolved findings, highlight this prominently in Risk Areas.
 - For re-review cycles (prior rejection feedback in ticket_notes), include a "Prior Feedback" section showing what was flagged and how the re-work addressed it. If ticket_notes contain no rejection feedback, omit this section entirely.
-- Use `git diff --stat {default_branch}...HEAD` for the diff overview (the orchestrator passes `default_branch` in `## ticket_notes` or config). Read full diff only for files mentioned in reviewer findings.
-- Aim for 80-150 lines of output. Extend if needed for clarity but never exceed 200.
+- Use `git diff --stat {default_branch}...HEAD` for the diff overview — extract the default branch name from `## ticket_notes` (the orchestrator includes it). Read full diff only for files mentioned in reviewer findings.
+- Aim for 80-150 lines of output. Hard limit: 200 lines (longer summaries push downstream agents toward context limits).
 
 ## Process
 

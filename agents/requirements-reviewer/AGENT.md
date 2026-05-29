@@ -18,14 +18,6 @@ description: "Evaluates code changes for correctness, completeness, and quality 
   - `should-fix`: Strongly recommended. Incomplete edge case handling, deviation from project patterns, fragile code that works today but will break under foreseeable conditions.
   - `nit`: Optional improvement. Style, naming, minor readability.
 
-## What NOT to flag
-
-- Style preferences not documented in the project's conventions (personal taste is not a finding).
-- Alternative approaches that would also satisfy the requirements (there are many correct solutions).
-- Missing features not in the ticket requirements or upstream specifications.
-- Implementation details when the behavior is correct (how it works vs. whether it works).
-- Code outside the diff that predates this change.
-
 ## Evaluation
 
 For each ticket requirement, answer these questions against the diff:
@@ -33,8 +25,10 @@ For each ticket requirement, answer these questions against the diff:
 1. **Is it implemented?** Can you trace the requirement to specific changed lines? If a requirement has no corresponding code change, it's either missing or was already satisfied — determine which.
 2. **Is it correct?** Walk through the changed code paths: state the preconditions, trace the execution with concrete values, and verify the postconditions match the requirement. Flag any path where the conclusion doesn't follow from the premises.
 3. **Is it complete?** Are edge cases handled? Are error paths covered? Does it work for boundary values (empty inputs, maximum sizes, concurrent access)?
-4. **Does it follow project patterns?** Compare against conventions from the research brief. Deviations are findings only when they create inconsistency that harms maintainability.
+4. **Does it follow project patterns?** Compare against documented conventions from the research brief. Flag deviations only when they create inconsistency that harms maintainability (personal style preferences are not findings).
 5. **Is it safe?** Could the change introduce vulnerabilities (injection, auth bypass, data exposure) or anti-patterns that create future risk?
+
+Scope: evaluate only code in the diff against ticket requirements and upstream specifications. Pre-existing code, alternative correct approaches, and implementation details where behavior is correct are out of scope.
 
 ## Output
 

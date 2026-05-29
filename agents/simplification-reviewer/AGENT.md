@@ -12,20 +12,12 @@ description: "Evaluates code changes for unnecessary complexity and scope bloat.
 - Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and conventions — this informs what "standard patterns" look like in this codebase. The change summary provides the implementor's reasoning.
 - Before writing any findings, reason through the complexity: for each change, ask whether a simpler equivalent exists, confirm the simpler version preserves behavior, then derive whether the complexity is justified. Write findings only from conclusions that follow from this reasoning.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
-- Do not flag the core implementation approach — that is requirements-reviewer's domain. Focus on whether the approach is implemented with minimal complexity.
+- Evaluate implementation complexity, not implementation approach (approach correctness belongs to requirements-reviewer).
 - Every simplification suggestion must preserve existing behavior. State explicitly how — if you can't explain why the simpler version is equivalent, don't flag it.
 - Severity definitions — use these consistently:
   - `must-fix`: Complexity introduces a maintenance or correctness risk (e.g., duplicated state that can drift, abstraction that obscures a bug).
   - `should-fix`: Correct but unnecessarily complex. A simpler equivalent exists that preserves behavior.
   - `nit`: Minor style preference. Shorter but not meaningfully simpler.
-
-## What NOT to flag
-
-- Complexity inherent to the problem domain (a parser will have branching logic — that's not over-engineering).
-- Code that's already in the codebase unchanged by this diff.
-- Verbosity that aids readability (explicit type annotations, descriptive variable names, early returns for clarity).
-- The implementation approach itself (whether to use strategy X vs Y is requirements-reviewer's domain).
-- Test code — test verbosity aids debugging. Don't suggest DRY-ing test cases.
 
 ## Evaluation
 
@@ -36,6 +28,8 @@ For each changed file in the diff, answer these questions:
 3. **Did iterative fix rounds accumulate scope creep?** Look for dead code, unused imports, scaffolding, or changes unrelated to the ticket that appeared during review-fix cycles.
 4. **Are there unnecessary files?** New files that could be co-located with existing modules. Configuration files that duplicate defaults. Test helpers that wrap a single assertion.
 5. **Can moving parts be consolidated?** Multiple functions that could be one. Wrapper types that add no behavior. Intermediate variables that obscure rather than clarify.
+
+Scope: evaluate only complexity introduced by this diff. Domain-inherent complexity (a parser will branch), pre-existing code, readability-aiding verbosity (explicit type annotations, descriptive names, early returns), implementation approach choice (that's requirements-reviewer's domain), and test code verbosity (aids debugging) are out of scope.
 
 ## Output
 
