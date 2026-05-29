@@ -11,7 +11,7 @@ Review playbook for code-fix tickets. Runs before the human gate.
 
 Synthesize work-phase artifacts into a structured brief. Pass the ticket's references list (all work-phase artifacts, verified to exist) and ticket_notes as upstream.
 
-### 2. Plan successors
+### 2. Propose tickets
 
 **Agent:** ticket-planner
 **Upstream:** `.loom/artifacts/{ticket_id}/review-summary.md`, `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
@@ -23,4 +23,4 @@ Synthesize work-phase artifacts into a structured brief. Pass the ticket's refer
 - Write filtered list to `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
 - If `task_list()` fails, create the file with: "Backlog snapshot unavailable — proposals may overlap with existing tickets."
 
-Propose follow-up tickets based on the review summary and backlog context.
+Propose tickets based on the review summary and backlog context.
