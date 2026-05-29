@@ -23,7 +23,7 @@ Handle convergence loops declared in playbooks.
 
 6. **Evaluate verdict logic.** AND: all agents must have `VERDICT: pass`. OR: at least one.
 
-7. **If verdict satisfied:** convergence is complete. Register reviewer output paths via `addReferences`. Return to the orchestrator — continue with the next playbook step after the convergence block.
+7. **If verdict satisfied:** convergence is complete. Register reviewer output paths via `addReferences`. Convergence is complete — continue with the next playbook step.
 
 8. **If verdict not satisfied and `round` < Max rounds:** verify each reviewer output_path file exists and has at least one non-whitespace character (if missing or whitespace-only, treat the reviewer as failed — go to step 5). Spawn the feedback agent from **On needs-work**, passing all reviewer output_path references as `## upstream_artifacts`. Use the feedback agent output path template with `{N}` = current round. When the feedback agent completes, verify its output_path exists. Register all output paths from this round via `addReferences`. Store the feedback agent's output_path as `{last_feedback_output}`. Increment `round`. Go to step 3.
 

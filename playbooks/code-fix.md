@@ -19,13 +19,15 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 
 Fix the bug in the worktree. Write a change summary to the output path.
 
+If this step is a retry after test failure (see step 4), the test results artifact is included in upstream. Fix the failing tests based on the failure context.
+
 ### 3. Review
 
 ## Convergence
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
 **Verdict logic:** AND
-**Max rounds:** 3
+**Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Convergence: {round} rounds, unresolved feedback — see artifacts."
@@ -46,7 +48,9 @@ Fix the bug in the worktree. Write a change summary to the output path.
 **Agent:** run-tests
 **Output path:** `.loom/artifacts/{ticket_id}/test-results.md`
 
-Run the project's test suite and scan for secrets.
+Run the project's test suite.
+
+**On failure:** If any assertion failures are reported, retry from step 2 with the test results artifact added to implement's upstream. Retry once — if tests fail again after the second pass, proceed to completion and append to ticket_notes: "Tests failing after retry — see test-results.md."
 
 ### 5. Completion
 
@@ -54,10 +58,8 @@ Run the project's test suite and scan for secrets.
 
 ## Pre-completion checklist
 
-The orchestrator verifies all items before proceeding to Phase 3:
-
 - [ ] research-codebase-arch produced output
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
-- [ ] run-tests produced output (with test results and secrets scan)
+- [ ] run-tests produced output
 - [ ] All output paths registered via addReferences
