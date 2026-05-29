@@ -23,7 +23,7 @@ How to write agents for Loom. Follow this when creating new files in `agents/`.
 
 8. **No repeated context.** Orchestrator modules build on each other sequentially. Never restate what a prior phase produced — the AI already has it. No "Inputs" sections listing what the caller already passed.
 
-9. **One-sentence role, not a persona.** "You are a senior engineer evaluating spec completeness" focuses behavior. Multi-paragraph persona descriptions waste tokens without improving output.
+9. **Role with boundaries, not a persona.** Every agent gets a `**Role:**` line stating what it owns and what it defers to other agents. This sharpens focus and prevents overlap in parallel reviewer panels. Keep it to two sentences max. No multi-paragraph personas — they waste tokens without improving output.
 
 10. **Reserve emphasis for invariants.** MUST/NEVER/CRITICAL only for safety or correctness invariants. Normal prose for everything else. Claude 4.x overtriggers on emphatic language — it interprets "NEVER" as more absolute than you intend, causing refusals or rigid behavior where judgment was needed.
 
@@ -45,7 +45,7 @@ model: sonnet              # optional — omit to inherit from caller
 
 # Agent Name
 
-{1-2 sentences: what this agent produces or evaluates.}
+**Role:** {What this agent owns — its unique responsibility in the pipeline. State what it does and what it explicitly defers to other agents. One sentence for the responsibility, one for the boundary.}
 
 ## Constraints
 
@@ -89,6 +89,22 @@ Use the verdict form when the playbook specifies convergence on this agent.
 Input: ...
 Output: ...
 ```
+
+## Doer vs. reviewer output
+
+**Doer agents** (e.g., implement, apply-review-fixes, run-tests) produce work products in the worktree and write a tracking summary to output_path. STATUS line: `complete` or `failed — {reason}`. Never return VERDICT.
+
+**Reviewer agents** (e.g., requirements-reviewer, regression-analyst) evaluate artifacts and produce structured findings at output_path. STATUS line: `complete — VERDICT: pass` or `complete — VERDICT: needs-work`.
+
+**Reviewer findings format.** Each finding must include:
+1. File path (relative to worktree root) and line number — e.g., `src/utils/config.ts:42`
+2. Severity — `must-fix` (blocks pass), `should-fix` (strongly recommended), or `nit` (optional)
+3. Description of the issue
+4. Concrete recommendation
+
+This structure is required because apply-review-fixes uses severity to prioritize and file:line to locate code. Vague findings like "needs improvement" are not actionable.
+
+**output_path semantics.** Code-modifying agents (doers) edit source files in the worktree — this is their primary work, not a side effect. The output_path artifact is a tracking summary for the orchestrator and downstream agents. The boundary rule applies to framework-level operations: no backlog writes, no git operations, no framework file modifications.
 
 ## Shared module style
 
