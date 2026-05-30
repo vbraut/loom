@@ -17,7 +17,7 @@ Explore the codebase architecture, locate relevant files and patterns for implem
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
-Implement the changes described in the ticket and any linked plan. Write a change summary to the output path.
+Implement the changes described in the ticket. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — read it for the detailed breakdown of changes. Write a change summary to the output path.
 
 ### 3. Converge
 
@@ -56,7 +56,9 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 ### 5. Capture
 
 **Agent:** capture-screenshots
-**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/changes.md`
 **Output path:** `.loom/artifacts/{ticket_id}/screenshots.md`
 
 Capture the running application at mobile and desktop viewports.

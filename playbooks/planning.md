@@ -28,6 +28,8 @@ Create a technical implementation plan from the spec and research brief.
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Plan convergence: {round} rounds, unresolved feedback — see artifacts."
 
+Reviewers evaluate the plan content for completeness and risk — the diff is just the plan document being added, not code changes. requirements-reviewer traces spec requirements to plan items. regression-analyst reads the plan's proposed file changes and traces consumer impact in the codebase.
+
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`

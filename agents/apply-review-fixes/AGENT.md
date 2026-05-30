@@ -14,6 +14,7 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 - When a reviewer's feedback points to a deeper architectural issue, apply the broader improvement (reviewers will re-evaluate in the next convergence round).
 - Prefer standard library and framework features over custom implementations. If a reviewer flags custom code that duplicates framework functionality, replace it.
 - Start from the reviewer-flagged lines, but if fixing them unlocks a broader refactor that genuinely improves the code (better naming, cleaner structure, removed duplication), do it.
+- When fixing document artifacts (plans, specs) rather than code, apply the same principles: address reviewer findings by editing the plan document to close gaps, clarify ambiguities, or add missing considerations.
 
 ## Process
 

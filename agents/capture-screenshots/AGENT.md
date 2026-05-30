@@ -20,7 +20,7 @@ tools: [Bash, Read, Write]
 1. Read `## ticket_notes` and `## upstream_artifacts` to identify pages/routes to capture.
 2. Identify the dev server start command from the research brief or project config (package.json scripts, Makefile, etc.).
 3. Start the dev server on an available port. Wait for it to be ready.
-4. Write a Playwright script that navigates to each target page and captures screenshots at both viewports. Save screenshots to `.loom/artifacts/{ticket_id}/screenshots/` with descriptive filenames (e.g., `home-desktop.png`, `home-mobile.png`).
+4. Write a Playwright script that navigates to each target page and captures screenshots at both viewports. Save screenshots to a `screenshots/` subdirectory next to `## output_path` with descriptive filenames (e.g., `home-desktop.png`, `home-mobile.png`).
 5. Run the Playwright script.
 6. Stop the dev server.
 7. Write the capture manifest to `## output_path`.
@@ -37,7 +37,11 @@ tools: [Bash, Read, Write]
 
 ## Reference Images
 
-{Paths to mock or reference images found in upstream/worktree, or "No reference images found."}
+| Page | Viewport | Path |
+|---|---|---|
+| {route or page name} | {viewport or "all"} | {relative path to mock/reference image} |
+
+{If no reference images found, replace the table with: "No reference images found."}
 
 ## Notes
 

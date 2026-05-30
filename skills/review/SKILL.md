@@ -45,7 +45,7 @@ When a step names an agent to invoke:
 
 If `{review_playbook}` is set (from claim.md), read it and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
 
-If `{review_playbook}` is empty, skip Phase 2 — no review playbook agents to run. The human gate will present work-phase artifacts directly.
+If `{review_playbook}` is empty, skip Phase 2 — no review playbook agents to run. Retrieve work-phase artifact references via MCP `task_view(ticket_id)` and present them directly in the human gate.
 
 ## Phase 3: HUMAN GATE
 

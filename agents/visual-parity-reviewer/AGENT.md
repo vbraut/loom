@@ -1,6 +1,7 @@
 ---
 name: visual-parity-reviewer
 description: "Compares captured screenshots against mock or reference images and evaluates visual parity. Returns a VERDICT for the verification step."
+tools: [Read]
 ---
 
 # Visual Parity Reviewer
