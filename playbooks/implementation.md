@@ -11,18 +11,46 @@ Feature implementation playbook. Implements code from an approved plan. Requires
 
 Explore the codebase architecture, locate relevant files and patterns for implementation.
 
-### 2. Implement
+### 2. Debate approach
+
+**Agents:** debate-architect, debate-implementer, debate-critic, debate-user (parallel)
+**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+
+**Agent output paths:**
+- debate-architect: `.loom/artifacts/{ticket_id}/perspective-architect.md`
+- debate-implementer: `.loom/artifacts/{ticket_id}/perspective-implementer.md`
+- debate-critic: `.loom/artifacts/{ticket_id}/perspective-critic.md`
+- debate-user: `.loom/artifacts/{ticket_id}/perspective-user.md`
+
+Four perspectives evaluate the proposed implementation approach independently. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — perspectives should read it for the detailed breakdown.
+
+### 3. Synthesize debate
+
+**Agent:** debate-synthesizer
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/perspective-architect.md`
+- `.loom/artifacts/{ticket_id}/perspective-implementer.md`
+- `.loom/artifacts/{ticket_id}/perspective-critic.md`
+- `.loom/artifacts/{ticket_id}/perspective-user.md`
+**Output path:** `.loom/artifacts/{ticket_id}/debate-synthesis.md`
+
+Cross-examine all perspectives, resolve disagreements, and produce a synthesized implementation approach.
+
+### 4. Implement
 
 **Agent:** implement
-**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/debate-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
-Implement the changes described in the ticket. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — read it for the detailed breakdown of changes. Write a change summary to the output path.
+Implement the changes described in the ticket using the debated approach. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — read it for the detailed breakdown of changes. Write a change summary to the output path.
 
-### 3. Converge
+### 5. Converge
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
 **Verdict logic:** AND
+**Consecutive clean rounds:** 2
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -37,10 +65,11 @@ Implement the changes described in the ticket. If the ticket references an imple
 - regression-analyst: `.loom/artifacts/{ticket_id}/regression-r{N}.md`
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
 - security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
+- edge-case-hunter: `.loom/artifacts/{ticket_id}/edge-cases-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 4. Verify
+### 6. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -52,9 +81,9 @@ Implement the changes described in the ticket. If the ticket references an imple
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 4 with both artifacts added to implement's upstream.
 
-### 5. Capture
+### 7. Capture
 
 **Agent:** capture-screenshots
 **Upstream:**
@@ -64,7 +93,7 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 
 Capture the running application at mobile and desktop viewports.
 
-### 6. Visual verify
+### 8. Visual verify
 
 **Agent:** visual-parity-reviewer
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
@@ -72,15 +101,16 @@ Capture the running application at mobile and desktop viewports.
 
 Compare captured screenshots against mock or reference images.
 
-**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 2 with the visual parity artifact added to implement's upstream.
+**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 4 with the visual parity artifact added to implement's upstream.
 
-### 7. Completion
+### 9. Completion
 
 `pr: true`
 
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
+- [ ] Debate completed (4 perspectives + synthesis)
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
