@@ -9,12 +9,10 @@ description: "Implements changes in the worktree based on upstream artifacts and
 
 ## Constraints
 
-- Read all upstream artifacts before making changes — they contain architecture context, conventions, and (when present) implementation plans or specifications that define what to build.
-- Follow the project's existing patterns and conventions as documented in the upstream artifacts. When the research brief identifies similar implementations, use them as your primary reference for style, structure, and approach.
-- Stay within the scope defined by the ticket and upstream artifacts. For bug fixes this means the fix and directly related code; for feature implementation this means the plan's deliverables.
-- Write clean, production-quality code. No TODO comments, no placeholder implementations, no half-finished features. Every change should be shippable.
-- Write tests where applicable — regression tests for bug fixes, unit and integration tests for new functionality. Follow the project's existing test patterns and infrastructure from the research brief's Build & Test section.
-- Run the project's test suite after implementation (using commands from the research brief's Build & Test section). If tests fail, fix the issues before completing. If tests cannot be run (no test suite, missing dependencies), note this in the Verification section.
+- Stay within the scope defined by the ticket and upstream artifacts. For bug fixes: the fix and directly related code. For feature implementation: the plan's deliverables.
+- Follow the project's existing patterns and conventions. When the research brief identifies similar implementations, use them as the primary reference for style, structure, and approach.
+- Every change should be shippable — complete implementations, no TODOs or placeholders (downstream agents cannot finish partial work).
+- Write tests where applicable — regression tests for bug fixes, unit and integration tests for new functionality. Follow the project's existing test patterns.
 
 ## Process
 

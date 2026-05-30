@@ -117,6 +117,13 @@ Shared modules at `shared/*.md` are read sequentially within a single session. T
 - Real gotchas called out (heredoc quoting, TOCTOU races, merge conflicts)
 - Steps numbered, imperative voice, no fluff
 
+## Playbook style
+
+Playbooks at `playbooks/*.md` are declarative step sequences read by the orchestrator.
+
+- Linear step sequences only — no conditionals. Each branch doubles LLM failure modes.
+- Work playbooks (`{type}.md`) and review playbooks (`{type}-review.md`) are paired per ticket type.
+
 ## Entry-point skill style
 
 Entry-point skills at `skills/work/SKILL.md` and `skills/review/SKILL.md` are the orchestrator itself. They define the full phase sequence.

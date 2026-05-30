@@ -16,6 +16,7 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
    - **1**: No eligible tickets. Print `No eligible tickets for /loom:{mode}. Nothing to do.` and stop.
    - **2**: Lock contention. Print `Dispatch lock contention — another session is claiming a ticket. Try again shortly.` and stop.
    - **3**: Usage error. This is a framework bug — halt with the error message.
+   - **4**: Claim failed — the task was picked but assignment failed (race condition or MCP error). Print `Claim failed for the selected ticket. Try again.` and stop.
    - **Any other code** (e.g., 127 = script not found): Print the error and stop.
 
 3. If mode is `work`, transition status via MCP:
@@ -51,7 +52,10 @@ Read the `type:` label from `ticket_data` (e.g., `type:code-fix` → type is `co
 
 - **No `type:` label**: `ERROR: Ticket {ticket_id} has no type: label.`
 - **Multiple `type:` labels**: `ERROR: Ticket {ticket_id} has multiple type: labels: [{values}].`
-- **Playbook missing**: verify `{loom_plugin_dir}/playbooks/{type}.md` exists. If not: `ERROR: No playbook for type '{type}'.`
+- **Playbook missing**: resolve the playbook filename based on mode:
+  - `work` mode: `{type}.md`
+  - `review` mode: `{type}-review.md`
+  Verify `{loom_plugin_dir}/playbooks/{resolved_filename}` exists. If not: `ERROR: No playbook for type '{type}' in {mode} mode (expected: playbooks/{resolved_filename})`
 
 ## 3. Ensure worktree
 
@@ -63,6 +67,7 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 Use the project's `default_branch` from config (defaults to `main`).
 
 **If the worktree already exists** (prior run, rejection, or review pickup):
+- If there are uncommitted changes: `git -C {worktree_path} add -A && git -C {worktree_path} commit -m "loom: preserve partial artifacts from prior run"` (skip if working tree is clean).
 - Sync: `git -C {worktree_path} merge {default_branch} --no-edit`
 - On merge conflict: prefer default branch for non-artifact files — config, dependencies, infrastructure (conflicts here break builds/deploys). Prefer worktree for artifact files — specs, plans, reviews, mocks under `.claude/` or `.loom/` (these represent the ticket's work-in-progress). For code files, three-way merge preserving both sides' intent.
 - If unresolvable: `git merge --abort`, report the conflict, stop.

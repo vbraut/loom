@@ -185,6 +185,8 @@ echo ""
 echo "--- Playbook-agent cross-check ---"
 
 crosscheck_ok=true
+
+# Forward check: agent names mentioned in playbooks must have AGENT.md
 for playbook in "$LOOM_ROOT"/playbooks/*.md; do
   [ -f "$playbook" ] || continue
   rel_path="${playbook#$LOOM_ROOT/}"
@@ -200,7 +202,64 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
     fi
   done
 done
+
+# Reverse check: **Agent:** references in playbooks must have a matching agent directory
+for playbook in "$LOOM_ROOT"/playbooks/*.md; do
+  [ -f "$playbook" ] || continue
+  rel_path="${playbook#$LOOM_ROOT/}"
+
+  while IFS= read -r agent_ref; do
+    [ -z "$agent_ref" ] && continue
+    if [ ! -f "$LOOM_ROOT/agents/$agent_ref/AGENT.md" ]; then
+      err "$rel_path references agent '$agent_ref' but agents/$agent_ref/AGENT.md not found"
+      crosscheck_ok=false
+    fi
+  done < <(grep -oE '\*\*Agent:\*\* [a-z][a-z0-9-]*' "$playbook" | sed 's/\*\*Agent:\*\* //' || true)
+
+  # Also check **On needs-work:** references (convergence feedback agents)
+  while IFS= read -r agent_ref; do
+    [ -z "$agent_ref" ] && continue
+    if [ ! -f "$LOOM_ROOT/agents/$agent_ref/AGENT.md" ]; then
+      err "$rel_path references feedback agent '$agent_ref' but agents/$agent_ref/AGENT.md not found"
+      crosscheck_ok=false
+    fi
+  done < <(grep -oE '\*\*On needs-work:\*\* [a-z][a-z0-9-]*' "$playbook" | sed 's/\*\*On needs-work:\*\* //' || true)
+done
+
 [ "$crosscheck_ok" = true ] && ok "All playbook-referenced agents have AGENT.md files"
+
+# ── Work/review playbook pairing ─────────────────────────────────
+
+echo ""
+echo "--- Work/review playbook pairing ---"
+
+pairing_ok=true
+for playbook in "$LOOM_ROOT"/playbooks/*.md; do
+  [ -f "$playbook" ] || continue
+  base_name=$(basename "$playbook" .md)
+
+  # Skip review playbooks (checked from the work side)
+  echo "$base_name" | grep -q '\-review$' && continue
+
+  review_playbook="$LOOM_ROOT/playbooks/${base_name}-review.md"
+  if [ ! -f "$review_playbook" ]; then
+    err "playbooks/${base_name}.md has no corresponding playbooks/${base_name}-review.md"
+    pairing_ok=false
+  fi
+done
+
+for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
+  [ -f "$playbook" ] || continue
+  base_name=$(basename "$playbook" .md)
+  work_name="${base_name%-review}"
+
+  work_playbook="$LOOM_ROOT/playbooks/${work_name}.md"
+  if [ ! -f "$work_playbook" ]; then
+    err "playbooks/${base_name}.md has no corresponding playbooks/${work_name}.md"
+    pairing_ok=false
+  fi
+done
+[ "$pairing_ok" = true ] && ok "All work playbooks have matching review playbooks"
 
 # ── Scripts ───────────────────────────────────────────────────────
 
