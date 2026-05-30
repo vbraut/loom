@@ -48,7 +48,9 @@ Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}
 
 ### 1. Create approved tickets
 
-For each proposal the human approved from the ticket-planner output:
+If `{approved_proposals}` is empty (no ticket-planner ran, or all proposals were rejected), skip this step.
+
+For each approved proposal:
 
 ```
 task_create(
@@ -58,8 +60,6 @@ task_create(
   dependencies=[ticket_id]
 )
 ```
-
-If the human modified a proposal before approving, use their modified values.
 
 ### 2. Transition ticket
 

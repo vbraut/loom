@@ -58,13 +58,25 @@ Present to the human reviewer:
 
 Ask: **Approve or Reject?**
 
-If the playbook included a ticket-planner step, read its output file. Parse each `### N` block under `## Proposals` as a proposal — extract Title, Type, Description, and Rationale fields. If no `### N` blocks exist under `## Proposals`, skip proposal confirmation. Otherwise present each proposal to the human and ask them to confirm, modify, or reject each.
+### Proposal handling
+
+If the playbook included a ticket-planner step, read its output file. Parse each `### N` block under `## Proposals` as a proposal — extract Title, Type, Description, and Rationale fields. If no `### N` blocks exist under `## Proposals`, skip proposal handling.
+
+For each proposal:
+
+1. **Validate Type** — check that `playbooks/{Type}.md` exists. If not, flag the proposal to the human as having an invalid type.
+2. **Present** — show Title, Type, Description, and Rationale.
+3. **Ask** — approve, modify, or reject.
+4. **On modify** — accept the human's changes, then re-validate (non-empty Title, valid Type). Loop until valid or rejected.
+5. **On reject** — drop the proposal silently.
+
+Collect only approved (possibly modified) proposals. Pass them to Phase 4 as `{approved_proposals}`.
 
 ## Phase 4: ROUTE
 
 ### On approval:
 
-Read `shared/transition.md` and follow "Review approval transition".
+Read `shared/transition.md` and follow "Review approval transition". Pass `{approved_proposals}` (may be empty if all were rejected or no ticket-planner ran).
 
 ### On rejection:
 
