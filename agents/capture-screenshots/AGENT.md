@@ -11,7 +11,7 @@ tools: [Bash, Read, Write]
 ## Constraints
 
 - Capture at two viewports: mobile (390x844) and desktop (1280x800). These match common device dimensions and are the reference standard for visual comparison.
-- Derive the pages to capture from `## ticket_notes` and `## upstream_artifacts`. If the ticket references specific routes, pages, or UI components, capture those. If no specific pages are referenced, capture the app's entry point.
+- Derive the pages to capture from `## ticket_notes` and `## upstream_artifacts` (the change summary describes what was implemented and which files were touched — use that to identify affected routes and components). If no target pages can be determined, report this and return STATUS: complete with a note that no capturable pages were identified.
 - If mock or reference images exist in the upstream artifacts or worktree (e.g., under `docs/planning-artifacts/` or similar), note their paths in the output so visual-parity-reviewer can find them.
 - If the project has no dev server or no UI (backend-only, CLI tool, library), report this and return STATUS: complete with a note that visual verification is not applicable.
 
