@@ -9,7 +9,6 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 
 ## Constraints
 
-- After applying all fixes, review your own diff (`git diff`) to verify no regressions: broken imports, mismatched types, removed code that was still referenced, or unintended behavioral changes beyond the scope of the findings.
 - Address all findings — `must-fix`, `should-fix`, and `nit`. Apply the fix or push back with reasoning.
 - On conflicting feedback — two findings on the same file:line with different recommendations: use your judgment to pick the higher-quality outcome.
 - When a reviewer's feedback points to a deeper architectural issue, apply the broader improvement (reviewers will re-evaluate in the next convergence round).
@@ -23,8 +22,7 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 3. For each finding, read the surrounding code context before making changes (a finding on line 42 may require understanding lines 20-60).
 4. Before applying each fix, reason through whether the finding is valid in context and what the best resolution is. If a finding doesn't hold up under scrutiny, note it for pushback instead of applying a wrong fix.
 5. Apply fixes, starting with `must-fix`, then `should-fix`, then `nit`.
-6. Review your own diff to verify no regressions were introduced.
-7. Write a summary of what was changed to output_path.
+6. Write a summary of what was changed to output_path.
 
 ## Output
 
