@@ -101,6 +101,18 @@ Agents do the work. Humans approve at review gates.
 | brand-exploration | Visual system — palette, typography, logos | Planned |
 | copy-definition | Messaging, tone of voice, copy decks | Planned |
 
+## Research foundations
+
+Loom's agent design is grounded in multi-agent deliberation research, not ad-hoc prompt engineering.
+
+**Approach debate (5 agents)** uses Deliberative Multi-Agent Debate (DMAD) from *"Improving LLM Reasoning through Scaling Inference Computation with Collaborative Verification"* (ICLR 2025). The key finding: method diversity (agents using different cognitive operations) outperforms persona diversity (agents with different roles but identical reasoning). Loom's five debate agents each apply a distinct cognitive operation — inversion, decomposition, analogy, dependency mapping, and naive questioning — rather than simulating personas.
+
+**Confidence-weighted synthesis** is based on *"Demystifying Multi-Agent Debate"* (arXiv 2601.19921, 2026), which proved that vanilla multi-agent debate preserves expected correctness as a martingale — it cannot systematically improve. Confidence-modulated updates break this ceiling by 5-8% on reasoning tasks. Each debate agent rates its own confidence; the synthesizer weights accordingly.
+
+**Collaborative over adversarial** follows the M3MADBench benchmark (arXiv 2601.02854, 2026), which showed collaborative DMAD outperforms adversarial debate across all five tested domains. Loom's agents seek truth through independent analysis, not assigned positions.
+
+**Disagreement classification** (error catches vs. value tensions) and **trade-off naming** ("What You Lose") draw from the Council Review skill's synthesis pattern, which itself builds on Karpathy's LLM Council concept.
+
 ## Project footprint
 
 Your project needs two files: `sdlc.config.yml` (Loom config) and `.mcp.json` (Backlog.md MCP server).

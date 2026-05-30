@@ -40,6 +40,7 @@ description: "Cross-examines debate agent outputs using confidence-weighted synt
 | debate-decomposition | Decomposition | {N}/10 | {one-line summary} |
 | debate-analogy | Analogy | {N}/10 | {one-line summary} |
 | debate-dependency | Dependency mapping | {N}/10 | {one-line summary} |
+| debate-outsider | Naive questioning | {N}/10 | {one-line summary} |
 
 ## Consensus
 

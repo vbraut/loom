@@ -13,7 +13,7 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 
 ### 2. Debate approach
 
-**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency (parallel)
+**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency, debate-outsider (parallel)
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Agent output paths:**
@@ -21,8 +21,9 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 - debate-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
 - debate-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - debate-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- debate-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Four cognitive operations evaluate the proposed fix independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the fix sequence correct?).
+Five cognitive operations evaluate the proposed fix independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the fix sequence correct?), outsider (what insider knowledge does this assume?).
 
 ### 3. Synthesize debate
 
@@ -32,6 +33,7 @@ Four cognitive operations evaluate the proposed fix independently using method d
 - `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
 - `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 **Output path:** `.loom/artifacts/{ticket_id}/debate-synthesis.md`
 
 Cross-examine all perspectives, resolve disagreements, and produce a synthesized fix approach.
@@ -90,7 +92,7 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] Debate completed (4 perspectives + synthesis)
+- [ ] Debate completed (5 methods + synthesis)
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output

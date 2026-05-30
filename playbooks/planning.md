@@ -13,7 +13,7 @@ Explore the codebase architecture, locate relevant files and patterns for the pl
 
 ### 2. Debate approach
 
-**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency (parallel)
+**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency, debate-outsider (parallel)
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Agent output paths:**
@@ -21,8 +21,9 @@ Explore the codebase architecture, locate relevant files and patterns for the pl
 - debate-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
 - debate-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - debate-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- debate-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Four cognitive operations evaluate the proposed approach independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — are prerequisites met?). Each agent includes a confidence score for weighted synthesis.
+Five cognitive operations evaluate the proposed approach independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — are prerequisites met?), outsider (what insider knowledge does this assume?). Each agent includes a confidence score for weighted synthesis.
 
 ### 3. Synthesize debate
 
@@ -32,6 +33,7 @@ Four cognitive operations evaluate the proposed approach independently using met
 - `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
 - `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 **Output path:** `.loom/artifacts/{ticket_id}/debate-synthesis.md`
 
 Cross-examine all perspectives, resolve disagreements, and produce a synthesized approach with consensus, tensions, and a risk register.
@@ -75,7 +77,7 @@ Reviewers evaluate the plan content for completeness and risk — the diff is ju
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] Debate completed (4 perspectives + synthesis)
+- [ ] Debate completed (5 methods + synthesis)
 - [ ] draft-plan produced output
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] All output paths registered via addReferences
