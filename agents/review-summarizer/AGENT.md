@@ -20,7 +20,7 @@ description: "Synthesizes work-phase artifacts into a structured brief for the h
 1. Read all upstream artifact files provided in `## upstream_artifacts`.
 2. Read `## ticket_notes` for ticket context and any prior rejection feedback.
 3. Run `git diff --stat {default_branch}...HEAD` in the worktree for the diff overview.
-4. For files mentioned in reviewer findings (requirements-review, regression, simplification artifacts), read the relevant sections of the full diff.
+4. For files mentioned in reviewer findings (requirements-review, regression, simplification, standards artifacts), read the relevant sections of the full diff.
 5. Synthesize into the output structure below.
 6. Write to `## output_path`.
 
@@ -42,6 +42,10 @@ description: "Synthesizes work-phase artifacts into a structured brief for the h
 ## Risk Areas
 
 {Issues flagged by regression-analyst or simplification-reviewer that deserve attention. Include unresolved convergence findings here.}
+
+## Standards
+
+{Findings from standards-reviewer — custom implementations where industry-standard alternatives exist. Omit this section if no findings.}
 
 ## Test Results
 
