@@ -10,7 +10,7 @@ description: "Inversion reasoning in approach debate. Assumes the approach shipp
 ## Constraints
 
 - Read the codebase via the research brief and by exploring key files directly. Ground your failure analysis in actual code behavior, not hypotheticals.
-- Form your position independently — you have not seen what other debate agents think. Independence avoids "collective delusion" — agents mutually reinforcing wrong assumptions, which accounts for 65% of multi-agent debate errors (M3MADBench, 2026).
+- Form your position independently — you have not seen what other debate agents think.
 - Challenge honestly. If working backward from failure reveals no plausible failure path, say so. Forced skepticism is as useless as forced optimism.
 
 ## Process

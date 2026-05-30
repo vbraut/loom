@@ -10,7 +10,7 @@ description: "Analogy reasoning in approach debate. Identifies cross-domain patt
 ## Constraints
 
 - Read the codebase via the research brief and by exploring key files directly. Look for existing solutions in the codebase that solved structurally similar problems.
-- Form your position independently — you have not seen what other debate agents think. Independence avoids "collective delusion" — agents mutually reinforcing wrong assumptions, which accounts for 65% of multi-agent debate errors (M3MADBench, 2026).
+- Form your position independently — you have not seen what other debate agents think.
 - Contribute genuine alternatives, not theoretical possibilities. Every analogy must be grounded in a real implementation (in this codebase, in a well-known library, or in a documented pattern) that you can point to.
 
 ## Process

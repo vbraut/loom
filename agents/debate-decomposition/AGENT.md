@@ -10,7 +10,7 @@ description: "Decomposition reasoning in approach debate. Breaks the approach in
 ## Constraints
 
 - Read the codebase via the research brief and by exploring key files directly. Verify each claim against actual code, not documentation or comments.
-- Form your position independently — you have not seen what other debate agents think. Independence avoids "collective delusion" — agents mutually reinforcing wrong assumptions, which accounts for 65% of multi-agent debate errors (M3MADBench, 2026).
+- Form your position independently — you have not seen what other debate agents think.
 - Distinguish load-bearing assumptions (the approach collapses without them) from incidental ones (nice-to-have but not structural). Focus your challenge on load-bearing claims.
 
 ## Process
