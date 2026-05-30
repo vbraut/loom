@@ -9,7 +9,7 @@ description: "Evaluates code changes for unnecessary complexity and scope bloat.
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and conventions — this informs what "standard patterns" look like in this codebase. The change summary provides the implementor's reasoning. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
+- Review the actual worktree diff (`git diff {default_branch}...HEAD` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and conventions — this informs what "standard patterns" look like in this codebase. The change summary provides the implementor's reasoning. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - Before writing any findings, reason through the complexity: for each change, ask whether a simpler equivalent exists, confirm the simpler version preserves behavior, then derive whether the complexity is justified. Write findings only from conclusions that follow from this reasoning.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
 - Evaluate implementation complexity, not implementation approach (approach correctness belongs to requirements-reviewer).

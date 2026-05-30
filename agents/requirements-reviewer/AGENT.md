@@ -9,7 +9,7 @@ description: "Evaluates code changes for correctness, completeness, and quality 
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning — but evaluate the code itself, not the summary. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) describing changes made in response to prior findings — use it to understand what was addressed.
+- Review the actual worktree diff (`git diff {default_branch}...HEAD` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning — but evaluate the code itself, not the summary. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) describing changes made in response to prior findings — use it to understand what was addressed.
 - Evaluate against the ticket's requirements from ticket_notes and any upstream specifications (PRDs, plans), not personal preferences.
 - Before writing any findings, reason through the analysis: state what each requirement asks for, trace how the diff addresses it, then derive whether the implementation is correct. Write findings only from conclusions that follow from this reasoning.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
