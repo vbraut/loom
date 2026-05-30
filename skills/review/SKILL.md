@@ -35,13 +35,14 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). All paths passed to agents must be absolute, resolved from the worktree root. Set `cwd` to the worktree.
-3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
-4. If failed: stop (error handling below).
-5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
-5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
-6. For parallel agents: spawn all via multiple Agent tool calls.
-7. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
+2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve them to absolute paths from the worktree root. When the **Upstream:** contains a retrieval instruction (e.g., "retrieve via MCP `task_view`"), execute the retrieval: call `task_view(ticket_id)`, extract the `references` list, verify each path exists and is non-empty, and use the valid paths.
+3. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch`), and `## upstream_artifacts` with the resolved paths from step 2. All paths must be absolute. Set `cwd` to the worktree.
+4. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
+5. If failed: stop (error handling below).
+6. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+6b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
+7. For parallel agents: spawn all via multiple Agent tool calls.
+8. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
 If `{review_playbook}` is set (from claim.md), read it and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
 

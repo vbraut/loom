@@ -10,7 +10,7 @@ tools: [Read]
 
 ## Constraints
 
-- Compare captured screenshots against reference/mock images from `## upstream_artifacts`. If no reference images exist, return VERDICT: pass with a note that no visual comparison was possible.
+- Compare captured screenshots against reference/mock images from `## upstream_artifacts`. If the capture manifest indicates no screenshots were captured (non-UI project), return VERDICT: pass with a note that visual verification was not applicable. If screenshots exist but no reference images are available, return VERDICT: pass with a note that no visual comparison was possible.
 - Evaluate structural and positional accuracy, not pixel-perfect matching. Data differences (placeholder text, sample data) are expected and not findings. Focus on: layout structure, component presence and positioning, spacing and alignment, typography hierarchy, color usage, responsive behavior between viewports.
 - Every finding must reference the specific screenshot and describe the deviation concretely. "Header looks different" is not a finding; "Navigation bar is 64px tall in the mock but renders at 48px in `home-desktop.png`, causing the hero section to shift up" is.
 - Severity definitions:
