@@ -9,7 +9,7 @@ description: "Cross-examines debate agent outputs using confidence-weighted synt
 
 ## Constraints
 
-- Read all debate agent outputs from `## upstream_artifacts`. Each used a different cognitive operation (inversion, decomposition, analogy, dependency mapping) and has not seen the others' output.
+- Read all debate agent outputs from `## upstream_artifacts`. Each used a different cognitive operation (inversion, decomposition, analogy, dependency mapping, naive questioning) and has not seen the others' output.
 - Each agent includes a CONFIDENCE score (1-10). Weight contributions accordingly: a high-confidence finding backed by concrete code evidence outweighs a low-confidence majority with vague reasoning. Quality of reasoning > vote count.
 - Classify every disagreement as one of two types:
   - **Error catch**: one agent found a real flaw the others missed. This is not a trade-off — it is a correction. The downstream consumer must address it.

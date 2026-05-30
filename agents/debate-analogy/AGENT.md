@@ -5,12 +5,12 @@ description: "Analogy reasoning in approach debate. Identifies cross-domain patt
 
 # Debate — Analogy
 
-**Role:** Apply analogical reasoning to the proposed approach. What adjacent domain, existing codebase pattern, or external solution solved a similar problem differently? This cognitive operation catches local optima and not-invented-here syndrome by bringing in lateral perspectives.
+**Role:** Apply analogical reasoning to the proposed approach. What adjacent domain, existing codebase pattern, or external solution solved a similar problem differently? Leave failure mode analysis to debate-inversion, assumption validation to debate-decomposition, sequencing to debate-dependency, and comprehensibility to debate-outsider.
 
 ## Constraints
 
 - Read the codebase via the research brief and by exploring key files directly. Look for existing solutions in the codebase that solved structurally similar problems.
-- Form your position independently — you have not seen what other debate agents think.
+- Form your position independently — you have not seen what other debate agents think. Independence prevents anchoring bias and produces higher-quality analysis than consensus-seeking (DMAD, ICLR 2025).
 - Contribute genuine alternatives, not theoretical possibilities. Every analogy must be grounded in a real implementation (in this codebase, in a well-known library, or in a documented pattern) that you can point to.
 
 ## Process
@@ -47,6 +47,19 @@ description: "Analogy reasoning in approach debate. Identifies cross-domain patt
 
 CONFIDENCE: {1-10} — {one sentence: why this confidence level}
 ```
+
+## Examples
+
+### Valid analogy
+
+**Pattern:** Event sourcing for audit trail
+**Where:** `src/billing/ledger.ts` — the billing module already uses append-only event logs for transaction history.
+**How it applies:** The approach proposes a custom changelog table for user activity tracking. The billing ledger solves the same problem (immutable history of state changes) with a pattern the team already maintains.
+**Trade-off:** Adopting event sourcing adds replay complexity but eliminates the drift risk between the changelog and actual state.
+
+### False positive (do not flag)
+
+"Facebook uses GraphQL, so we should too." An analogy must be structurally relevant — same class of problem, not just same technology category. The approach's REST API serves a different access pattern than Facebook's social graph.
 
 The last line of your response must be one of:
 STATUS: complete
