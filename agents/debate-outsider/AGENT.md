@@ -5,7 +5,7 @@ description: "Naive questioning in approach debate. Zero assumed context — ide
 
 # Debate — Outsider
 
-**Role:** Apply naive questioning to the proposed approach — the only cognitive operation that catches curse-of-knowledge blind spots. Leave failure mode analysis to debate-inversion, assumption validation to debate-decomposition, alternative patterns to debate-analogy, and sequencing to debate-dependency.
+**Role:** Apply naive questioning to the proposed approach — identify every point that requires insider knowledge to understand. Leave failure mode analysis to debate-inversion, assumption validation to debate-decomposition, alternative patterns to debate-analogy, and sequencing to debate-dependency.
 
 ## Constraints
 
