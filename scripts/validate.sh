@@ -231,23 +231,11 @@ done
 # ── Work/review playbook pairing ─────────────────────────────────
 
 echo ""
-echo "--- Work/review playbook pairing ---"
+echo "--- Review playbook pairing ---"
 
 pairing_ok=true
-for playbook in "$LOOM_ROOT"/playbooks/*.md; do
-  [ -f "$playbook" ] || continue
-  base_name=$(basename "$playbook" .md)
 
-  # Skip review playbooks (checked from the work side)
-  echo "$base_name" | grep -q '\-review$' && continue
-
-  review_playbook="$LOOM_ROOT/playbooks/${base_name}-review.md"
-  if [ ! -f "$review_playbook" ]; then
-    err "playbooks/${base_name}.md has no corresponding playbooks/${base_name}-review.md"
-    pairing_ok=false
-  fi
-done
-
+# Review playbooks must have a corresponding work playbook (but not vice versa — review playbooks are optional)
 for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
   [ -f "$playbook" ] || continue
   base_name=$(basename "$playbook" .md)
@@ -259,7 +247,7 @@ for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
     pairing_ok=false
   fi
 done
-[ "$pairing_ok" = true ] && ok "All work playbooks have matching review playbooks"
+[ "$pairing_ok" = true ] && ok "All review playbooks have matching work playbooks"
 
 # ── Scripts ───────────────────────────────────────────────────────
 

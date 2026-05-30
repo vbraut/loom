@@ -43,15 +43,17 @@ When a step names an agent to invoke:
 6. For parallel agents: spawn all via multiple Agent tool calls.
 7. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
-Read `{loom_plugin_dir}/playbooks/{type}-review.md` and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
+If `{review_playbook}` is set (from claim.md), read it and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
+
+If `{review_playbook}` is empty, skip Phase 2 — no review playbook agents to run. The human gate will present work-phase artifacts directly.
 
 ## Phase 3: HUMAN GATE
 
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
-2. **Artifacts**: list all output files produced during playbook execution.
-3. **Agent findings**: reports or summaries from Phase 2.
+2. **Artifacts**: list all output files produced during playbook execution (or work-phase artifacts if no review playbook ran).
+3. **Agent findings**: reports or summaries from Phase 2 (skip if no review playbook ran).
 
 Ask: **Approve or Reject?**
 

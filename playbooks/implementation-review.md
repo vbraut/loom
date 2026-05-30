@@ -1,6 +1,6 @@
-# code-fix-review
+# implementation-review
 
-Review playbook for code-fix tickets. Runs before the human gate.
+Review playbook for implementation tickets. Runs before the human gate.
 
 ## Steps
 
@@ -32,4 +32,4 @@ Synthesize work-phase artifacts and standards review into a structured brief.
 - Write filtered list to `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
 - If `task_list()` fails, create the file with: "Backlog snapshot unavailable — proposals may overlap with existing tickets."
 
-Propose tickets based on the review summary and backlog context.
+Propose follow-up tickets based on the review summary and backlog context.

@@ -1,6 +1,6 @@
 ---
 name: research-codebase-arch
-description: "Explores project architecture and produces a structured context brief for downstream agents. Triggered as the first step in code-fix and code-implementation playbooks."
+description: "Explores project architecture and produces a structured context brief for downstream agents. Triggered as the first step in work playbooks."
 ---
 
 # Research Codebase Architecture
