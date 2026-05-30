@@ -10,7 +10,7 @@ description: "Dependency-mapping reasoning in approach debate. Traces critical p
 ## Constraints
 
 - Read the codebase via the research brief and by exploring key files directly. Trace actual import chains, data flows, and initialization sequences.
-- Form your position independently — you have not seen what other debate agents think. Independence prevents anchoring bias and produces higher-quality analysis than consensus-seeking (DMAD, ICLR 2025).
+- Form your position independently — you have not seen what other debate agents think. Independence avoids "collective delusion" — agents mutually reinforcing wrong assumptions, which accounts for 65% of multi-agent debate errors (M3MADBench, 2026).
 - Focus on executability: can someone actually build this in the order implied? What must exist before each step can begin?
 
 ## Process

@@ -10,7 +10,7 @@ description: "Naive questioning in approach debate. Zero assumed context — ide
 ## Constraints
 
 - Read `## ticket_notes` and `## upstream_artifacts` as a newcomer would. Do not fill in gaps from general knowledge — if something isn't explained, flag it.
-- Form your position independently — you have not seen what other debate agents think. Independence prevents anchoring bias and produces higher-quality analysis than consensus-seeking (DMAD, ICLR 2025).
+- Form your position independently — you have not seen what other debate agents think. Independence avoids "collective delusion" — agents mutually reinforcing wrong assumptions, which accounts for 65% of multi-agent debate errors (M3MADBench, 2026).
 - You ARE allowed to read the codebase to verify whether unexplained terms actually exist and what they do. The point is not ignorance — it's identifying what the approach fails to make explicit.
 
 ## Process

@@ -103,15 +103,17 @@ Agents do the work. Humans approve at review gates.
 
 ## Research foundations
 
-Loom's agent design is grounded in multi-agent deliberation research, not ad-hoc prompt engineering.
+Loom's agent design is informed by multi-agent deliberation research. The principles below shaped the architecture; the specific agents and workflow are Loom's own design.
 
-**Approach debate (5 agents)** uses Deliberative Multi-Agent Debate (DMAD) from *"Improving LLM Reasoning through Scaling Inference Computation with Collaborative Verification"* (ICLR 2025). The key finding: method diversity (agents using different cognitive operations) outperforms persona diversity (agents with different roles but identical reasoning). Loom's five debate agents each apply a distinct cognitive operation — inversion, decomposition, analogy, dependency mapping, and naive questioning — rather than simulating personas.
+**Method diversity over persona diversity.** DMAD — *"Breaking Mental Set to Improve Reasoning through Diverse Multi-Agent Debate"* (ICLR 2025) — showed that assigning structurally different reasoning methods to same-model agents outperforms giving them different personas. DMAD uses generic prompting strategies (CoT, SBP, PoT); Loom adapts the principle to code analysis with five domain-specific cognitive operations: inversion, decomposition, analogy, dependency mapping, and naive questioning.
 
-**Confidence-weighted synthesis** is based on *"Demystifying Multi-Agent Debate"* (arXiv 2601.19921, 2026), which proved that vanilla multi-agent debate preserves expected correctness as a martingale — it cannot systematically improve. Confidence-modulated updates break this ceiling by 5-8% on reasoning tasks. Each debate agent rates its own confidence; the synthesizer weights accordingly.
+**Single-round independence.** DMAD itself uses multi-round cross-talk (agents refine after seeing peers). Loom's debate agents run independently with no cross-talk — a deliberate trade-off. M3MADBench (arXiv 2601.02854, 2026) found that 65% of multi-agent debate errors come from "collective delusion" where agents mutually reinforce wrong assumptions. Independence sacrifices self-correction but avoids groupthink. Iterative refinement happens later, in the convergence review loop.
 
-**Collaborative over adversarial** follows the M3MADBench benchmark (arXiv 2601.02854, 2026), which showed collaborative DMAD outperforms adversarial debate across all five tested domains. Loom's agents seek truth through independent analysis, not assigned positions.
+**Confidence-weighted synthesis.** *"Demystifying Multi-Agent Debate"* (arXiv 2601.19921, 2026) proved that vanilla multi-agent debate preserves expected correctness as a martingale — it cannot systematically improve. Confidence-modulated updates break this ceiling (1-3pp on reasoning benchmarks). Loom's debate agents self-rate confidence 1-10; the synthesizer weights findings by evidence quality rather than vote count.
 
-**Disagreement classification** (error catches vs. value tensions) and **trade-off naming** ("What You Lose") draw from the Council Review skill's synthesis pattern, which itself builds on Karpathy's LLM Council concept.
+**Collaborative over adversarial.** M3MADBench showed collaborative debate outperforms adversarial across all five tested domains — adversarial framing introduces divergent noise that degrades results. Loom's agents seek truth through independent analysis, not assigned positions.
+
+**Disagreement classification and trade-off naming.** Error catches (one agent found a real flaw) vs. value tensions (both sides valid, priorities decide) and explicit "What You Lose" cost naming draw from the Council Review pattern, itself built on Karpathy's LLM Council concept.
 
 ## Project footprint
 
