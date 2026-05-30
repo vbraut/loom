@@ -21,14 +21,14 @@ Create a technical implementation plan from the spec and research brief.
 
 ### 3. Converge
 
-**Agents:** requirements-reviewer, regression-analyst (parallel)
+**Agents:** requirements-reviewer, regression-analyst, security-reviewer (parallel)
 **Verdict logic:** AND
 **Max rounds:** 3
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Plan convergence: {round} rounds, unresolved feedback — see artifacts."
 
-Reviewers evaluate the plan content for completeness and risk — the diff is just the plan document being added, not code changes. requirements-reviewer traces spec requirements to plan items. regression-analyst reads the plan's proposed file changes and traces consumer impact in the codebase.
+Reviewers evaluate the plan content for completeness and risk — the diff is just the plan document being added, not code changes. requirements-reviewer traces spec requirements to plan items. regression-analyst reads the plan's proposed file changes and traces consumer impact in the codebase. security-reviewer evaluates the plan's security posture — new trust boundaries, sensitive data handling, and auth changes.
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -37,6 +37,7 @@ Reviewers evaluate the plan content for completeness and risk — the diff is ju
 **Reviewer output paths:**
 - requirements-reviewer: `.loom/artifacts/{ticket_id}/requirements-review-r{N}.md`
 - regression-analyst: `.loom/artifacts/{ticket_id}/regression-r{N}.md`
+- security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 

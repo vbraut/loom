@@ -21,7 +21,7 @@ Fix the bug in the worktree. Write a change summary to the output path.
 
 ### 3. Converge
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer (parallel)
 **Verdict logic:** AND
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
@@ -36,6 +36,7 @@ Fix the bug in the worktree. Write a change summary to the output path.
 - requirements-reviewer: `.loom/artifacts/{ticket_id}/requirements-review-r{N}.md`
 - regression-analyst: `.loom/artifacts/{ticket_id}/regression-r{N}.md`
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
+- security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 

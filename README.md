@@ -17,7 +17,7 @@
               ║  └─────┬────┘  ║           A G E N T S
               ║     claim      ║──weft──│               │
               ║     execute    ║          requirements-reviewer
-              ║     transition ║──weft──│ edge-case-hunter
+              ║     transition ║──weft──│ security-reviewer
               ║  ┌─────┴────┐  ║        │               │
               ║  │ worktree  │  ║        └─ ─ ─ ─ ─ ─ ─┘
               ║  └──────────┘  ║
@@ -89,18 +89,17 @@ Agents do the work. Humans approve at review gates.
 - **Orchestrator** — glue between backlog, git, and playbooks: picks tickets, manages worktrees, executes the right playbook, transitions state
 - **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context
 
-## Planned ticket types
+## Ticket types
 
-The following playbooks are being implemented incrementally:
-
-| Type | Description | Step |
-|------|-------------|------|
-| code-fix | Bug investigation + fix | 3 |
-| code-implementation | Build from an approved PRD or plan | 5 |
-| product-definition | PRD + mocks for a feature | 6 |
-| strategy-definition | Research and decision documents | 7 |
-| brand-exploration | Visual system — palette, typography, logos | 7 |
-| copy-definition | Messaging, tone of voice, copy decks | 7 |
+| Type | Description | Status |
+|------|-------------|--------|
+| code-fix | Bug investigation + fix | Done |
+| planning | Technical plan from PRD or spec | Done |
+| implementation | Build from an approved plan | Done |
+| product-definition | PRD + mocks for a feature | Planned |
+| strategy-definition | Research and decision documents | Planned |
+| brand-exploration | Visual system — palette, typography, logos | Planned |
+| copy-definition | Messaging, tone of voice, copy decks | Planned |
 
 ## Project footprint
 
