@@ -45,7 +45,7 @@ When a step names an agent to invoke:
 
 ### Retry protocol
 
-When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. If the block says to skip a step on retry, skip it — proceed directly to the step after the skipped one. Retry at most once per failure block.
+When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified.
 
 ### Verify step handling
 
