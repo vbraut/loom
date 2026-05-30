@@ -13,25 +13,25 @@ Explore the codebase architecture, locate relevant files and patterns for implem
 
 ### 2. Debate approach
 
-**Agents:** debate-architect, debate-implementer, debate-critic, debate-user (parallel)
+**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency (parallel)
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Agent output paths:**
-- debate-architect: `.loom/artifacts/{ticket_id}/perspective-architect.md`
-- debate-implementer: `.loom/artifacts/{ticket_id}/perspective-implementer.md`
-- debate-critic: `.loom/artifacts/{ticket_id}/perspective-critic.md`
-- debate-user: `.loom/artifacts/{ticket_id}/perspective-user.md`
+- debate-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion.md`
+- debate-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
+- debate-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
+- debate-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 
-Four perspectives evaluate the proposed implementation approach independently. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — perspectives should read it for the detailed breakdown.
+Four cognitive operations evaluate the proposed implementation approach independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the build sequence correct?). If the ticket references an implementation plan, agents should read it from the worktree. Each agent includes a confidence score for weighted synthesis.
 
 ### 3. Synthesize debate
 
 **Agent:** debate-synthesizer
 **Upstream:**
-- `.loom/artifacts/{ticket_id}/perspective-architect.md`
-- `.loom/artifacts/{ticket_id}/perspective-implementer.md`
-- `.loom/artifacts/{ticket_id}/perspective-critic.md`
-- `.loom/artifacts/{ticket_id}/perspective-user.md`
+- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
+- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
+- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
+- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 **Output path:** `.loom/artifacts/{ticket_id}/debate-synthesis.md`
 
 Cross-examine all perspectives, resolve disagreements, and produce a synthesized implementation approach.
