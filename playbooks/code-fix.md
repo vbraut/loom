@@ -19,11 +19,7 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 
 Fix the bug in the worktree. Write a change summary to the output path.
 
-If this step is a retry after test failure (see step 4), the test results artifact is included in upstream. Fix the failing tests based on the failure context.
-
-### 3. Review
-
-## Convergence
+### 3. Converge
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
 **Verdict logic:** AND
@@ -43,23 +39,29 @@ If this step is a retry after test failure (see step 4), the test results artifa
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 4. Test
+### 4. Verify
 
-**Agent:** run-tests
-**Output path:** `.loom/artifacts/{ticket_id}/test-results.md`
+**Agents:** run-tests, test-coverage (parallel)
 
-Run the project's test suite.
+**Agent output paths:**
+- run-tests: `.loom/artifacts/{ticket_id}/test-results.md`
+- test-coverage: `.loom/artifacts/{ticket_id}/test-coverage.md`
 
-**On failure:** If any assertion failures are reported, retry from step 2 with the test results artifact added to implement's upstream. Retry once — if tests fail again after the second pass, proceed to completion and append to ticket_notes: "Tests failing after retry — see test-results.md."
+**Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
+
+run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
+
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
 
 ### 5. Completion
 
 `pr: true`
 
-## Pre-completion checklist
+## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
+- [ ] test-coverage produced output
 - [ ] All output paths registered via addReferences

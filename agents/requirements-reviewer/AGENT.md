@@ -9,7 +9,7 @@ description: "Evaluates code changes for correctness, completeness, and quality 
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning — but evaluate the code itself, not the summary.
+- Review the actual worktree diff (`git diff {default_branch}...HEAD` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning — but evaluate the code itself, not the summary. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) describing changes made in response to prior findings — use it to understand what was addressed.
 - Evaluate against the ticket's requirements from ticket_notes and any upstream specifications (PRDs, plans), not personal preferences.
 - Before writing any findings, reason through the analysis: state what each requirement asks for, trace how the diff addresses it, then derive whether the implementation is correct. Write findings only from conclusions that follow from this reasoning.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
@@ -18,14 +18,6 @@ description: "Evaluates code changes for correctness, completeness, and quality 
   - `should-fix`: Strongly recommended. Incomplete edge case handling, deviation from project patterns, fragile code that works today but will break under foreseeable conditions.
   - `nit`: Optional improvement. Style, naming, minor readability.
 
-## What NOT to flag
-
-- Style preferences not documented in the project's conventions (personal taste is not a finding).
-- Alternative approaches that would also satisfy the requirements (there are many correct solutions).
-- Missing features not in the ticket requirements or upstream specifications.
-- Implementation details when the behavior is correct (how it works vs. whether it works).
-- Code outside the diff that predates this change.
-
 ## Evaluation
 
 For each ticket requirement, answer these questions against the diff:
@@ -33,8 +25,10 @@ For each ticket requirement, answer these questions against the diff:
 1. **Is it implemented?** Can you trace the requirement to specific changed lines? If a requirement has no corresponding code change, it's either missing or was already satisfied — determine which.
 2. **Is it correct?** Walk through the changed code paths: state the preconditions, trace the execution with concrete values, and verify the postconditions match the requirement. Flag any path where the conclusion doesn't follow from the premises.
 3. **Is it complete?** Are edge cases handled? Are error paths covered? Does it work for boundary values (empty inputs, maximum sizes, concurrent access)?
-4. **Does it follow project patterns?** Compare against conventions from the research brief. Deviations are findings only when they create inconsistency that harms maintainability.
+4. **Does it follow project patterns?** Compare against documented conventions from the research brief. Flag deviations only when they create inconsistency that harms maintainability (personal style preferences are not findings).
 5. **Is it safe?** Could the change introduce vulnerabilities (injection, auth bypass, data exposure) or anti-patterns that create future risk?
+
+Scope: evaluate only code in the diff against ticket requirements and upstream specifications. Pre-existing code, alternative correct approaches, and implementation details where behavior is correct are out of scope.
 
 ## Output
 
