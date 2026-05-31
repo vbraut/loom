@@ -11,7 +11,7 @@ Bug fix playbook. Requires `pr: true` for transition.
 
 Explore the codebase architecture, locate the bug, identify relevant files and patterns, and draft a proposed fix approach.
 
-### 2. Assess approach
+### 2. Assess approach (cognitive)
 
 **Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (parallel)
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
@@ -23,9 +23,21 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 - assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Five cognitive operations evaluate the proposed fix independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the fix sequence correct?), outsider (what insider knowledge does this assume?).
+Five cognitive operations evaluate the proposed fix independently using method diversity (DMAD).
 
-### 3. Synthesize assessments
+### 3. Assess approach (domain expertise)
+
+**Agent:** persona-reviewer (parallel)
+**Persona selection:**
+  Always: pm, dev
+  Dynamic (select 0-2 based on ticket content): security, data, qa, devops
+**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+
+**Agent output paths:** `.loom/artifacts/{ticket_id}/persona-{name}.md`
+
+Domain experts evaluate the proposed fix through their professional lens.
+
+### 4. Synthesize assessments
 
 **Agent:** assess-synthesizer
 **Upstream:**
@@ -34,11 +46,12 @@ Five cognitive operations evaluate the proposed fix independently using method d
 - `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - `.loom/artifacts/{ticket_id}/perspective-outsider.md`
+- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 3)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
 Cross-examine all perspectives, resolve disagreements, and produce a synthesized fix approach.
 
-### 4. Implement
+### 5. Implement
 
 **Agent:** implement
 **Upstream:**
@@ -48,9 +61,10 @@ Cross-examine all perspectives, resolve disagreements, and produce a synthesized
 
 Fix the bug in the worktree using the assessed approach. Write a change summary to the output path.
 
-### 5. Converge
+### 6. Converge
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, design-system-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
+**When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 6
@@ -72,7 +86,7 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 6. Verify
+### 7. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -84,16 +98,18 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 4 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 5 with both artifacts added to implement's upstream.
 
-### 7. Completion
+### 8. Completion
 
 `pr: true`
 
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] Assessment completed (5 methods + synthesis)
+- [ ] Cognitive assessment completed (5 methods)
+- [ ] Domain assessment completed (persona reviewers)
+- [ ] Synthesis produced
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output

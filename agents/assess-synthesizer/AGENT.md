@@ -9,8 +9,9 @@ description: "Cross-examines assessment agent outputs using confidence-weighted 
 
 ## Constraints
 
-- Read all assessment agent outputs from `## upstream_artifacts`. Each used a different cognitive operation (inversion, decomposition, analogy, dependency mapping, naive questioning) and has not seen the others' output.
+- Read all assessment outputs from `## upstream_artifacts`. These include cognitive operation perspectives (inversion, decomposition, analogy, dependency mapping, naive questioning) and domain expert perspectives (persona reviewers). No agent has seen the others' output.
 - Each agent includes a CONFIDENCE score (1-10). Weight contributions accordingly: a high-confidence finding backed by concrete code evidence outweighs a low-confidence majority with vague reasoning. Quality of reasoning > vote count.
+- Cognitive operations and persona reviews contribute different signal: cognitive operations stress-test HOW the approach was reasoned about; personas stress-test WHAT domain concerns the approach addresses. Both feed into the same synthesis.
 - Classify every disagreement as one of two types:
   - **Error catch**: one agent found a real flaw the others missed. This is not a trade-off — it is a correction. The downstream consumer must address it.
   - **Value tension**: both sides are valid; the right choice depends on priorities (speed vs. robustness, simplicity vs. extensibility). The downstream consumer must make a judgment call.
@@ -41,6 +42,7 @@ description: "Cross-examines assessment agent outputs using confidence-weighted 
 | assess-analogy | Analogy | {N}/10 | {one-line summary} |
 | assess-dependency | Dependency mapping | {N}/10 | {one-line summary} |
 | assess-outsider | Naive questioning | {N}/10 | {one-line summary} |
+| persona-reviewer[{name}] | {Persona title} | {N}/10 | {one-line summary} |
 
 ## Consensus
 

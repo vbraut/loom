@@ -1,6 +1,6 @@
 ---
 name: elicit-approach
-description: "Stress-tests a synthesized approach through structured reasoning methods. Applies cognitive techniques (pre-mortem, Socratic questioning, constraint relaxation, etc.) to surface gaps the assessment agents missed."
+description: "Stress-tests a synthesized approach through structured reasoning methods selected from the method registry. Applies cognitive techniques to surface gaps the assessment agents missed."
 ---
 
 # Elicit Approach
@@ -9,7 +9,9 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 
 ## Constraints
 
-- Read the assessment synthesis from `## upstream_artifacts`. This contains the approach after 5 independent cognitive evaluations and confidence-weighted synthesis.
+- Read the assessment synthesis from `## upstream_artifacts`. This contains the approach after independent cognitive evaluations, persona reviews, and confidence-weighted synthesis.
+- Read the method registry from `shared/elicitation-methods.csv` in the Loom plugin directory.
+- Select 10 methods that best match the content being elicited — balance foundational and specialized techniques. Consider: content type, complexity, risk level, domain, and creative potential.
 - Apply methods sequentially. Each method builds on findings from prior methods.
 - Only report findings that surface genuinely new concerns — not restatements of what the assessment synthesis already captured.
 - Write actionable findings: what's wrong, why it matters, and what to change.
@@ -17,34 +19,28 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 ## Process
 
 1. Read the assessment synthesis and ticket notes from `## upstream_artifacts` and `## ticket_notes`.
-2. Apply each applicable method from the registry below. Skip methods that don't apply to the content type.
-3. For each method, produce concrete findings or confirm the approach holds.
-4. Compile all findings into the output.
-
-## Method Registry
-
-Apply in order. Each method takes 1-3 sentences of analysis — depth over breadth.
-
-1. **Pre-mortem.** It's 3 months later and this failed. What went wrong? Work backward from the most plausible failure.
-2. **Socratic questioning.** For each major decision: why this and not something else? What evidence supports it? What would change your mind?
-3. **Constraint relaxation.** Remove one constraint at a time. Does the approach change significantly? If removing a constraint dramatically simplifies the solution, the constraint may be artificial.
-4. **Steel-man alternatives.** Take the rejected alternatives from the synthesis's Trade-offs Accepted. Make the strongest possible case for each. Does the rejection still hold?
-5. **Dependency inversion.** What if the assumed execution order is wrong? What if the thing you depend on isn't ready, changes its API, or disappears?
-6. **Second-order effects.** Beyond the immediate change — what does this enable or prevent in the future? Does it create lock-in?
-7. **Assumption surfacing.** List every implicit assumption. For each: what happens if it's wrong? Which ones have you NOT verified against the code?
-8. **Counterfactual.** If you had to solve this problem with the opposite approach (e.g., server-side instead of client-side, sync instead of async), what would be better about it?
-9. **Stakeholder lens.** Who else is affected by this change beyond the ticket author? Operations, security, other teams, end users?
-10. **Minimum viable test.** What is the cheapest way to validate the riskiest assumption before full implementation?
+2. Read the method registry from `shared/elicitation-methods.csv`.
+3. Analyze the content: type (PRD, plan, approach), complexity, stakeholder needs, risk level, creative potential.
+4. Select 10 methods from the registry that best match the context. Balance across categories — include mix of foundational (core, risk) and specialized (creative, competitive, technical) techniques.
+5. Apply each selected method sequentially. Use the method's description and output_pattern from the CSV as a guide.
+6. For each method, produce concrete findings or confirm the approach holds.
+7. Compile all findings into the output.
 
 ## Output
 
 ```
+## Methods Selected
+
+| # | Category | Method | Why Selected |
+|---|----------|--------|--------------|
+| 1 | {category} | {method_name} | {brief reason for selection} |
+
 ## Elicitation Findings
 
 ### {Method name}
 
 **Finding:** {what the method revealed}
-**Impact:** {why it matters — Critical / High / Medium / Low}
+**Impact:** {Critical / High / Medium / Low}
 **Recommendation:** {what to change in the approach}
 
 ...

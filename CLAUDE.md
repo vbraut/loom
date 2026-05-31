@@ -3,9 +3,10 @@
 ## Architecture
 
 - Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
-- Shared modules in `shared/` — config, claim, transition
-- Playbooks in `playbooks/` — declarative step sequences per ticket type
+- Shared modules in `shared/` — config, claim, transition, quality-principles, elicitation-methods.csv
+- Playbooks in `playbooks/` — declarative step sequences per ticket type, with conditional steps via `**When:**`
 - Agents in `agents/<name>/AGENT.md` — subagents spawned by the orchestrator (doers and reviewers alike)
+- Personas in `personas/<name>.md` — domain expert profiles injected into persona-reviewer agent; `_universal.md` for shared quality principles
 - Templates in `templates/` — universal methodology, not project-specific
 - Scripts in `scripts/` — `validate.sh` (structural checks), `install-hooks.sh` (pre-commit hook)
 - Plugin manifest in `.claude-plugin/plugin.json`

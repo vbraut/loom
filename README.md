@@ -85,9 +85,10 @@ Agents do the work. Humans approve at review gates.
 
 ## Concepts
 
-- **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, requirements-reviewer)
+- **Agents** — single-purpose subagents, both doers and reviewers (e.g., implement, requirements-reviewer, persona-reviewer)
+- **Personas** — domain expert profiles (PM, UX, Security, Data, etc.) injected into the parameterized persona-reviewer agent for domain-specific assessment
 - **Orchestrator** — glue between backlog, git, and playbooks: picks tickets, manages worktrees, executes the right playbook, transitions state
-- **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context
+- **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context. Supports conditional steps via `**When:**` fields
 
 ## Ticket types
 
@@ -105,7 +106,7 @@ Agents do the work. Humans approve at review gates.
 
 Loom's agent design is informed by multi-agent deliberation research. The principles below shaped the architecture; the specific agents and workflow are Loom's own design.
 
-**Method diversity over persona diversity.** DMAD — *"Breaking Mental Set to Improve Reasoning through Diverse Multi-Agent Debate"* (ICLR 2025) — showed that assigning structurally different reasoning methods to same-model agents outperforms giving them different personas. DMAD uses generic prompting strategies (CoT, SBP, PoT); Loom adapts the principle to code analysis with five domain-specific cognitive operations: inversion, decomposition, analogy, dependency mapping, and naive questioning.
+**Method diversity AND domain diversity.** DMAD — *"Breaking Mental Set to Improve Reasoning through Diverse Multi-Agent Debate"* (ICLR 2025) — showed that assigning structurally different reasoning methods to same-model agents outperforms giving them different personas alone. Loom applies both: five cognitive operations (inversion, decomposition, analogy, dependency mapping, naive questioning) provide method diversity, while persona-based reviewers (PM, Dev, UX, Security, Data, etc.) provide domain expertise diversity. Cognitive operations stress-test HOW the approach was reasoned about; personas stress-test WHAT domain concerns it addresses.
 
 **Single-round independence.** DMAD itself uses multi-round cross-talk (agents refine after seeing peers). Loom's assessment agents run independently with no cross-talk — a deliberate trade-off. M3MADBench (arXiv 2601.02854, 2026) found that 65% of multi-agent errors come from "collective delusion" where agents mutually reinforce wrong assumptions. Independence sacrifices self-correction but avoids groupthink. Iterative refinement happens later, in the convergence review loop.
 
@@ -114,6 +115,10 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 **Collaborative over adversarial.** M3MADBench showed collaborative analysis outperforms adversarial across all five tested domains — adversarial framing introduces divergent noise that degrades results. Loom's agents seek truth through independent analysis, not assigned positions.
 
 **Disagreement classification and trade-off naming.** Error catches (one agent found a real flaw) vs. value tensions (both sides valid, priorities decide) and explicit "What You Lose" cost naming draw from the Council Review pattern, itself built on Karpathy's LLM Council concept.
+
+**Universal quality principles.** All agents receive shared quality principles — quality over speed, pre-existing issues in touched files must be fixed, no partial solutions. These override agent-specific rules when in conflict, ensuring consistent standards across the entire workflow.
+
+**50-method elicitation registry.** After assessment synthesis, the elicit-approach agent selects 10 contextually relevant methods from a 50-method registry spanning 12 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
 
 ## Project footprint
 

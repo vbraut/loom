@@ -263,6 +263,51 @@ for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
 done
 [ "$pairing_ok" = true ] && ok "All review playbooks have matching work playbooks"
 
+# ── Personas ──────────────────────────────────────────────────────
+
+echo ""
+echo "--- Personas ---"
+
+persona_count=0
+if [ -d "$LOOM_ROOT/personas" ]; then
+  if [ -f "$LOOM_ROOT/personas/_universal.md" ]; then
+    ok "personas/_universal.md"
+  else
+    err "personas/_universal.md not found (required for quality principles injection)"
+  fi
+
+  for persona in "$LOOM_ROOT"/personas/*.md; do
+    [ -f "$persona" ] || continue
+    base=$(basename "$persona" .md)
+    [ "$base" = "_universal" ] && continue
+    persona_count=$((persona_count + 1))
+  done
+  echo "  ($persona_count personas found)"
+else
+  err "personas/ directory not found"
+fi
+
+# ── Shared modules extended ──────────────────────────────────────
+
+echo ""
+echo "--- Shared extended ---"
+
+for module in quality-principles; do
+  module_path="$LOOM_ROOT/shared/$module.md"
+  if [ -f "$module_path" ]; then
+    ok "shared/$module.md"
+  else
+    err "shared/$module.md not found"
+  fi
+done
+
+if [ -f "$LOOM_ROOT/shared/elicitation-methods.csv" ]; then
+  method_count=$(tail -n +2 "$LOOM_ROOT/shared/elicitation-methods.csv" | wc -l | tr -d ' ')
+  ok "shared/elicitation-methods.csv ($method_count methods)"
+else
+  err "shared/elicitation-methods.csv not found"
+fi
+
 # ── Scripts ───────────────────────────────────────────────────────
 
 echo ""
