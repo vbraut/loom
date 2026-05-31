@@ -1,6 +1,6 @@
 # implementation
 
-Feature implementation playbook. Implements code from an approved plan. Requires `pr: true` for transition.
+Feature implementation playbook. Produces an implementation plan (assessed, elicited, and converged), then implements code and validates through convergence, testing, and visual verification. Requires `pr: true` for transition.
 
 ## Steps
 
@@ -9,54 +9,112 @@ Feature implementation playbook. Implements code from an approved plan. Requires
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-Explore the codebase architecture, locate relevant files and patterns for implementation.
+Explore the codebase architecture with a code focus — locate relevant files, trace dependency chains, identify patterns, and draft a proposed implementation approach.
 
-### 2. Debate approach
+### 2. Draft implementation plan
 
-**Agents:** debate-inversion, debate-decomposition, debate-analogy, debate-dependency, debate-outsider (parallel)
+**Agent:** draft-plan
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+**Output path:** `.loom/artifacts/{ticket_id}/plan.md`
+
+Create a technical implementation plan mapping requirements to file changes, ordered by dependency, with alternatives considered and test expectations.
+
+### 3. Assess plan
+
+**Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (parallel)
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/plan.md`
 
 **Agent output paths:**
-- debate-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- debate-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- debate-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- debate-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- debate-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
+- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion.md`
+- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
+- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
+- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Five cognitive operations evaluate the proposed implementation approach independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the build sequence correct?), outsider (what insider knowledge does this assume?). If the ticket references an implementation plan, agents should read it from the worktree. Each agent includes a confidence score for weighted synthesis.
+Five cognitive operations evaluate the implementation plan independently using method diversity (DMAD): inversion (assume it failed — what caused it?), decomposition (break into atomic claims — which are load-bearing?), analogy (what existing pattern solves this better?), dependency mapping (what blocks what — is the build sequence correct?), outsider (what insider knowledge does this assume?). Each agent includes a confidence score for weighted synthesis.
 
-### 3. Synthesize debate
+### 4. Synthesize assessments
 
-**Agent:** debate-synthesizer
+**Agent:** assess-synthesizer
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/perspective-inversion.md`
 - `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
 - `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-**Output path:** `.loom/artifacts/{ticket_id}/debate-synthesis.md`
+**Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
 Cross-examine all perspectives, resolve disagreements, and produce a synthesized implementation approach.
 
-### 4. Implement
+### 5. Elicit
+
+**Agent:** elicit-approach
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
+**Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
+
+Stress-test the synthesized approach through structured reasoning methods — pre-mortem, Socratic questioning, constraint relaxation, steel-man alternatives, dependency inversion, second-order effects, assumption surfacing, counterfactual, stakeholder lens, and minimum viable test.
+
+### 6. Revise plan
+
+**Agent:** apply-review-fixes
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/plan.md`
+- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
+- `.loom/artifacts/{ticket_id}/elicitation.md`
+**Output path:** `.loom/artifacts/{ticket_id}/plan-revisions.md`
+
+Incorporate assessment and elicitation findings into the implementation plan.
+
+### 7. Converge plan
+
+**Agents:** requirements-reviewer, regression-analyst, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
+**Verdict logic:** AND
+**Consecutive clean rounds:** 2
+**Max rounds:** 5
+**On needs-work:** apply-review-fixes
+**On max rounds:** Proceed to next step. Append to ticket_notes:
+  "Plan convergence: {round} rounds, unresolved feedback — see artifacts."
+
+Reviewers evaluate the implementation plan for completeness and risk. requirements-reviewer traces spec requirements to plan items. regression-analyst reads the plan's proposed file changes and traces consumer impact. security-reviewer evaluates security posture. edge-case-hunter identifies boundary conditions the plan doesn't account for. adversarial-reviewer stress-tests logical consistency.
+
+**Upstream for reviewers:**
+- `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/plan.md`
+
+**Reviewer output paths:**
+- requirements-reviewer: `.loom/artifacts/{ticket_id}/plan-requirements-r{N}.md`
+- regression-analyst: `.loom/artifacts/{ticket_id}/plan-regression-r{N}.md`
+- security-reviewer: `.loom/artifacts/{ticket_id}/plan-security-r{N}.md`
+- edge-case-hunter: `.loom/artifacts/{ticket_id}/plan-edge-cases-r{N}.md`
+- adversarial-reviewer: `.loom/artifacts/{ticket_id}/plan-adversarial-r{N}.md`
+
+**Feedback agent output path:** `.loom/artifacts/{ticket_id}/plan-fixes-r{N}.md`
+
+### 8. Implement
 
 **Agent:** implement
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/debate-synthesis.md`
+- `.loom/artifacts/{ticket_id}/plan.md`
+- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
-Implement the changes described in the ticket using the debated approach. If the ticket references an implementation plan (created by a planning ticket and merged to main), the plan file is in the worktree — read it for the detailed breakdown of changes. Write a change summary to the output path.
+Implement the changes described in the converged plan. The plan has been assessed, elicited, and converged — follow it directly. Write a change summary to the output path.
 
-### 5. Converge
+### 9. Converge code
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, design-system-reviewer (parallel)
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
-  "Convergence: {round} rounds, unresolved feedback — see artifacts."
+  "Code convergence: {round} rounds, unresolved feedback — see artifacts."
+
+Reviewers evaluate the implemented code changes. requirements-reviewer traces spec requirements to code changes. regression-analyst reads the diff and traces consumer impact. simplification-reviewer checks for unnecessary complexity. security-reviewer evaluates security posture. edge-case-hunter traces boundary conditions. design-system-reviewer audits UI code for design system compliance.
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -68,10 +126,11 @@ Implement the changes described in the ticket using the debated approach. If the
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
 - security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
 - edge-case-hunter: `.loom/artifacts/{ticket_id}/edge-cases-r{N}.md`
+- design-system-reviewer: `.loom/artifacts/{ticket_id}/design-system-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 6. Verify
+### 10. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -83,9 +142,9 @@ Implement the changes described in the ticket using the debated approach. If the
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 4 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 8 with both artifacts added to implement's upstream.
 
-### 7. Capture
+### 11. Capture
 
 **Agent:** capture-screenshots
 **Upstream:**
@@ -95,7 +154,7 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 
 Capture the running application at mobile and desktop viewports.
 
-### 8. Visual verify
+### 12. Visual verify
 
 **Agent:** visual-parity-reviewer
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
@@ -103,18 +162,22 @@ Capture the running application at mobile and desktop viewports.
 
 Compare captured screenshots against mock or reference images.
 
-**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 4 with the visual parity artifact added to implement's upstream.
+**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 8 with the visual parity artifact added to implement's upstream.
 
-### 9. Completion
+### 13. Completion
 
 `pr: true`
 
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] Debate completed (5 methods + synthesis)
+- [ ] draft-plan produced implementation plan
+- [ ] Assessment completed (5 methods + synthesis)
+- [ ] Elicitation completed
+- [ ] Plan revised with assessment and elicitation findings
+- [ ] Plan convergence ran (passed or hit max rounds with note)
 - [ ] implement produced output and modified worktree
-- [ ] Convergence ran (passed or hit max rounds with note)
+- [ ] Code convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
 - [ ] test-coverage produced output
 - [ ] capture-screenshots produced output

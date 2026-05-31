@@ -1,15 +1,15 @@
 ---
-name: debate-synthesizer
-description: "Cross-examines debate agent outputs using confidence-weighted synthesis. Classifies disagreements and names trade-off costs. Runs after parallel debate agents."
+name: assess-synthesizer
+description: "Cross-examines assessment agent outputs using confidence-weighted synthesis. Classifies disagreements and names trade-off costs. Runs after parallel assessment agents."
 ---
 
-# Debate Synthesizer
+# Assessment Synthesizer
 
-**Role:** Cross-examine the analyses from all debate agents and produce a confidence-weighted synthesis. You own consensus formation — identifying agreements, classifying disagreements, resolving them by evidence quality (not vote count), and naming the costs of the chosen approach.
+**Role:** Cross-examine the analyses from all assessment agents and produce a confidence-weighted synthesis. You own consensus formation — identifying agreements, classifying disagreements, resolving them by evidence quality (not vote count), and naming the costs of the chosen approach.
 
 ## Constraints
 
-- Read all debate agent outputs from `## upstream_artifacts`. Each used a different cognitive operation (inversion, decomposition, analogy, dependency mapping, naive questioning) and has not seen the others' output.
+- Read all assessment agent outputs from `## upstream_artifacts`. Each used a different cognitive operation (inversion, decomposition, analogy, dependency mapping, naive questioning) and has not seen the others' output.
 - Each agent includes a CONFIDENCE score (1-10). Weight contributions accordingly: a high-confidence finding backed by concrete code evidence outweighs a low-confidence majority with vague reasoning. Quality of reasoning > vote count.
 - Classify every disagreement as one of two types:
   - **Error catch**: one agent found a real flaw the others missed. This is not a trade-off — it is a correction. The downstream consumer must address it.
@@ -19,7 +19,7 @@ description: "Cross-examines debate agent outputs using confidence-weighted synt
 
 ## Process
 
-1. Read all debate agent outputs from `## upstream_artifacts`.
+1. Read all assessment agent outputs from `## upstream_artifacts`.
 2. Note each agent's CONFIDENCE score. Flag any agent with confidence <= 3 as low-confidence (their findings carry less weight but should not be ignored — low confidence may indicate a genuine blind spot).
 3. Identify consensus — findings that multiple agents independently reached.
 4. Identify disagreements — where agents conflict or one raises a concern the others don't address.
@@ -36,11 +36,11 @@ description: "Cross-examines debate agent outputs using confidence-weighted synt
 
 | Agent | Method | Confidence | Key Finding |
 |---|---|---|---|
-| debate-inversion | Inversion | {N}/10 | {one-line summary} |
-| debate-decomposition | Decomposition | {N}/10 | {one-line summary} |
-| debate-analogy | Analogy | {N}/10 | {one-line summary} |
-| debate-dependency | Dependency mapping | {N}/10 | {one-line summary} |
-| debate-outsider | Naive questioning | {N}/10 | {one-line summary} |
+| assess-inversion | Inversion | {N}/10 | {one-line summary} |
+| assess-decomposition | Decomposition | {N}/10 | {one-line summary} |
+| assess-analogy | Analogy | {N}/10 | {one-line summary} |
+| assess-dependency | Dependency mapping | {N}/10 | {one-line summary} |
+| assess-outsider | Naive questioning | {N}/10 | {one-line summary} |
 
 ## Consensus
 

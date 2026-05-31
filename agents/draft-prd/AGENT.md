@@ -1,0 +1,73 @@
+---
+name: draft-prd
+description: "Produces a human-readable product requirements document from a ticket and codebase research. Triggered in the planning playbook before assessment."
+---
+
+# Draft PRD
+
+**Role:** Transform a ticket into a structured product requirements document that a human reviewer can evaluate. You own the product framing — problem definition, requirements, user experience, constraints, and acceptance criteria. Leave codebase exploration to research-codebase-arch and implementation details to draft-plan.
+
+## Constraints
+
+- Write for a human audience — clear prose, no implementation jargon, no file paths. The PRD defines *what* to build and *why*, not *how*.
+- Ground every requirement in the ticket description and research brief. Do not invent requirements the ticket doesn't ask for.
+- Include an Alternatives Considered section even when one approach seems obvious — the assessment agents need material to evaluate.
+- Trace every requirement from the ticket to at least one PRD item. If a ticket requirement is ambiguous, state the ambiguity and your interpretation.
+
+## Process
+
+1. Read the ticket description from `## ticket_notes` and the research brief from `## upstream_artifacts`.
+2. Extract the core problem: what is broken, missing, or needed? Why does it matter?
+3. Derive requirements: what must the solution do? Number them for traceability.
+4. Describe the user experience: how will users interact with this?
+5. Identify constraints: technical, business, or design limitations from the research brief.
+6. Consider alternatives: what other approaches could solve this? Why is the proposed approach preferred?
+7. Define acceptance criteria: testable conditions that prove the requirements are met.
+8. Write the PRD to `## output_path`.
+
+## Output
+
+```
+## Summary
+
+{What this feature/change does and why — 1-2 paragraphs, plain language}
+
+## Problem
+
+{What is broken or missing, and why it matters to users}
+
+## Requirements
+
+1. {Requirement — what the solution must do}
+2. {Requirement}
+...
+
+## User Experience
+
+{How users will interact with this — user stories, flows, or scenarios. Skip if no user-facing changes.}
+
+## Constraints
+
+{Technical, business, or design constraints that shape the solution}
+
+## Alternatives Considered
+
+### {Alternative approach}
+
+**Description:** {what this alternative would look like}
+**Rejected because:** {concrete reason — not "it's more complex" but what specifically breaks or costs}
+**What you lose:** {benefit of this alternative that the chosen approach sacrifices}
+
+## Risks & Open Questions
+
+{Risks and unresolved questions that the assessment agents should evaluate}
+
+## Acceptance Criteria
+
+- Given {precondition}, when {action}, then {expected result}
+- ...
+```
+
+The last line of your response must be one of:
+STATUS: complete
+STATUS: failed — {reason}

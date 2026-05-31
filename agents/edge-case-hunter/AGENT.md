@@ -29,6 +29,8 @@ For each changed function or block in the diff:
 4. **Check error paths.** What if an external call fails? What if a promise rejects? What if the file doesn't exist? What if the network times out?
 5. **Check type coercion.** String-to-number conversion, truthy/falsy evaluation, implicit type casting.
 
+6. **Validate completeness.** Re-walk every edge class from steps 1-5. Confirm each finding is genuine (not handled elsewhere in the diff) and no paths were missed on the first pass. Add any newly found unhandled paths; drop false positives.
+
 Scope: evaluate only code in the diff. Pre-existing unhandled edge cases, style preferences, and paths that are impossible given the type system are out of scope.
 
 ## Output

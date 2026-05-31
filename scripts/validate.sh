@@ -216,6 +216,20 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
     fi
   done < <(grep -oE '\*\*Agent:\*\* [a-z][a-z0-9-]*' "$playbook" | sed 's/\*\*Agent:\*\* //' || true)
 
+  # Also check **Agents:** (plural) references — comma-separated lists of parallel agents
+  while IFS= read -r agents_line; do
+    [ -z "$agents_line" ] && continue
+    agents_value=$(echo "$agents_line" | sed 's/\*\*Agents:\*\* //')
+    for agent_ref in $(echo "$agents_value" | tr ',' '\n' | sed 's/ *(parallel)//; s/^ *//; s/ *$//'); do
+      [ -z "$agent_ref" ] && continue
+      echo "$agent_ref" | grep -qE '^[a-z][a-z0-9-]+$' || continue
+      if [ ! -f "$LOOM_ROOT/agents/$agent_ref/AGENT.md" ]; then
+        err "$rel_path references agent '$agent_ref' but agents/$agent_ref/AGENT.md not found"
+        crosscheck_ok=false
+      fi
+    done
+  done < <(grep -oE '\*\*Agents:\*\* [a-z][a-z0-9, -]*(\(parallel\))?' "$playbook" || true)
+
   # Also check **On needs-work:** references (convergence feedback agents)
   while IFS= read -r agent_ref; do
     [ -z "$agent_ref" ] && continue

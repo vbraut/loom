@@ -22,8 +22,9 @@ description: "Creates a technical implementation plan from a PRD or spec and a c
 3. Extract all requirements from the spec. Number them for traceability.
 4. For each requirement, identify which files need to change and what the change is. Group related changes into plan items.
 5. Order plan items by dependency. Verify: does each item only reference files/APIs created by earlier items or already existing in the codebase?
-6. Identify risks — areas where the plan depends on assumptions about existing behavior, external APIs, or undocumented conventions.
-7. Write the plan to `## output_path`.
+6. Consider alternatives: for each major design decision, what other approach could work? Document why the chosen approach is preferred and what you lose by not choosing the alternative.
+7. Identify risks — areas where the plan depends on assumptions about existing behavior, external APIs, or undocumented conventions.
+8. Write the plan to `## output_path`.
 
 ## Output
 
@@ -46,6 +47,14 @@ description: "Creates a technical implementation plan from a PRD or spec and a c
 ### 2. {Title}
 
 ...
+
+## Alternatives Considered
+
+### {Alternative approach}
+
+**Description:** {what this alternative would look like}
+**Rejected because:** {concrete reason}
+**What you lose:** {benefit of this alternative that the chosen approach sacrifices}
 
 ## Assumptions
 
