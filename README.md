@@ -235,31 +235,21 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
 
 ### code-fix
 
-Bug investigation and fix. Requires PR for transition. 8 steps.
+Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
 
 ```
  1 ── research-codebase-arch ────── locate bug, draft fix approach
- │
- │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
- 2    │ assess-inversion      assess-dependency     persona-pm      │
- │    │ assess-decomposition  assess-outsider       persona-dev     │
- │    │ assess-analogy                              persona-{...}   │
- │    └────────────────── outputs: *-r1.md (initial round) ────────┘
- │
- 3 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
- │                                   outputs: *-r2.md, *-r3.md, ...
- 4 ── assess-synthesizer ────────── compile converged positions
- 5 ── implement ─────────────────── fix the bug
+ 2 ── implement ─────────────────── fix the bug
  │
  │    ┌─ CONVERGE (max 6 rounds, 2 consecutive clean) ─────────────┐
- 6    │ requirements-reviewer    security-reviewer                   │
+ 3    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  design-system-reviewer†             │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
- 7 ── run-tests + test-coverage ─── parallel; ↻ retry from 5 on failure
- 8 ── completion (PR required)
+ 4 ── run-tests + test-coverage ─── parallel; ↻ retry from 2 on failure
+ 5 ── completion (PR required)
 
 † when design_system configured
 ```

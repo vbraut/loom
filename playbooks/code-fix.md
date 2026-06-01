@@ -1,6 +1,6 @@
 # code-fix
 
-Bug fix playbook. Requires `pr: true` for transition.
+Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix through convergence and testing. Requires `pr: true` for transition.
 
 ## Steps
 
@@ -11,59 +11,16 @@ Bug fix playbook. Requires `pr: true` for transition.
 
 Explore the codebase architecture, locate the bug, identify relevant files and patterns, and draft a proposed fix approach.
 
-### 2. Assess approach
-
-**Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (named, parallel)
-**Agent:** persona-reviewer (named, parallel)
-**Persona selection:**
-  Always: pm, dev
-  Dynamic (select 0-2 based on ticket content): security, data, qa, devops
-**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
-
-**Agent output paths:**
-- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
-- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
-- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
-- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
-- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
-- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`
-
-Initial assessment: `{R}=1`. Five cognitive operations and domain experts evaluate the proposed fix independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
-
-### 3. Cross-talk
-
-**Named agents:** all agents from step 2
-**Max rounds:** 3
-**On max rounds:** Proceed to next step. Append to ticket_notes:
-  "Cross-talk: {round} rounds, not fully converged — see artifacts."
-
-Assessment agents review each other's findings via SendMessage. Each round increments `{R}` (round 2 = first cross-talk round). Agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and write updated output to their round-numbered path. Exits when all agents report converged or max rounds reached.
-
-### 4. Synthesize assessments
-
-**Agent:** assess-synthesizer
-**Upstream:** latest round's output files:
-- `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
-- `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
-- `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
-- `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
-- `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
-- `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
-**Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
-
-Compile the converged positions from cross-talk into a unified fix approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
-
-### 5. Implement
+### 2. Implement
 
 **Agent:** implement
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
-Fix the bug in the worktree using the assessed approach. Write a change summary to the output path.
+Fix the bug in the worktree using the researched approach. Write a change summary to the output path.
 
-### 6. Converge
+### 3. Converge
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
@@ -88,7 +45,7 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 7. Verify
+### 4. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -100,18 +57,15 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 5 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
 
-### 8. Completion
+### 5. Completion
 
 `pr: true`
 
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
-- [ ] Synthesis produced
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
