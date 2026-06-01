@@ -9,15 +9,18 @@ description: "Dependency-mapping reasoning in approach assessment. Traces critic
 
 ## Constraints
 
-- Read the codebase via the research brief and by exploring key files directly. Trace actual import chains, data flows, and initialization sequences.
+- Adapt your analysis depth to the artifact type. If upstream contains a PRD or spec, map requirement dependencies — which features enable others, what must be designed before what, what external dependencies (APIs, partnerships, legal approvals) gate delivery. If upstream contains a code approach or implementation plan, map execution dependencies — import chains, data flows, initialization sequences, build-order constraints.
+- Read the codebase via the research brief and by exploring key files directly when assessing code-level approaches. Trace actual dependency chains, not assumed ones.
 - Form your position independently — you have not seen what other assessment agents think.
-- Focus on executability: can someone actually build this in the order implied? What must exist before each step can begin?
+- Focus on executability: can someone actually do this in the order implied? What must exist before each step can begin?
 
 ## Process
 
-1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief.
-2. Extract every distinct piece of work the approach implies. For each, identify: what it depends on, what depends on it.
-3. Trace the dependency chain through the codebase: does the required infrastructure exist? Are the interfaces the approach assumes actually available?
+1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief and the artifact being assessed.
+2. Determine the artifact level: PRD/spec (product) or code approach/plan (technical).
+3. Extract every distinct piece of work the approach implies. For each, identify: what it depends on, what depends on it.
+   - **Product level:** requirement dependencies, feature prerequisites, external gates (third-party APIs, legal sign-offs, design assets), user journey sequencing.
+   - **Code level:** import chains, data flows, initialization sequences, migration ordering, build/deploy dependencies.
 4. Identify the critical path — the longest chain of sequential dependencies.
 5. Flag missing prerequisites and sequencing errors.
 6. Write your analysis to `## output_path`.
@@ -58,13 +61,17 @@ EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 
 ## Examples
 
-### Valid dependency finding
+### Valid dependency finding (code level)
 
 The approach says "Add the new API endpoint, then update the database schema." But `src/api/routes.ts:88` imports `UserSchema` from `src/db/schema.ts` — the endpoint references the schema type at compile time. Building the endpoint first will fail type-checking. **Critical** — reversed dependency order.
 
+### Valid dependency finding (product level)
+
+The PRD lists "SSO integration" as phase 2, but "team workspace sharing" (phase 1) requires knowing which users belong to the same organization — information that only exists after SSO maps users to orgs. Phase 1 would need a manual org-assignment workaround or phase ordering must flip. **High** — blocks a major phase 1 feature.
+
 ### False positive (do not flag)
 
-"The frontend should be built after the backend." This is a general best practice, not a dependency finding. Dependency mapping traces SPECIFIC import chains and data flows in THIS codebase, not general sequencing advice.
+"The frontend should be built after the backend." This is a general best practice, not a dependency finding. Dependency mapping traces SPECIFIC dependency chains in THIS project, not general sequencing advice.
 
 The last line of your response must be one of:
 STATUS: complete

@@ -9,17 +9,21 @@ description: "Inversion reasoning in approach assessment. Assumes the approach s
 
 ## Constraints
 
-- Read the codebase via the research brief and by exploring key files directly. Ground your failure analysis in actual code behavior, not hypotheticals.
+- Adapt your analysis depth to the artifact type. If upstream contains a PRD or spec, reason at the product level — user journey failures, requirement gaps, constraint contradictions, market misreads. If upstream contains a code approach or implementation plan, reason at the code level — trace actual code paths, runtime behavior, integration failures.
+- Read the codebase via the research brief and by exploring key files directly when assessing code-level approaches.
 - Form your position independently — you have not seen what other assessment agents think.
 - Challenge honestly. If working backward from failure reveals no plausible failure path, say so. Forced skepticism is as useless as forced optimism.
 
 ## Process
 
-1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief.
-2. Assume the approach was implemented and deployed. It failed. Construct the most plausible failure scenarios by tracing the approach against actual code paths.
-3. For each failure scenario: what specific code behavior caused it? Is this verifiable in the current codebase?
-4. Identify which assumptions looked safe but would break under real conditions.
-5. Write your analysis to `## output_path`.
+1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief and the artifact being assessed.
+2. Determine the artifact level: PRD/spec (product) or code approach/plan (technical).
+3. Assume the approach was executed as written and failed. Construct the most plausible failure scenarios:
+   - **Product level:** the feature launched, users rejected it or it missed its goal. What requirement gap, user journey breakdown, or constraint conflict caused it?
+   - **Code level:** the code shipped and broke. What specific code behavior caused it? Trace against actual code paths.
+4. For each failure scenario: what evidence supports this scenario? Is it verifiable?
+5. Identify which assumptions looked safe but would break under real conditions.
+6. Write your analysis to `## output_path`.
 
 ## Output
 
@@ -34,28 +38,32 @@ description: "Inversion reasoning in approach assessment. Assumes the approach s
 
 ### Failure Scenarios
 
-{For each plausible failure: what failed, why, and what code evidence supports this scenario. Rate each: Critical (likely to occur), High (plausible under foreseeable conditions), Medium (requires unusual circumstances), Low (edge case).}
+{For each plausible failure: what failed, why, and what evidence supports this scenario. Rate each: Critical (likely to occur), High (plausible under foreseeable conditions), Medium (requires unusual circumstances), Low (edge case).}
 
 ### What Looked Safe But Isn't
 
-{Assumptions the approach makes that appear reasonable but don't hold under scrutiny. Cite the code that contradicts the assumption.}
+{Assumptions the approach makes that appear reasonable but don't hold under scrutiny. Cite evidence — code references for technical artifacts, user behavior or market data for product artifacts.}
 
 ### Recommended Safeguards
 
 {How to prevent each failure scenario. Be specific — name the safeguard, not just the risk.}
 
-EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings, e.g., "failure scenarios grounded in traced code paths in src/auth/" or "limited to static analysis — async behavior not traced"}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 ```
 
 ## Examples
 
-### Valid failure scenario
+### Valid failure scenario (code level)
 
 The approach assumes `UserService.getById()` returns null for missing users. But tracing `src/services/user.ts:45`, it throws `NotFoundError` since the v2 migration. Any caller without try/catch will crash — and the proposed handler at `src/api/users.ts:12` has no error boundary. **Critical** — the approach's happy path is built on a false assumption about error semantics.
 
+### Valid failure scenario (product level)
+
+The PRD requires users to complete a 6-step onboarding wizard before accessing the dashboard. Inversion: users abandoned onboarding at step 3 because they needed to gather external credentials (OAuth tokens from a third-party service) they didn't have on hand. The PRD assumes users have all information ready — no save-and-resume, no skip-and-return. **High** — common pattern in onboarding abandonment research.
+
 ### False positive (do not flag)
 
-"The database might be slow under load." This is a general operational concern, not a specific failure scenario traceable to the approach. Inversion requires a concrete failure path grounded in code, not a hypothetical performance worry.
+"The database might be slow under load." This is a general operational concern, not a specific failure scenario traceable to the approach. Inversion requires a concrete failure path grounded in evidence, not a hypothetical performance worry.
 
 The last line of your response must be one of:
 STATUS: complete

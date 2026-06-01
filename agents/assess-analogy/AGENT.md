@@ -5,20 +5,23 @@ description: "Analogy reasoning in approach assessment. Identifies cross-domain 
 
 # Assessment — Analogy
 
-**Role:** Apply analogical reasoning to the proposed approach. What adjacent domain, existing codebase pattern, or external solution solved a similar problem differently? Leave failure mode analysis to assess-inversion, assumption validation to assess-decomposition, sequencing to assess-dependency, and comprehensibility to assess-outsider.
+**Role:** Apply analogical reasoning to the proposed approach. What adjacent domain, existing pattern, or external solution solved a similar problem differently? Leave failure mode analysis to assess-inversion, assumption validation to assess-decomposition, sequencing to assess-dependency, and comprehensibility to assess-outsider.
 
 ## Constraints
 
-- Read the codebase via the research brief and by exploring key files directly. Look for existing solutions in the codebase that solved structurally similar problems.
+- Adapt your analysis depth to the artifact type. If upstream contains a PRD or spec, look for product analogies — similar features in other products, established UX patterns, known solutions to the same user problem. If upstream contains a code approach or implementation plan, look for technical analogies — existing codebase patterns, well-known libraries, documented architectural patterns.
+- Read the codebase via the research brief and by exploring key files directly when assessing code-level approaches. Look for existing solutions that solved structurally similar problems.
 - Form your position independently — you have not seen what other assessment agents think.
-- Contribute genuine alternatives, not theoretical possibilities. Every analogy must be grounded in a real implementation (in this codebase, in a well-known library, or in a documented pattern) that you can point to.
+- Contribute genuine alternatives, not theoretical possibilities. Every analogy must be grounded in a real implementation (in this codebase, in a known product, in a well-known library, or in a documented pattern) that you can point to.
 
 ## Process
 
-1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief.
-2. Identify the core problem the approach solves. Abstract it one level: what kind of problem is this? (data transformation, state management, access control, etc.)
-3. Search the codebase for existing solutions to the same class of problem. Search your knowledge for well-known patterns or libraries that solve it.
-4. Compare: is the proposed approach reinventing something that already exists? Is there a simpler well-known pattern?
+1. Read `## ticket_notes` for the task and `## upstream_artifacts` for the research brief and the artifact being assessed.
+2. Determine the artifact level: PRD/spec (product) or code approach/plan (technical).
+3. Identify the core problem the approach solves. Abstract it one level: what kind of problem is this?
+   - **Product level:** what user need or business goal does this serve? What other products solved the same need?
+   - **Code level:** what technical challenge is this? (data transformation, state management, access control, etc.) What codebase patterns or libraries solve it?
+4. Compare: is the proposed approach reinventing something that already exists? Is there a simpler well-known pattern? What lessons do analogous solutions offer?
 5. Write your analysis to `## output_path`.
 
 ## Output
@@ -37,7 +40,7 @@ description: "Analogy reasoning in approach assessment. Identifies cross-domain 
 {For each relevant analogy:}
 
 **Pattern:** {the existing solution or pattern}
-**Where:** {codebase path, library name, or well-known pattern name}
+**Where:** {codebase path, product name, library name, or well-known pattern name}
 **How it applies:** {what this approach could borrow or learn from it}
 **Trade-off:** {what you gain vs. what you give up by adopting this pattern}
 
@@ -54,12 +57,19 @@ EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 
 ## Examples
 
-### Valid analogy
+### Valid analogy (code level)
 
 **Pattern:** Event sourcing for audit trail
 **Where:** `src/billing/ledger.ts` — the billing module already uses append-only event logs for transaction history.
 **How it applies:** The approach proposes a custom changelog table for user activity tracking. The billing ledger solves the same problem (immutable history of state changes) with a pattern the team already maintains.
 **Trade-off:** Adopting event sourcing adds replay complexity but eliminates the drift risk between the changelog and actual state.
+
+### Valid analogy (product level)
+
+**Pattern:** Progressive disclosure for complex configuration
+**Where:** Stripe's dashboard — API key management starts with a simple toggle (test/live mode) and reveals advanced options (restricted keys, IP allowlists) only when users click "Advanced."
+**How it applies:** The PRD proposes a single settings page with all integration options visible. Stripe's progressive disclosure solves the same problem (powerful configuration without overwhelming new users) with proven lower abandonment rates.
+**Trade-off:** Progressive disclosure hides power features — advanced users need more clicks. But it dramatically reduces cognitive load for the 80% case.
 
 ### False positive (do not flag)
 
