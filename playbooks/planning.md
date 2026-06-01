@@ -33,7 +33,7 @@ Create a human-readable PRD covering problem statement, requirements, user exper
 - assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Five cognitive operations evaluate the PRD independently using method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, and naive questioning. Each agent includes a confidence score for weighted synthesis.
+Five cognitive operations evaluate the PRD independently using method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, and naive questioning.
 
 ### 4. Assess PRD (domain expertise)
 
@@ -47,7 +47,7 @@ Five cognitive operations evaluate the PRD independently using method diversity 
 
 **Agent output paths:** `.loom/artifacts/{ticket_id}/persona-{name}.md`
 
-Domain experts evaluate the PRD through their professional lens — decision rules, boundaries, and evaluation criteria specific to their discipline. Each includes a confidence score for weighted synthesis.
+Domain experts evaluate the PRD through their professional lens — decision rules, boundaries, and evaluation criteria specific to their discipline.
 
 ### 5. Cross-examine assessments
 

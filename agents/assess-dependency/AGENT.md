@@ -53,7 +53,7 @@ description: "Dependency-mapping reasoning in approach assessment. Traces critic
 
 {Steps that are ordered wrong, circular dependencies, or parallel work that's actually sequential.}
 
-CONFIDENCE: {1-10} — {one sentence: why this confidence level}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 ```
 
 ## Examples

@@ -16,7 +16,6 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
   - `must-fix`: Violates a Decision Rule or NEVER boundary. Would cause user harm, data loss, or trust erosion.
   - `should-fix`: Missed opportunity per Evaluation Criteria. Degraded quality or experience.
   - `nit`: Improvement suggestion outside core criteria.
-- Include a confidence score (1-10) reflecting how certain you are in your findings. High confidence = grounded in concrete evidence from the artifacts. Low confidence = based on assumptions or incomplete information.
 - Only report findings that require YOUR persona's domain expertise. Drop findings that any general reviewer would catch.
 
 ## Evaluation
@@ -40,8 +39,6 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
 
 1. `{location}` — **{severity}** — {description from persona's perspective}
    Recommendation: {what to change}
-
-## Confidence: {1-10}
 
 ## Summary
 

@@ -16,7 +16,7 @@ description: "Facilitates structured cross-examination between independent asses
 
 ## Process
 
-1. Read all upstream assessment outputs. Note each agent's CONFIDENCE score and key findings.
+1. Read all upstream assessment outputs. Note each agent's key findings and evidence basis.
 2. Map agreements — findings that multiple independent agents reached. Note whether agreement spans the cognitive/persona boundary (stronger signal) or stays within one group.
 3. Map disagreements — where agents conflict or one raises a concern others dismiss. For each, identify the specific evidence each side cites.
 4. For each disagreement, simulate a challenge-response exchange:
@@ -50,8 +50,8 @@ description: "Facilitates structured cross-examination between independent asses
 ### {Disagreement topic}
 
 **Positions:**
-- {Agent A} ({confidence}/10): {position with evidence}
-- {Agent B} ({confidence}/10): {opposing position with evidence}
+- {Agent A}: {position with evidence}
+- {Agent B}: {opposing position with evidence}
 
 **Challenge:** {strongest objection, citing specific evidence}
 **Response:** {best defense, citing specific evidence}

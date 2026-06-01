@@ -49,7 +49,7 @@ description: "Analogy reasoning in approach assessment. Identifies cross-domain 
 
 {Where the proposed approach is genuinely the best fit and analogies don't apply. Acknowledge when custom is correct.}
 
-CONFIDENCE: {1-10} — {one sentence: why this confidence level}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 ```
 
 ## Examples

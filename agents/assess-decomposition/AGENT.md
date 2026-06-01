@@ -49,7 +49,7 @@ description: "Decomposition reasoning in approach assessment. Breaks the approac
 
 {How to fix or validate unverified/contradicted claims. Prioritize load-bearing ones.}
 
-CONFIDENCE: {1-10} — {one sentence: why this confidence level}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 ```
 
 ## Examples

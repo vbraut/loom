@@ -33,7 +33,7 @@ Create a technical implementation plan mapping requirements to file changes, ord
 - assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 
-Five cognitive operations evaluate the implementation plan independently using method diversity (DMAD). Each agent includes a confidence score for weighted synthesis.
+Five cognitive operations evaluate the implementation plan independently using method diversity (DMAD).
 
 ### 4. Assess plan (domain expertise)
 

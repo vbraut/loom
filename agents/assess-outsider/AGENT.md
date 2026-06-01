@@ -49,7 +49,7 @@ description: "Naive questioning in approach assessment. Zero assumed context —
 
 {What a fresh implementation agent would struggle with if given only this approach and the codebase. Specific missing context, not general "needs more detail."}
 
-CONFIDENCE: {1-10} — {one sentence: why this confidence level}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 ```
 
 ## Examples

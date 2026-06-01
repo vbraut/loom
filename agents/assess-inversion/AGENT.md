@@ -44,7 +44,7 @@ description: "Inversion reasoning in approach assessment. Assumes the approach s
 
 {How to prevent each failure scenario. Be specific — name the safeguard, not just the risk.}
 
-CONFIDENCE: {1-10} — {one sentence: why this confidence level, e.g., "8 — failure scenarios grounded in traced code paths" or "4 — limited visibility into the async behavior"}
+EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings, e.g., "failure scenarios grounded in traced code paths in src/auth/" or "limited to static analysis — async behavior not traced"}
 ```
 
 ## Examples
