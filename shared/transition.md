@@ -7,16 +7,16 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 ### 1. Commit worktree changes
 
 ```bash
-git add -A
+git add -A -- ':!.loom'
 git commit -m "$(cat <<'EOF'
 loom({ticket_id}): {ticket_title}
 EOF
 )"
 ```
 
-Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command.
+Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes all framework artifacts — they are ephemeral process state, not project deliverables.
 
-If there are no changes to commit, skip this step. `git add -A` relies on the project's `.gitignore` — ensure it covers build artifacts, logs, and credentials.
+If there are no changes to commit, skip this step.
 
 ### 2. Push and open PR (if `create_pr` is true)
 
@@ -81,7 +81,7 @@ git branch -d loom/{ticket_id_lowercase}
 
 If `git checkout` fails (dirty working tree), stop. The ticket is already `done` and the branch is preserved.
 
-If merge conflicts: prefer default branch for non-artifact files (config, dependencies, infrastructure — conflicts here break builds/deploys). Prefer worktree for artifact files (specs, plans, reviews, mocks under `.claude/` or `.loom/`). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
+If merge conflicts: prefer default branch for config, dependencies, and infrastructure (conflicts here break builds/deploys). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
 
 ## Review rejection transition
 
