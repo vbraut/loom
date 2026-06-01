@@ -28,7 +28,7 @@ description: "Explores project architecture and produces a structured context br
 
 ## Output
 
-Six required sections:
+Seven required sections:
 
 ```
 ## Inputs Received
