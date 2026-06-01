@@ -1,32 +1,6 @@
 # Loom
 
-```
-         .:|||:.                    .:|||:.
-       .:|     |:.                .:|     |:.
-      :|  SKILL  |:.  ─ warp ─ .:|  SKILL  |:
-      ':|       |:'    thread    ':|       |:'
-        ':|||:'                    ':|||:'
-            \\_______      _______//
-                     \\  //
-              ╔═══════╧╧═══════╗
-              ║   T H E        ║
-              ║   L O O M      ║
-              ╠════════════════╣
-              ║  ┌──────────┐  ║
-              ║  │ playbook │  ║        ┌─ ─ ─ ─ ─ ─ ─┐
-              ║  └─────┬────┘  ║           A G E N T S
-              ║     claim      ║──weft──│               │
-              ║     execute    ║          requirements-reviewer
-              ║     transition ║──weft──│ security-reviewer
-              ║  ┌─────┴────┐  ║        │               │
-              ║  │ worktree  │  ║        └─ ─ ─ ─ ─ ─ ─┘
-              ║  └──────────┘  ║
-              ╚═══╤════════╤═══╝
-             todo │        │ review
-          ┄┄┄┄┄┄┄┄┤        ├┄┄┄┄┄┄┄┄
-          backlog │ ticket │ done
-          ┄┄┄┄┄┄┄┄┴────────┴┄┄┄┄┄┄┄┄
-```
+![Loom](loom.png)
 
 AI-driven SDLC framework for Claude Code. One plugin, any project.
 

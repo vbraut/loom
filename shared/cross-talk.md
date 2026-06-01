@@ -45,7 +45,7 @@ Assessment agents from the preceding step must have been spawned with the `name`
 
    For persona-reviewer agents, use the name format `persona-{name}` matching how they were spawned.
 
-5. **Parse each agent's response.** Find the last line beginning with `CROSS-TALK:` (case-sensitive). Extract `converged` or `unresolved — {concerns}`.
+5. **Wait for all responses, then parse.** All SendMessage calls from step 4 are parallel — wait for every agent to respond before evaluating any results. Then, for each agent, find the last line beginning with `CROSS-TALK:` (case-sensitive). Extract `converged` or `unresolved — {concerns}`.
 
    **If SendMessage fails for any agent** (agent not responding, crashed, or errored): `ERROR: Cross-talk agent '{name}' did not respond. Aborting cross-talk.` — stop and follow the orchestrator's error handling.
 

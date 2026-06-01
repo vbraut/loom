@@ -44,7 +44,7 @@ When a step names an agent to invoke:
 7. For parallel agents: spawn all via multiple Agent tool calls.
 8. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
-If `{review_playbook}` is set (from claim.md), read it and follow it. If the playbook contains a `## Convergence` section, read `shared/convergence.md` from the Loom plugin directory and follow it.
+If `{review_playbook}` is set (from claim.md), read it and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step.
 
 If `{review_playbook}` is empty, skip Phase 2 — no review playbook agents to run. Retrieve work-phase artifact references via MCP `task_view(ticket_id)` and present them directly in the human gate.
 

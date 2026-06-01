@@ -35,7 +35,7 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). All paths passed to agents must be absolute, resolved from the worktree root. Set `cwd` to the worktree.
+2. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). When a step has `**Upstream for {agent}:**`, use that for the named agent instead of the default `**Upstream:**`. All paths passed to agents must be absolute, resolved from the worktree root. Set `cwd` to the worktree.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
@@ -77,9 +77,11 @@ When a step specifies `persona-reviewer` with a `**Persona selection:**` block:
    - API-only, no UI → `qa` instead of `ux`
    - Cross-cutting, multi-system → `tech-lead`, `architect`
    - User-facing flows → `end-user`
+   - Process-heavy, multi-team coordination → `sm`
+   - Public-facing documentation, API docs, help text → `tech-writer`
 3. Read `{loom_plugin_dir}/personas/_universal.md` and the selected persona file `{loom_plugin_dir}/personas/{name}.md`.
 4. Spawn `persona-reviewer` with an additional `## persona` section containing: the universal principles first, then a `---` separator, then the persona file content.
-5. Each persona-reviewer instance gets a distinct output path: `.loom/artifacts/{ticket_id}/persona-{name}.md`.
+5. Each persona-reviewer instance gets the output path defined in the playbook's **Agent output paths:** (e.g., `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`).
 
 ### Elicit-approach invocation
 
@@ -87,7 +89,7 @@ When spawning `elicit-approach`, include an additional `## method_registry` sect
 
 ### Retry protocol
 
-When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. Track retry count per step. If the step has a `**Max retries:**` field, stop retrying after that many attempts — follow the orchestrator's error handling with `ERROR: Step {step} exceeded max retries ({N}).`
+When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. Track retry count per step — each step has its own counter that persists across re-entries (if step 14 retries from step 10, step 12's counter is not reset when re-entered). If the step has a `**Max retries:**` field, stop retrying after that many attempts — follow the orchestrator's error handling with `ERROR: Step {step} exceeded max retries ({N}).`
 
 ### Verify step handling
 

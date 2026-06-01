@@ -11,6 +11,7 @@ Handle convergence loops declared in playbooks.
    - **Consecutive clean rounds** — integer (default 1 if not specified). Convergence exits only after this many consecutive rounds where all reviewers return `VERDICT: pass`.
    - **On needs-work** — feedback agent name
    - **On max rounds** — instruction text
+   - **Upstream for reviewers** — paths to pass as `## upstream_artifacts` to each reviewer
    - **Reviewer output paths** — per-agent path templates with `{N}` placeholder
    - **Feedback agent output path** — path template with `{N}` placeholder
 
@@ -37,4 +38,4 @@ Handle convergence loops declared in playbooks.
    - Store all reviewer output_paths from this round.
    - Increment `round`. Go to step 3.
 
-9. **If `round` > Max rounds and convergence not complete:** follow the **On max rounds** instruction from the convergence block. If the instruction includes "Append to ticket_notes", call `task_edit(ticket_id, notesAppend=[text])` with the quoted text, replacing `{round}` with the current round value. Return to the orchestrator — continue with the next playbook step.
+9. **If `round` >= Max rounds and convergence not complete:** follow the **On max rounds** instruction from the convergence block. If the instruction includes "Append to ticket_notes", call `task_edit(ticket_id, notesAppend=[text])` with the quoted text, replacing `{round}` with the current round value. Return to the orchestrator — continue with the next playbook step.
