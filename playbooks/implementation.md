@@ -106,7 +106,6 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`
-- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
 ### 11. Converge code
