@@ -7,25 +7,37 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 ### 1. Commit worktree changes
 
 ```bash
-git add -A
+git add -A -- . ':!.loom'
+git diff --cached --quiet
+```
+
+If `git diff --cached --quiet` exits 0, there are no staged changes — skip the commit and step 2.
+
+Otherwise, commit:
+
+```bash
 git commit -m "$(cat <<'EOF'
 loom({ticket_id}): {ticket_title}
 EOF
 )"
 ```
 
-Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command.
-
-If there are no changes to commit, skip this step. `git add -A` relies on the project's `.gitignore` — ensure it covers build artifacts, logs, and credentials.
+Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes all framework artifacts — they are ephemeral process state, not project deliverables.
 
 ### 2. Push and open PR (if `create_pr` is true)
 
 ```bash
 git -C {worktree_path} push -u origin loom/{ticket_id_lowercase}
 gh pr create --head loom/{ticket_id_lowercase} --base {default_branch} --title "loom({ticket_id}): {ticket_title}" --body "$(cat <<'EOF'
-{PR body from playbook artifacts}
+{PR body}
 EOF
 )"
+```
+
+**PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Tradeoffs` sections as the PR body. If it does not exist (e.g., non-code playbook), use the ticket description from `## ticket_notes` instead. Prefix the body with:
+```
+**Ticket:** {ticket_id} — {ticket_title}
+**Type:** {ticket_type}
 ```
 
 ### 3. Update ticket status
@@ -48,7 +60,9 @@ Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}
 
 ### 1. Create approved tickets
 
-For each proposal the human approved from the ticket-planner output:
+If `{approved_proposals}` is empty (no ticket-planner ran, or all proposals were rejected), skip this step.
+
+For each approved proposal:
 
 ```
 task_create(
@@ -59,8 +73,6 @@ task_create(
 )
 ```
 
-If the human modified a proposal before approving, use their modified values.
-
 ### 2. Transition ticket
 
 ```
@@ -70,18 +82,18 @@ task_edit(ticket_id, assignee=["@released"])
 
 ### 3. Merge and cleanup
 
-First verify the project root is on the default branch with a clean working tree:
+Run these commands from the **project root** (not from a worktree):
 
 ```bash
 git checkout {default_branch}
 git merge loom/{ticket_id_lowercase} --no-edit
-git worktree remove {worktree_path}
+git worktree remove --force {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
 
-If `git checkout` fails (dirty working tree), stop. The ticket is already `done` and the branch is preserved.
+If `git checkout` fails (dirty working tree or branch checked out elsewhere), stop. The ticket is already `done` and the branch is preserved — the human can merge manually. If `git branch -d` fails (refuses due to unmerged commits), use `git branch -D` only if the merge in the prior step succeeded.
 
-If merge conflicts: prefer default branch for non-artifact files (config, dependencies, infrastructure — conflicts here break builds/deploys). Prefer worktree for artifact files (specs, plans, reviews, mocks under `.claude/` or `.loom/`). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
+If merge conflicts: prefer default branch for config, dependencies, and infrastructure (conflicts here break builds/deploys). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
 
 ## Review rejection transition
 
@@ -106,10 +118,11 @@ The worktree is preserved — the next /loom:work run reuses it with feedback in
 
 On any failure during playbook execution:
 
-1. Revert status so dispatch can re-pick:
-   - If working (`active`): `task_edit(ticket_id, status="todo")`
-   - If reviewing (`review`): status stays (already dispatchable)
-2. Release lock: `task_edit(ticket_id, assignee=["@released"])`
-3. Print the error and stop
+1. Attempt BOTH cleanup operations independently (do not skip 1b if 1a fails):
+   a. Revert status so dispatch can re-pick:
+      - If working (`active`): `task_edit(ticket_id, status="todo")`
+      - If reviewing (`review`): status stays (already dispatchable)
+   b. Release lock: `task_edit(ticket_id, assignee=["@released"])`
+2. Print the error and stop (include any cleanup failures from step 1)
 4. Skip appending notes to the ticket (the human sees the error in the terminal; ticket notes are for cross-session review feedback, not error logs)
 5. Worktree is preserved with partial artifacts

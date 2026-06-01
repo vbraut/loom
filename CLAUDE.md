@@ -3,9 +3,10 @@
 ## Architecture
 
 - Entry-point skills in `skills/work/SKILL.md` and `skills/review/SKILL.md` — one level deep, discovered by Claude Code plugin
-- Shared modules in `shared/` — config, claim, transition
-- Playbooks in `playbooks/` — declarative step sequences per ticket type
+- Shared modules in `shared/` — config, claim, transition, convergence, cross-talk, quality-principles, elicitation-methods.csv
+- Playbooks in `playbooks/` — declarative step sequences per ticket type, with conditional agents via `**When:**` and step gates via `**Skip when:**`
 - Agents in `agents/<name>/AGENT.md` — subagents spawned by the orchestrator (doers and reviewers alike)
+- Personas in `personas/<name>.md` — domain expert profiles injected into persona-reviewer agent; `_universal.md` for shared quality principles
 - Templates in `templates/` — universal methodology, not project-specific
 - Scripts in `scripts/` — `validate.sh` (structural checks), `install-hooks.sh` (pre-commit hook)
 - Plugin manifest in `.claude-plugin/plugin.json`
@@ -13,7 +14,7 @@
 ## Boundary rules
 
 1. Agents never invoke other agents. The orchestrator decides composition.
-2. Agents write tracking artifacts to `output_path` and work products to the worktree (files the agent is instructed to create or modify as part of its task) — no backlog writes, no git operations.
+2. Agents write tracking artifacts to `output_path` and work products to the worktree (files the agent is instructed to create or modify as part of its task) — no backlog writes, no git write operations (commits, pushes, branch management). Read-only git commands (`git diff`, `git log`) are allowed.
 3. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
 
 ## Adding an agent

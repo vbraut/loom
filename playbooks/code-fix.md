@@ -1,6 +1,6 @@
 # code-fix
 
-Bug fix playbook. Requires `pr: true` for transition.
+Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix through convergence and testing. Requires `pr: true` for transition.
 
 ## Steps
 
@@ -9,20 +9,19 @@ Bug fix playbook. Requires `pr: true` for transition.
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-Explore the codebase architecture, locate the bug, identify relevant files and patterns.
-
 ### 2. Implement
 
 **Agent:** implement
-**Upstream:** `.loom/artifacts/{ticket_id}/research.md`
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
-
-Fix the bug in the worktree. Write a change summary to the output path.
 
 ### 3. Converge
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
+**When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
+**Consecutive clean rounds:** 2
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -36,6 +35,9 @@ Fix the bug in the worktree. Write a change summary to the output path.
 - requirements-reviewer: `.loom/artifacts/{ticket_id}/requirements-review-r{N}.md`
 - regression-analyst: `.loom/artifacts/{ticket_id}/regression-r{N}.md`
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
+- security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
+- edge-case-hunter: `.loom/artifacts/{ticket_id}/edge-cases-r{N}.md`
+- design-system-reviewer: `.loom/artifacts/{ticket_id}/design-system-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
@@ -49,9 +51,8 @@ Fix the bug in the worktree. Write a change summary to the output path.
 
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
-run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
-
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
+**Max retries:** 2
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
 
 ### 5. Completion
 

@@ -29,6 +29,10 @@ description: "Discovers and runs the project's test suite and reports results."
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Test Results
 
 **Runner:** {test command used}

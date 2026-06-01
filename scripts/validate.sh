@@ -121,7 +121,7 @@ done
 echo ""
 echo "--- Shared modules ---"
 
-for module in config claim transition convergence; do
+for module in config claim transition convergence cross-talk; do
   module_path="$LOOM_ROOT/shared/$module.md"
   if [ -f "$module_path" ]; then
     ok "shared/$module.md"
@@ -216,6 +216,20 @@ for playbook in "$LOOM_ROOT"/playbooks/*.md; do
     fi
   done < <(grep -oE '\*\*Agent:\*\* [a-z][a-z0-9-]*' "$playbook" | sed 's/\*\*Agent:\*\* //' || true)
 
+  # Also check **Agents:** (plural) references — comma-separated lists of parallel agents
+  while IFS= read -r agents_line; do
+    [ -z "$agents_line" ] && continue
+    agents_value=$(echo "$agents_line" | sed 's/\*\*Agents:\*\* //')
+    for agent_ref in $(echo "$agents_value" | tr ',' '\n' | sed 's/ *(parallel)//; s/^ *//; s/ *$//'); do
+      [ -z "$agent_ref" ] && continue
+      echo "$agent_ref" | grep -qE '^[a-z][a-z0-9-]+$' || continue
+      if [ ! -f "$LOOM_ROOT/agents/$agent_ref/AGENT.md" ]; then
+        err "$rel_path references agent '$agent_ref' but agents/$agent_ref/AGENT.md not found"
+        crosscheck_ok=false
+      fi
+    done
+  done < <(grep -oE '\*\*Agents:\*\* [a-z][a-z0-9, -]*(\(parallel\))?' "$playbook" || true)
+
   # Also check **On needs-work:** references (convergence feedback agents)
   while IFS= read -r agent_ref; do
     [ -z "$agent_ref" ] && continue
@@ -231,23 +245,11 @@ done
 # ── Work/review playbook pairing ─────────────────────────────────
 
 echo ""
-echo "--- Work/review playbook pairing ---"
+echo "--- Review playbook pairing ---"
 
 pairing_ok=true
-for playbook in "$LOOM_ROOT"/playbooks/*.md; do
-  [ -f "$playbook" ] || continue
-  base_name=$(basename "$playbook" .md)
 
-  # Skip review playbooks (checked from the work side)
-  echo "$base_name" | grep -q '\-review$' && continue
-
-  review_playbook="$LOOM_ROOT/playbooks/${base_name}-review.md"
-  if [ ! -f "$review_playbook" ]; then
-    err "playbooks/${base_name}.md has no corresponding playbooks/${base_name}-review.md"
-    pairing_ok=false
-  fi
-done
-
+# Review playbooks must have a corresponding work playbook (but not vice versa — review playbooks are optional)
 for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
   [ -f "$playbook" ] || continue
   base_name=$(basename "$playbook" .md)
@@ -259,7 +261,52 @@ for playbook in "$LOOM_ROOT"/playbooks/*-review.md; do
     pairing_ok=false
   fi
 done
-[ "$pairing_ok" = true ] && ok "All work playbooks have matching review playbooks"
+[ "$pairing_ok" = true ] && ok "All review playbooks have matching work playbooks"
+
+# ── Personas ──────────────────────────────────────────────────────
+
+echo ""
+echo "--- Personas ---"
+
+persona_count=0
+if [ -d "$LOOM_ROOT/personas" ]; then
+  if [ -f "$LOOM_ROOT/personas/_universal.md" ]; then
+    ok "personas/_universal.md"
+  else
+    err "personas/_universal.md not found (required for quality principles injection)"
+  fi
+
+  for persona in "$LOOM_ROOT"/personas/*.md; do
+    [ -f "$persona" ] || continue
+    base=$(basename "$persona" .md)
+    [ "$base" = "_universal" ] && continue
+    persona_count=$((persona_count + 1))
+  done
+  echo "  ($persona_count personas found)"
+else
+  err "personas/ directory not found"
+fi
+
+# ── Shared modules extended ──────────────────────────────────────
+
+echo ""
+echo "--- Shared extended ---"
+
+for module in quality-principles; do
+  module_path="$LOOM_ROOT/shared/$module.md"
+  if [ -f "$module_path" ]; then
+    ok "shared/$module.md"
+  else
+    err "shared/$module.md not found"
+  fi
+done
+
+if [ -f "$LOOM_ROOT/shared/elicitation-methods.csv" ]; then
+  method_count=$(tail -n +2 "$LOOM_ROOT/shared/elicitation-methods.csv" | wc -l | tr -d ' ')
+  ok "shared/elicitation-methods.csv ($method_count methods)"
+else
+  err "shared/elicitation-methods.csv not found"
+fi
 
 # ── Scripts ───────────────────────────────────────────────────────
 
