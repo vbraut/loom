@@ -31,14 +31,14 @@ Create a human-readable PRD covering problem statement, requirements, user exper
 - `.loom/artifacts/{ticket_id}/prd.md`
 
 **Agent output paths:**
-- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}.md`
+- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
+- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
+- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
+- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
+- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
+- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`
 
-Five cognitive operations and domain experts evaluate the PRD independently in parallel. Cognitive operations use method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, and naive questioning. Persona reviewers evaluate through their professional lens — decision rules, boundaries, and evaluation criteria specific to their discipline.
+Initial assessment: `{R}=1`. Five cognitive operations and domain experts evaluate the PRD independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
 
 ### 4. Cross-talk
 
@@ -47,23 +47,33 @@ Five cognitive operations and domain experts evaluate the PRD independently in p
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Cross-talk: {round} rounds, not fully converged — see artifacts."
 
-Assessment agents review each other's findings via SendMessage. Each round, agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and update their own assessment. Exits when all agents report converged (no remaining Critical/High concerns) or max rounds reached.
+Assessment agents review each other's findings via SendMessage. Each round increments `{R}` (round 2 = first cross-talk round). Agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and write updated output to their round-numbered path. Exits when all agents report converged or max rounds reached.
 
 ### 5. Synthesize assessments
 
 **Agent:** assess-synthesizer
-**Upstream:**
-- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 3)
+**Upstream:** latest round's output files:
+- `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
+- `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
 Compile the converged positions from cross-talk into a unified approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
 
-### 6. Elicit
+### 6. Revise PRD
+
+**Agent:** apply-review-fixes
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/prd.md`
+- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
+**Output path:** `.loom/artifacts/{ticket_id}/prd-synthesis-revisions.md`
+
+Apply assessment and synthesis findings to the PRD before elicitation.
+
+### 7. Elicit
 
 **Agent:** elicit-approach
 **Upstream:**
@@ -72,18 +82,17 @@ Compile the converged positions from cross-talk into a unified approach. Agents 
 
 Stress-test the synthesized approach through 10 structured reasoning methods selected from the method registry based on context analysis.
 
-### 7. Revise PRD
+### 8. Revise PRD
 
 **Agent:** apply-review-fixes
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/prd.md`
-- `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
-**Output path:** `.loom/artifacts/{ticket_id}/prd-revisions.md`
+**Output path:** `.loom/artifacts/{ticket_id}/prd-elicitation-revisions.md`
 
-Incorporate assessment and elicitation findings into the PRD.
+Incorporate elicitation findings into the PRD.
 
-### 8. Converge PRD
+### 9. Converge PRD
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
@@ -111,9 +120,9 @@ Reviewers evaluate the PRD for completeness and risk. simplification-reviewer pr
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 9. Create mocks
+### 10. Create mocks
 
-**When:** step 2 PRD describes UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 10 is skipped)
+**When:** step 2 PRD describes UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 11 is skipped)
 **Agent:** create-mocks
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -122,9 +131,9 @@ Reviewers evaluate the PRD for completeness and risk. simplification-reviewer pr
 
 Create HTML mockups for all screens and states described in the PRD using the project's design system.
 
-### 10. Converge mocks
+### 11. Converge mocks
 
-**When:** step 9 produced mocks (skip if create-mocks reported "no UI changes")
+**When:** step 10 produced mocks (skip if create-mocks reported "no UI changes")
 **Agents:** mock-alignment-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
@@ -146,7 +155,7 @@ mock-alignment-reviewer verifies every PRD requirement has a visual representati
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/mock-fixes-r{N}.md`
 
-### 11. Completion
+### 12. Completion
 
 ## Pre-completion checklist (verify before transitioning)
 
@@ -155,8 +164,9 @@ mock-alignment-reviewer verifies every PRD requirement has a visual representati
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
 - [ ] Cross-talk completed (converged or hit max rounds with note)
 - [ ] Synthesis produced
+- [ ] PRD revised with synthesis findings
 - [ ] Elicitation completed
-- [ ] PRD revised with assessment and elicitation findings
+- [ ] PRD revised with elicitation findings
 - [ ] PRD convergence ran (passed or hit max rounds with note)
 - [ ] Mocking completed (or skipped if no UI changes)
 - [ ] All output paths registered via addReferences

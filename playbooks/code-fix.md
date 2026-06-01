@@ -21,14 +21,14 @@ Explore the codebase architecture, locate the bug, identify relevant files and p
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Agent output paths:**
-- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}.md`
+- assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
+- assess-decomposition: `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
+- assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
+- assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
+- assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
+- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`
 
-Five cognitive operations and domain experts evaluate the proposed fix independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
+Initial assessment: `{R}=1`. Five cognitive operations and domain experts evaluate the proposed fix independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
 
 ### 3. Cross-talk
 
@@ -37,18 +37,18 @@ Five cognitive operations and domain experts evaluate the proposed fix independe
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Cross-talk: {round} rounds, not fully converged — see artifacts."
 
-Assessment agents review each other's findings via SendMessage. Each round, agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and update their own assessment. Exits when all agents report converged (no remaining Critical/High concerns) or max rounds reached.
+Assessment agents review each other's findings via SendMessage. Each round increments `{R}` (round 2 = first cross-talk round). Agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and write updated output to their round-numbered path. Exits when all agents report converged or max rounds reached.
 
 ### 4. Synthesize assessments
 
 **Agent:** assess-synthesizer
-**Upstream:**
-- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 2)
+**Upstream:** latest round's output files:
+- `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-decomposition-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-analogy-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-dependency-r{R}.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
+- `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
 Compile the converged positions from cross-talk into a unified fix approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
