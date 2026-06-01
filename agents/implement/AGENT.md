@@ -28,6 +28,10 @@ description: "Implements changes in the worktree based on upstream artifacts and
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Approach
 
 {What was implemented and the reasoning behind key decisions — 3-10 lines}
