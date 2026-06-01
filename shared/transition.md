@@ -7,7 +7,7 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 ### 1. Commit worktree changes
 
 ```bash
-git add -A -- ':!.loom'
+git add -A -- . ':!.loom'
 git diff --cached --quiet
 ```
 
@@ -82,7 +82,7 @@ task_edit(ticket_id, assignee=["@released"])
 
 ### 3. Merge and cleanup
 
-First verify the project root is on the default branch with a clean working tree:
+Run these commands from the **project root** (not from a worktree):
 
 ```bash
 git checkout {default_branch}
@@ -91,7 +91,7 @@ git worktree remove {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
 
-If `git checkout` fails (dirty working tree), stop. The ticket is already `done` and the branch is preserved.
+If `git checkout` fails (dirty working tree or branch checked out elsewhere), stop. The ticket is already `done` and the branch is preserved — the human can merge manually. If `git branch -d` fails (refuses due to unmerged commits), use `git branch -D` only if the merge in the prior step succeeded.
 
 If merge conflicts: prefer default branch for config, dependencies, and infrastructure (conflicts here break builds/deploys). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
 
@@ -118,10 +118,11 @@ The worktree is preserved — the next /loom:work run reuses it with feedback in
 
 On any failure during playbook execution:
 
-1. Revert status so dispatch can re-pick:
-   - If working (`active`): `task_edit(ticket_id, status="todo")`
-   - If reviewing (`review`): status stays (already dispatchable)
-2. Release lock: `task_edit(ticket_id, assignee=["@released"])`
-3. Print the error and stop
+1. Attempt BOTH cleanup operations independently (do not skip 1b if 1a fails):
+   a. Revert status so dispatch can re-pick:
+      - If working (`active`): `task_edit(ticket_id, status="todo")`
+      - If reviewing (`review`): status stays (already dispatchable)
+   b. Release lock: `task_edit(ticket_id, assignee=["@released"])`
+2. Print the error and stop (include any cleanup failures from step 1)
 4. Skip appending notes to the ticket (the human sees the error in the terminal; ticket notes are for cross-session review feedback, not error logs)
 5. Worktree is preserved with partial artifacts

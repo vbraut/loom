@@ -79,6 +79,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 ### 9. Converge plan
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
+**When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 5
@@ -97,6 +98,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - security-reviewer: `.loom/artifacts/{ticket_id}/plan-security-r{N}.md`
 - edge-case-hunter: `.loom/artifacts/{ticket_id}/plan-edge-cases-r{N}.md`
 - adversarial-reviewer: `.loom/artifacts/{ticket_id}/plan-adversarial-r{N}.md`
+- design-system-reviewer: `.loom/artifacts/{ticket_id}/plan-design-system-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/plan-fixes-r{N}.md`
 
@@ -121,6 +123,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/plan.md`
 - `.loom/artifacts/{ticket_id}/changes.md`
 
 **Reviewer output paths:**

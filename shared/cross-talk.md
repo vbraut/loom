@@ -37,10 +37,13 @@ Assessment agents from the preceding step must have been spawned with the `name`
    1. Review the other agents' findings — look for disagreements, gaps, or reinforcements
    2. Challenge specific points where you have counter-evidence (cite file:line)
    3. Acknowledge findings that strengthen or correct your own analysis
-   4. Revise your assessment — write updated output to {agent's output_path with {R}=round}
+   4. Revise your assessment — write updated output to the path in ## output_path below
    5. End your response with exactly one of:
       CROSS-TALK: converged
       CROSS-TALK: unresolved — {comma-separated list of remaining Critical/High concerns}
+
+   ## output_path
+   {agent's output_path with {R}=round}
    ```
 
    For persona-reviewer agents, use the name format `persona-{name}` matching how they were spawned.
@@ -51,8 +54,10 @@ Assessment agents from the preceding step must have been spawned with the `name`
 
    **If any agent's response is missing the `CROSS-TALK:` line:** `ERROR: Cross-talk agent '{name}' did not produce a CROSS-TALK: signal. Aborting cross-talk.` — stop and follow the orchestrator's error handling.
 
-6. **Check exit condition.** If ALL agents report `CROSS-TALK: converged`: cross-talk is complete — continue with the next playbook step. The final round's output paths are the ones downstream steps should consume.
+6. **Register outputs.** For each agent, register its output_path for this round: `task_edit(ticket_id, addReferences=[path])`.
 
-7. **If any agent reports `unresolved` and `round` < Max rounds:** increment `round`. Go to step 3.
+7. **Check exit condition.** If ALL agents report `CROSS-TALK: converged`: cross-talk is complete — continue with the next playbook step. The final round's output paths are the ones downstream steps should consume.
 
-8. **If `round` >= Max rounds and not all converged:** follow the **On max rounds** instruction from the cross-talk block (typically: proceed and append a note to ticket_notes). The latest round's output paths are the ones downstream steps should consume. Return to the orchestrator — continue with the next playbook step.
+8. **If any agent reports `unresolved` and `round` < Max rounds:** increment `round`. Go to step 3.
+
+9. **If `round` >= Max rounds and not all converged:** follow the **On max rounds** instruction from the cross-talk block (typically: proceed and append a note to ticket_notes). The latest round's output paths are the ones downstream steps should consume. Return to the orchestrator — continue with the next playbook step.

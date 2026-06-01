@@ -187,7 +187,7 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
  9    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  adversarial-reviewer                │
- │    │ ↻ apply-review-fixes                                        │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
 10 ── implement ─────────────────── execute the converged plan

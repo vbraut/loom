@@ -33,9 +33,12 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
    ```bash
    LOCK="{backlog_cwd}/.loom/dispatch.lock"
    mkdir -p "$(dirname "$LOCK")"
+   ```
+   Before attempting `mkdir "$LOCK"`, check for stale locks: if `"$LOCK"` exists and is older than 600 seconds (based on directory mtime), remove it with `rmdir "$LOCK"` (matches next-task.sh's stale lock cleanup).
+   ```bash
    mkdir "$LOCK"
    ```
-   If `mkdir "$LOCK"` fails (directory already exists): `ERROR: Dispatch lock contention — another session is claiming a ticket. Try again shortly.`
+   If `mkdir "$LOCK"` fails (directory already exists and not stale): `ERROR: Dispatch lock contention — another session is claiming a ticket. Try again shortly.`
 
 2. Read ticket via MCP: `task_view(manual_id)`
 

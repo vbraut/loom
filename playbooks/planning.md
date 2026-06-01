@@ -104,7 +104,6 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 
 ### 10. Create mocks
 
-**Skip when:** no UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 11 is skipped)
 **Agent:** create-mocks
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -113,7 +112,7 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 
 ### 11. Converge mocks
 
-**Skip when:** create-mocks reported "no UI changes"
+**Skip when:** create-mocks output contains "no UI changes"
 **Agents:** mock-alignment-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND

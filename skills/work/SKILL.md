@@ -40,7 +40,7 @@ When a step names an agent to invoke:
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
 5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
-6. For parallel agents: spawn all via multiple Agent tool calls.
+6. For parallel agents: spawn all via multiple Agent tool calls. When a step has `**Agent output paths:**` (keyed per agent name), look up each agent's name in the list and pass its path as `## output_path`. When a step has a single `**Output path:**`, all agents in that step share the same path (only valid for single-agent steps).
 7. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
 ### Named agent spawning
@@ -60,7 +60,7 @@ Read `{loom_plugin_dir}/shared/quality-principles.md` once at the start of Phase
 When a step contains a `**When:**` field, evaluate the condition before executing:
 - `config.context.{key}`: check if the `context.{key}` path is defined in sdlc.config.yml. If not defined, skip the agent or step.
 
-When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step.
+When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step. Conditions may reference prior agent output (e.g., "create-mocks output contains 'no UI changes'") — read the referenced output file to evaluate.
 
 When a reviewer line within a convergence step has an inline `(when: ...)` condition, evaluate it the same way. Include the reviewer only if the condition is met.
 
@@ -118,8 +118,9 @@ Read `shared/transition.md` from the Loom plugin directory and follow the "Work 
 ## Error handling
 
 If anything fails at any point:
-1. Revert status so the ticket is re-claimable: `task_edit(ticket_id, status="todo")`
-2. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
-3. Print the error clearly
-4. Stop — the human sees the failure in the terminal, so skip appending notes to the ticket (it would duplicate what they already see and clutter the ticket for the next run)
-5. The worktree is preserved with whatever artifacts exist
+1. Attempt BOTH cleanup operations independently (do not skip step 1b if step 1a fails):
+   a. Revert status so the ticket is re-claimable: `task_edit(ticket_id, status="todo")`
+   b. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
+2. Print the error clearly (include any cleanup failures from step 1)
+3. Stop — the human sees the failure in the terminal, so skip appending notes to the ticket (it would duplicate what they already see and clutter the ticket for the next run)
+4. The worktree is preserved with whatever artifacts exist

@@ -22,7 +22,7 @@ Review playbook for implementation tickets. Runs before the human gate.
 **Upstream:** `.loom/artifacts/{ticket_id}/review-summary.md`, `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
 **Output path:** `.loom/artifacts/{ticket_id}/successor-proposals.md`
 
-**Pre-fetch (before spawning agent):** The orchestrator pre-fetches the backlog snapshot:
+**Pre-fetch:** The orchestrator pre-fetches the backlog snapshot:
 - Call `task_list()` via MCP
 - Filter client-side to: id, title, type label, status. If more than 200 tickets, truncate to the 200 most recent.
 - Write filtered list to `.loom/artifacts/{ticket_id}/backlog-snapshot.md`
