@@ -38,7 +38,7 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 
 ### 1
 - **Title:** {Short, actionable title}
-- **Type:** {Ticket type matching an existing playbook — e.g., code-fix, code-implementation}
+- **Type:** {Ticket type matching an existing playbook — e.g., code-fix, implementation}
 - **Description:** {What needs to be done and why. Enough context for a fresh agent to pick this up independently.}
 - **Rationale:** {How this was discovered — which review finding, test failure, or analysis surfaced it.}
 
@@ -55,13 +55,13 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ```
 ### 1
 - **Title:** Add user invitation database schema and API endpoint
-- **Type:** code-implementation
+- **Type:** implementation
 - **Description:** Create the `invitations` table (inviter_id FK, invitee_email, token, status enum [pending/accepted/expired], created_at, expires_at) and POST /api/invitations endpoint that generates a token, stores the row, and returns the invite link. Validate: invitee not already a member, inviter has permission, rate limit 10/hour per inviter. See PRD sections BS-1 through BS-3.
 - **Rationale:** Foundation for the invitation flow — all other tickets (email delivery, acceptance UI, admin dashboard) depend on this schema and endpoint existing.
 
 ### 2
 - **Title:** Invitation email delivery with expiration
-- **Type:** code-implementation
+- **Type:** implementation
 - **Description:** When an invitation is created, send a branded email via the existing EmailService with the invite link. Include inviter name, org name, and 72h expiration notice. Handle EmailService failures by marking the invitation as `delivery_failed` and surfacing in admin dashboard. See PRD sections BS-4, BS-5.
 - **Rationale:** Depends on ticket #1 (schema + endpoint). Isolated because email delivery has its own failure modes and testing surface.
 ```

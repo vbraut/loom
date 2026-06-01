@@ -47,6 +47,10 @@ Assessment agents from the preceding step must have been spawned with the `name`
 
 5. **Parse each agent's response.** Find the last line beginning with `CROSS-TALK:` (case-sensitive). Extract `converged` or `unresolved — {concerns}`.
 
+   **If SendMessage fails for any agent** (agent not responding, crashed, or errored): `ERROR: Cross-talk agent '{name}' did not respond. Aborting cross-talk.` — stop and follow the orchestrator's error handling.
+
+   **If any agent's response is missing the `CROSS-TALK:` line:** `ERROR: Cross-talk agent '{name}' did not produce a CROSS-TALK: signal. Aborting cross-talk.` — stop and follow the orchestrator's error handling.
+
 6. **Check exit condition.** If ALL agents report `CROSS-TALK: converged`: cross-talk is complete — continue with the next playbook step. The final round's output paths are the ones downstream steps should consume.
 
 7. **If any agent reports `unresolved` and `round` < Max rounds:** increment `round`. Go to step 3.

@@ -75,6 +75,15 @@ EVIDENCE BASIS: {one sentence: what concrete evidence supports these findings}
 
 "Facebook uses GraphQL, so we should too." An analogy must be structurally relevant — same class of problem, not just same technology category. The approach's REST API serves a different access pattern than Facebook's social graph.
 
+## Cross-talk
+
+When you receive a cross-talk message (other agents' assessments via SendMessage), you are in a debate round:
+
+1. Review other agents' findings for disagreements, gaps, or reinforcements
+2. Challenge specific points where you have counter-evidence (cite file:line or section)
+3. Acknowledge findings that strengthen or correct your analysis
+4. Write updated output to the path specified in the cross-talk message (replaces your original `## output_path` for this round)
+
 The last line of your response must be one of:
-STATUS: complete
-STATUS: failed — {reason}
+- Initial assessment: `STATUS: complete` or `STATUS: failed — {reason}`
+- Cross-talk round: `CROSS-TALK: converged` or `CROSS-TALK: unresolved — {remaining Critical/High concerns}`

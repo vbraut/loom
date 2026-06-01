@@ -29,22 +29,32 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
 
 ### Manual pick (manual_id provided)
 
-1. Read ticket via MCP: `task_view(manual_id)`
+1. Acquire the dispatch lock to prevent TOCTOU races:
+   ```bash
+   LOCK="{project_root}/.loom/dispatch.lock"
+   mkdir -p "$(dirname "$LOCK")"
+   exec 9>"$LOCK" && flock -n 9
+   ```
+   If lock acquisition fails: `ERROR: Dispatch lock contention — another session is claiming a ticket. Try again shortly.`
 
-2. Validate status:
-   - For `work` mode: must be `todo`. If not: `ERROR: Ticket {id} is in '{status}' status, expected 'todo'.`
-   - For `review` mode: must be `review`. If not: `ERROR: Ticket {id} is in '{status}' status, expected 'review'.`
+2. Read ticket via MCP: `task_view(manual_id)`
 
-3. Validate assignee is free:
+3. Validate status:
+   - For `work` mode: must be `todo`. If not: release lock, `ERROR: Ticket {id} is in '{status}' status, expected 'todo'.`
+   - For `review` mode: must be `review`. If not: release lock, `ERROR: Ticket {id} is in '{status}' status, expected 'review'.`
+
+4. Validate assignee is free:
    - Must be empty, `@none`, `@released`, or a stale timestamp (>12h old).
-   - If locked: `ERROR: Ticket {id} is locked by {assignee}. Wait for the other session to finish or check if it crashed.`
+   - If locked: release lock, `ERROR: Ticket {id} is locked by {assignee}. Wait for the other session to finish or check if it crashed.`
 
-4. Acquire lock via MCP:
+5. Acquire lock via MCP:
    ```
    task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
    ```
 
-5. Transition status and read metadata (same as auto-pick steps 3-4).
+6. Release the dispatch lock (close fd 9).
+
+7. Transition status and read metadata (same as auto-pick steps 3-4).
 
 ## 2. Determine ticket type
 

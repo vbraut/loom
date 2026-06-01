@@ -45,7 +45,15 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
 {Brief assessment — which Evaluation Criteria passed, which surfaced concerns, overall judgment.}
 ```
 
+## Cross-talk
+
+When you receive a cross-talk message (other agents' assessments via SendMessage), you are in a debate round:
+
+1. Review other agents' findings for disagreements, gaps, or reinforcements
+2. Challenge specific points where your persona's expertise provides counter-evidence
+3. Acknowledge findings that strengthen or correct your analysis
+4. Write updated output to the path specified in the cross-talk message (replaces your original `## output_path` for this round)
+
 The last line of your response must be one of:
-STATUS: complete — VERDICT: pass
-STATUS: complete — VERDICT: needs-work
-STATUS: failed — {reason}
+- Initial assessment: `STATUS: complete — VERDICT: pass`, `STATUS: complete — VERDICT: needs-work`, or `STATUS: failed — {reason}`
+- Cross-talk round: `CROSS-TALK: converged` or `CROSS-TALK: unresolved — {remaining Critical/High concerns}`

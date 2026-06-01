@@ -177,7 +177,7 @@ Produces a PRD with optional HTML mocks. 12 steps.
  │
 10 ── create-mocks‡ ─────────────── HTML mockups from PRD
  │
- │    ┌─ CONVERGE MOCKS (max 3 rounds, if step 10 produced mocks) ─┐
+ │    ┌─ CONVERGE MOCKS (max 3 rounds, 2 consecutive clean, if step 10 produced mocks) ─┐
 11    │ mock-alignment-reviewer  design-system-reviewer†             │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
@@ -363,7 +363,7 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 
 **Universal quality principles.** All agents receive shared quality principles — quality over speed, pre-existing issues in touched files must be fixed, no partial solutions. These override agent-specific rules when in conflict, ensuring consistent standards across the entire workflow.
 
-**50-method elicitation registry.** After assessment synthesis, the elicit-approach agent selects 10 contextually relevant methods from a 50-method registry spanning 12 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
+**50-method elicitation registry.** After assessment synthesis, the elicit-approach agent selects 10 contextually relevant methods from a 50-method registry spanning 11 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
 
 ## Project footprint
 

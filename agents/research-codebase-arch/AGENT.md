@@ -33,7 +33,7 @@ Seven required sections:
 ```
 ## Inputs Received
 
-{list all files from upstream_artifacts}
+{ticket_notes summary — what task was researched}
 
 ## Key Files
 

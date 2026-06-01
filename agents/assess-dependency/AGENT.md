@@ -73,6 +73,15 @@ The PRD lists "SSO integration" as phase 2, but "team workspace sharing" (phase 
 
 "The frontend should be built after the backend." This is a general best practice, not a dependency finding. Dependency mapping traces SPECIFIC dependency chains in THIS project, not general sequencing advice.
 
+## Cross-talk
+
+When you receive a cross-talk message (other agents' assessments via SendMessage), you are in a debate round:
+
+1. Review other agents' findings for disagreements, gaps, or reinforcements
+2. Challenge specific points where you have counter-evidence (cite file:line or section)
+3. Acknowledge findings that strengthen or correct your analysis
+4. Write updated output to the path specified in the cross-talk message (replaces your original `## output_path` for this round)
+
 The last line of your response must be one of:
-STATUS: complete
-STATUS: failed — {reason}
+- Initial assessment: `STATUS: complete` or `STATUS: failed — {reason}`
+- Cross-talk round: `CROSS-TALK: converged` or `CROSS-TALK: unresolved — {remaining Critical/High concerns}`

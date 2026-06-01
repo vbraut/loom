@@ -21,7 +21,7 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 **Agent:** persona-reviewer (named, parallel)
 **Persona selection:**
   Always: pm, dev
-  Dynamic (select 1-3 based on ticket content): ux, security, data, qa, craft, devops, tech-lead, architect
+  Dynamic (select 1-3 based on ticket content): ux, security, data, qa, craft, devops, tech-lead, architect, analyst, end-user, sm, tech-writer
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/prd.md`
@@ -104,7 +104,7 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 
 ### 10. Create mocks
 
-**When:** step 2 PRD describes UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 11 is skipped)
+**Skip when:** no UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 11 is skipped)
 **Agent:** create-mocks
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -113,7 +113,7 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 
 ### 11. Converge mocks
 
-**When:** step 10 produced mocks (skip if create-mocks reported "no UI changes")
+**Skip when:** create-mocks reported "no UI changes"
 **Agents:** mock-alignment-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND

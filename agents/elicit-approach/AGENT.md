@@ -10,7 +10,7 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 ## Constraints
 
 - Read the assessment synthesis from `## upstream_artifacts`. This contains the approach after independent cognitive evaluations, persona reviews, and confidence-weighted synthesis.
-- Read the method registry from `shared/elicitation-methods.csv` in the Loom plugin directory.
+- Read the method registry from `## method_registry` (provided by the orchestrator).
 - Select 10 methods that best match the content being elicited — balance foundational and specialized techniques. Consider: content type, complexity, risk level, domain, and creative potential.
 - Apply methods sequentially. Each method builds on findings from prior methods.
 - Only report findings that surface genuinely new concerns — not restatements of what the assessment synthesis already captured.
@@ -19,7 +19,7 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 ## Process
 
 1. Read the assessment synthesis and ticket notes from `## upstream_artifacts` and `## ticket_notes`.
-2. Read the method registry from `shared/elicitation-methods.csv`.
+2. Read the method registry from `## method_registry`.
 3. Analyze the content: type (PRD, plan, approach), complexity, stakeholder needs, risk level, creative potential.
 4. Select 10 methods from the registry that best match the context. Balance across categories — include mix of foundational (core, risk) and specialized (creative, competitive, technical) techniques.
 5. Apply each selected method sequentially. Use the method's description and output_pattern from the CSV as a guide.

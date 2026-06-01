@@ -8,6 +8,14 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 
 ```bash
 git add -A -- ':!.loom'
+git diff --cached --quiet
+```
+
+If `git diff --cached --quiet` exits 0, there are no staged changes — skip the commit and step 2.
+
+Otherwise, commit:
+
+```bash
 git commit -m "$(cat <<'EOF'
 loom({ticket_id}): {ticket_title}
 EOF
@@ -16,16 +24,20 @@ EOF
 
 Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes all framework artifacts — they are ephemeral process state, not project deliverables.
 
-If there are no changes to commit, skip this step.
-
 ### 2. Push and open PR (if `create_pr` is true)
 
 ```bash
 git -C {worktree_path} push -u origin loom/{ticket_id_lowercase}
 gh pr create --head loom/{ticket_id_lowercase} --base {default_branch} --title "loom({ticket_id}): {ticket_title}" --body "$(cat <<'EOF'
-{PR body from playbook artifacts}
+{PR body}
 EOF
 )"
+```
+
+**PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Summary` sections as the PR body. If it does not exist (e.g., non-code playbook), use the ticket description from `## ticket_notes` instead. Prefix the body with:
+```
+**Ticket:** {ticket_id} — {ticket_title}
+**Type:** {ticket_type}
 ```
 
 ### 3. Update ticket status

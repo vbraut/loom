@@ -21,7 +21,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Agent:** persona-reviewer (named, parallel)
 **Persona selection:**
   Always: pm, dev
-  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead
+  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead, ux, craft, analyst, end-user
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`
@@ -143,7 +143,8 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 10 with both artifacts added to implement's upstream.
+**Max retries:** 2
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 10 with both artifacts and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
 
 ### 13. Capture
 
@@ -159,7 +160,8 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
 **Output path:** `.loom/artifacts/{ticket_id}/visual-parity.md`
 
-**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 10 with the visual parity artifact added to implement's upstream.
+**Max retries:** 2
+**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 10 with the visual parity artifact and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
 
 ### 15. Completion
 

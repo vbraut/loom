@@ -59,7 +59,8 @@ Read `{loom_plugin_dir}/shared/quality-principles.md` once at the start of Phase
 
 When a step contains a `**When:**` field, evaluate the condition before executing:
 - `config.context.{key}`: check if the `context.{key}` path is defined in sdlc.config.yml. If not defined, skip the agent or step.
-- `step {N} produced output`: check if the referenced step's output file exists and is non-empty. If not, skip.
+
+When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step.
 
 When a reviewer line within a convergence step has an inline `(when: ...)` condition, evaluate it the same way. Include the reviewer only if the condition is met.
 
@@ -80,15 +81,27 @@ When a step specifies `persona-reviewer` with a `**Persona selection:**` block:
 4. Spawn `persona-reviewer` with an additional `## persona` section containing: the universal principles first, then a `---` separator, then the persona file content.
 5. Each persona-reviewer instance gets a distinct output path: `.loom/artifacts/{ticket_id}/persona-{name}.md`.
 
+### Elicit-approach invocation
+
+When spawning `elicit-approach`, include an additional `## method_registry` section containing the content of `{loom_plugin_dir}/shared/elicitation-methods.csv`.
+
 ### Retry protocol
 
-When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified.
+When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. Track retry count per step. If the step has a `**Max retries:**` field, stop retrying after that many attempts — follow the orchestrator's error handling with `ERROR: Step {step} exceeded max retries ({N}).`
 
 ### Verify step handling
 
 For verify steps with `**On failure:**` blocks, after agents return `STATUS: complete`, read the output files and evaluate the failure conditions:
 - For agents with VERDICT: check the VERDICT value (`needs-work` = failure condition met).
 - For run-tests: check if the `### Assertion Failures` section exists and contains entries.
+
+### Round number placeholders
+
+Playbooks use two distinct round-number placeholders:
+- `{R}` — assessment/cross-talk round (increments across cross-talk rounds; used in assess step output paths)
+- `{N}` — convergence round (increments across convergence rounds; used in reviewer and feedback output paths)
+
+These are independent counters for different loops and never appear in the same step.
 
 ### Playbook execution
 

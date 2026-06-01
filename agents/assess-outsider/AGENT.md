@@ -70,6 +70,15 @@ The PRD says "align with the Q3 retention initiative." What retention initiative
 
 "The approach uses TypeScript." General technology names that any developer would understand are not insider jargon. Naive questioning targets project-specific terms and implicit context, not industry-standard vocabulary.
 
+## Cross-talk
+
+When you receive a cross-talk message (other agents' assessments via SendMessage), you are in a debate round:
+
+1. Review other agents' findings for disagreements, gaps, or reinforcements
+2. Challenge specific points where you have counter-evidence (cite file:line or section)
+3. Acknowledge findings that strengthen or correct your analysis
+4. Write updated output to the path specified in the cross-talk message (replaces your original `## output_path` for this round)
+
 The last line of your response must be one of:
-STATUS: complete
-STATUS: failed — {reason}
+- Initial assessment: `STATUS: complete` or `STATUS: failed — {reason}`
+- Cross-talk round: `CROSS-TALK: converged` or `CROSS-TALK: unresolved — {remaining Critical/High concerns}`

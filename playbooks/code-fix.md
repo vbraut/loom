@@ -51,7 +51,8 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
+**Max retries:** 2
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
 
 ### 5. Completion
 
