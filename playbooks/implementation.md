@@ -1,6 +1,6 @@
 # implementation
 
-Feature implementation playbook. Produces an implementation plan (assessed, cross-examined, elicited, and converged), then implements code and validates through convergence, testing, and visual verification. Requires `pr: true` for transition.
+Feature implementation playbook. Produces an implementation plan (assessed, cross-talked, elicited, and converged), then implements code and validates through convergence, testing, and visual verification. Requires `pr: true` for transition.
 
 ## Steps
 
@@ -19,9 +19,13 @@ Explore the codebase architecture with a code focus — locate relevant files, t
 
 Create a technical implementation plan mapping requirements to file changes, ordered by dependency, with alternatives considered and test expectations.
 
-### 3. Assess plan (cognitive)
+### 3. Assess plan
 
-**Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (parallel)
+**Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (named, parallel)
+**Agent:** persona-reviewer (named, parallel)
+**Persona selection:**
+  Always: pm, dev
+  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`
@@ -32,38 +36,20 @@ Create a technical implementation plan mapping requirements to file changes, ord
 - assess-analogy: `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - assess-dependency: `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider.md`
+- persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}.md`
 
-Five cognitive operations evaluate the implementation plan independently using method diversity (DMAD).
+Five cognitive operations and domain experts evaluate the implementation plan independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
 
-### 4. Assess plan (domain expertise)
+### 4. Cross-talk
 
-**Agent:** persona-reviewer (parallel)
-**Persona selection:**
-  Always: pm, dev
-  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead
-**Upstream:**
-- `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/plan.md`
+**Named agents:** all agents from step 3
+**Max rounds:** 3
+**On max rounds:** Proceed to next step. Append to ticket_notes:
+  "Cross-talk: {round} rounds, not fully converged — see artifacts."
 
-**Agent output paths:** `.loom/artifacts/{ticket_id}/persona-{name}.md`
+Assessment agents review each other's findings via SendMessage. Each round, agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and update their own assessment. Exits when all agents report converged (no remaining Critical/High concerns) or max rounds reached.
 
-Domain experts evaluate the implementation plan through their professional lens.
-
-### 5. Cross-examine assessments
-
-**Agent:** assess-cross-talk
-**Upstream:**
-- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
-- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
-- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
-- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
-- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 4)
-**Output path:** `.loom/artifacts/{ticket_id}/cross-talk.md`
-
-Structured cross-examination across all independent perspectives. Identifies where cognitive operations and persona reviews converge, challenges positions with evidence, and surfaces blind spots.
-
-### 6. Synthesize assessments
+### 5. Synthesize assessments
 
 **Agent:** assess-synthesizer
 **Upstream:**
@@ -72,13 +58,12 @@ Structured cross-examination across all independent perspectives. Identifies whe
 - `.loom/artifacts/{ticket_id}/perspective-analogy.md`
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - `.loom/artifacts/{ticket_id}/perspective-outsider.md`
-- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 4)
-- `.loom/artifacts/{ticket_id}/cross-talk.md`
+- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 3)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-Cross-examine all perspectives — both cognitive operations and domain expertise — informed by the cross-talk findings, and produce a synthesized implementation approach.
+Compile the converged positions from cross-talk into a unified implementation approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
 
-### 7. Elicit
+### 6. Elicit
 
 **Agent:** elicit-approach
 **Upstream:**
@@ -87,7 +72,7 @@ Cross-examine all perspectives — both cognitive operations and domain expertis
 
 Stress-test the synthesized approach through 10 structured reasoning methods selected from the method registry.
 
-### 8. Revise plan
+### 7. Revise plan
 
 **Agent:** apply-review-fixes
 **Upstream:**
@@ -98,7 +83,7 @@ Stress-test the synthesized approach through 10 structured reasoning methods sel
 
 Incorporate assessment and elicitation findings into the implementation plan.
 
-### 9. Converge plan
+### 8. Converge plan
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
 **Verdict logic:** AND
@@ -124,7 +109,7 @@ Reviewers evaluate the implementation plan for completeness and risk. simplifica
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/plan-fixes-r{N}.md`
 
-### 10. Implement
+### 9. Implement
 
 **Agent:** implement
 **Upstream:**
@@ -135,7 +120,7 @@ Reviewers evaluate the implementation plan for completeness and risk. simplifica
 
 Implement the changes described in the converged plan. The plan has been assessed, elicited, and converged — follow it directly. Write a change summary to the output path.
 
-### 11. Converge code
+### 10. Converge code
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
@@ -162,7 +147,7 @@ Reviewers evaluate the implemented code changes. design-system-reviewer audits U
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 12. Verify
+### 11. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -174,9 +159,9 @@ Reviewers evaluate the implemented code changes. design-system-reviewer audits U
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 10 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 9 with both artifacts added to implement's upstream.
 
-### 13. Capture
+### 12. Capture
 
 **Agent:** capture-screenshots
 **Upstream:**
@@ -186,7 +171,7 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 
 Capture the running application at mobile and desktop viewports.
 
-### 14. Visual verify
+### 13. Visual verify
 
 **Agent:** visual-parity-reviewer
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
@@ -194,9 +179,9 @@ Capture the running application at mobile and desktop viewports.
 
 Compare captured screenshots against mock or reference images.
 
-**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 10 with the visual parity artifact added to implement's upstream.
+**On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 9 with the visual parity artifact added to implement's upstream.
 
-### 15. Completion
+### 14. Completion
 
 `pr: true`
 
@@ -204,9 +189,8 @@ Compare captured screenshots against mock or reference images.
 
 - [ ] research-codebase-arch produced output
 - [ ] draft-plan produced implementation plan
-- [ ] Cognitive assessment completed (5 methods)
-- [ ] Domain assessment completed (persona reviewers)
-- [ ] Cross-examination completed
+- [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
+- [ ] Cross-talk completed (converged or hit max rounds with note)
 - [ ] Synthesis produced
 - [ ] Elicitation completed
 - [ ] Plan revised with assessment and elicitation findings
