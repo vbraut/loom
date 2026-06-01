@@ -23,7 +23,8 @@ description: "Produces a human-readable product requirements document from a tic
 5. Identify constraints: technical, business, or design limitations from the research brief.
 6. Consider alternatives: what other approaches could solve this? Why is the proposed approach preferred?
 7. Define acceptance criteria: testable conditions that prove the requirements are met.
-8. Write the PRD to `## output_path`.
+8. Sketch future considerations: natural extensions that a reader should be aware of. Include directions that would affect architectural choices now (e.g., "multi-tenant support later means avoid hardcoding org ID"). Exclude wishlist items that don't influence current design decisions.
+9. Write the PRD to `## output_path`.
 
 ## Output
 
