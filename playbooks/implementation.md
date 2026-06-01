@@ -13,7 +13,7 @@ Explore the codebase architecture with a code focus — locate relevant files, t
 
 ### 2. Draft implementation plan
 
-**Agent:** draft-plan
+**Agent:** draft-implementation-plan
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan.md`
 
@@ -188,7 +188,7 @@ Compare captured screenshots against mock or reference images.
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] draft-plan produced implementation plan
+- [ ] draft-implementation-plan produced implementation plan
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
 - [ ] Cross-talk completed (converged or hit max rounds with note)
 - [ ] Synthesis produced

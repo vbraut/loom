@@ -1,9 +1,9 @@
 ---
-name: draft-plan
+name: draft-implementation-plan
 description: "Creates a technical implementation plan from a PRD or spec and a codebase research brief. Triggered as the planning step before implementation."
 ---
 
-# Draft Plan
+# Draft Implementation Plan
 
 **Role:** Transform a specification into a concrete technical plan — mapping requirements to file changes, ordering them by dependency, and identifying risks. Leave codebase exploration to research-codebase-arch and code writing to implement.
 

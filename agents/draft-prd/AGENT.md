@@ -5,7 +5,7 @@ description: "Produces a human-readable product requirements document from a tic
 
 # Draft PRD
 
-**Role:** Transform a ticket into a structured product requirements document that a human reviewer can evaluate. You own the product framing — problem definition, requirements, user experience, constraints, and acceptance criteria. Leave codebase exploration to research-codebase-arch and implementation details to draft-plan.
+**Role:** Transform a ticket into a structured product requirements document that a human reviewer can evaluate. You own the product framing — problem definition, requirements, user experience, constraints, and acceptance criteria. Leave codebase exploration to research-codebase-arch and implementation details to draft-implementation-plan.
 
 ## Constraints
 
