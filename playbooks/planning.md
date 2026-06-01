@@ -9,15 +9,11 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-Explore the codebase architecture with a product focus — understand what exists today, how users interact with it, and what the planned work would touch.
-
 ### 2. Draft PRD
 
 **Agent:** draft-prd
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/prd.md`
-
-Create a human-readable PRD covering problem statement, requirements, user experience, constraints, alternatives considered, and acceptance criteria.
 
 ### 3. Assess PRD
 
@@ -38,16 +34,12 @@ Create a human-readable PRD covering problem statement, requirements, user exper
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
 - persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`
 
-Initial assessment: `{R}=1`. Five cognitive operations and domain experts evaluate the PRD independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
-
 ### 4. Cross-talk
 
 **Named agents:** all agents from step 3
 **Max rounds:** 3
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Cross-talk: {round} rounds, not fully converged — see artifacts."
-
-Assessment agents review each other's findings via SendMessage. Each round increments `{R}` (round 2 = first cross-talk round). Agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and write updated output to their round-numbered path. Exits when all agents report converged or max rounds reached.
 
 ### 5. Synthesize assessments
 
@@ -61,8 +53,6 @@ Assessment agents review each other's findings via SendMessage. Each round incre
 - `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-Compile the converged positions from cross-talk into a unified approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
-
 ### 6. Revise PRD
 
 **Agent:** apply-review-fixes
@@ -71,16 +61,12 @@ Compile the converged positions from cross-talk into a unified approach. Agents 
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/prd-synthesis-revisions.md`
 
-Apply assessment and synthesis findings to the PRD before elicitation.
-
 ### 7. Elicit
 
 **Agent:** elicit-approach
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
-
-Stress-test the synthesized approach through 10 structured reasoning methods selected from the method registry based on context analysis.
 
 ### 8. Revise PRD
 
@@ -89,8 +75,6 @@ Stress-test the synthesized approach through 10 structured reasoning methods sel
 - `.loom/artifacts/{ticket_id}/prd.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
 **Output path:** `.loom/artifacts/{ticket_id}/prd-elicitation-revisions.md`
-
-Incorporate elicitation findings into the PRD.
 
 ### 9. Converge PRD
 
@@ -102,8 +86,6 @@ Incorporate elicitation findings into the PRD.
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "PRD convergence: {round} rounds, unresolved feedback — see artifacts."
-
-Reviewers evaluate the PRD for completeness and risk. simplification-reviewer prevents scope bloat introduced by assessment and elicitation rounds. design-system-reviewer audits UI specifications against the project's design system (skipped if no design system configured).
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -129,8 +111,6 @@ Reviewers evaluate the PRD for completeness and risk. simplification-reviewer pr
 - `.loom/artifacts/{ticket_id}/prd.md`
 **Output path:** `.loom/artifacts/{ticket_id}/mock-manifest.md`
 
-Create HTML mockups for all screens and states described in the PRD using the project's design system.
-
 ### 11. Converge mocks
 
 **When:** step 10 produced mocks (skip if create-mocks reported "no UI changes")
@@ -142,8 +122,6 @@ Create HTML mockups for all screens and states described in the PRD using the pr
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Mock convergence: {round} rounds, unresolved feedback — see artifacts."
-
-mock-alignment-reviewer verifies every PRD requirement has a visual representation. design-system-reviewer audits mock HTML for design system compliance (skipped if no design system configured).
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/prd.md`

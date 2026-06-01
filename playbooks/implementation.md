@@ -9,15 +9,11 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-Explore the codebase architecture with a code focus — locate relevant files, trace dependency chains, identify patterns, and draft a proposed implementation approach.
-
 ### 2. Draft implementation plan
 
 **Agent:** draft-implementation-plan
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan.md`
-
-Create a technical implementation plan mapping requirements to file changes, ordered by dependency, with alternatives considered and test expectations.
 
 ### 3. Assess plan
 
@@ -38,16 +34,12 @@ Create a technical implementation plan mapping requirements to file changes, ord
 - assess-outsider: `.loom/artifacts/{ticket_id}/perspective-outsider-r{R}.md`
 - persona-{name}: `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`
 
-Initial assessment: `{R}=1`. Five cognitive operations and domain experts evaluate the implementation plan independently in parallel. Cognitive operations use method diversity (DMAD); persona reviewers evaluate through their professional lens.
-
 ### 4. Cross-talk
 
 **Named agents:** all agents from step 3
 **Max rounds:** 3
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Cross-talk: {round} rounds, not fully converged — see artifacts."
-
-Assessment agents review each other's findings via SendMessage. Each round increments `{R}` (round 2 = first cross-talk round). Agents receive all other agents' current positions, challenge or reinforce specific points with evidence, and write updated output to their round-numbered path. Exits when all agents report converged or max rounds reached.
 
 ### 5. Synthesize assessments
 
@@ -61,8 +53,6 @@ Assessment agents review each other's findings via SendMessage. Each round incre
 - `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-Compile the converged positions from cross-talk into a unified implementation approach. Agents have already debated and updated their positions — the synthesizer compiles consensus, notes any remaining tensions, and produces a self-contained approach.
-
 ### 6. Revise plan
 
 **Agent:** apply-review-fixes
@@ -71,16 +61,12 @@ Compile the converged positions from cross-talk into a unified implementation ap
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan-synthesis-revisions.md`
 
-Apply assessment and synthesis findings to the implementation plan before elicitation.
-
 ### 7. Elicit
 
 **Agent:** elicit-approach
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
-
-Stress-test the synthesized approach through 10 structured reasoning methods selected from the method registry.
 
 ### 8. Revise plan
 
@@ -89,8 +75,6 @@ Stress-test the synthesized approach through 10 structured reasoning methods sel
 - `.loom/artifacts/{ticket_id}/plan.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan-elicitation-revisions.md`
-
-Incorporate elicitation findings into the implementation plan.
 
 ### 9. Converge plan
 
@@ -101,8 +85,6 @@ Incorporate elicitation findings into the implementation plan.
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Plan convergence: {round} rounds, unresolved feedback — see artifacts."
-
-Reviewers evaluate the implementation plan for completeness and risk. simplification-reviewer catches unnecessary complexity and scope bloat from assessment rounds.
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -127,8 +109,6 @@ Reviewers evaluate the implementation plan for completeness and risk. simplifica
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
 
-Implement the changes described in the converged plan. The plan has been assessed, elicited, and converged — follow it directly. Write a change summary to the output path.
-
 ### 11. Converge code
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
@@ -139,8 +119,6 @@ Implement the changes described in the converged plan. The plan has been assesse
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Code convergence: {round} rounds, unresolved feedback — see artifacts."
-
-Reviewers evaluate the implemented code changes. design-system-reviewer audits UI code for design system compliance (skipped if no design system configured).
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -166,8 +144,6 @@ Reviewers evaluate the implemented code changes. design-system-reviewer audits U
 
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
-run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
-
 **On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 10 with both artifacts added to implement's upstream.
 
 ### 13. Capture
@@ -178,15 +154,11 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 - `.loom/artifacts/{ticket_id}/changes.md`
 **Output path:** `.loom/artifacts/{ticket_id}/screenshots.md`
 
-Capture the running application at mobile and desktop viewports.
-
 ### 14. Visual verify
 
 **Agent:** visual-parity-reviewer
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
 **Output path:** `.loom/artifacts/{ticket_id}/visual-parity.md`
-
-Compare captured screenshots against mock or reference images.
 
 **On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 10 with the visual parity artifact added to implement's upstream.
 

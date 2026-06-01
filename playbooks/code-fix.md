@@ -9,16 +9,12 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-Explore the codebase architecture, locate the bug, identify relevant files and patterns, and draft a proposed fix approach.
-
 ### 2. Implement
 
 **Agent:** implement
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 **Output path:** `.loom/artifacts/{ticket_id}/changes.md`
-
-Fix the bug in the worktree using the researched approach. Write a change summary to the output path.
 
 ### 3. Converge
 
@@ -54,8 +50,6 @@ Fix the bug in the worktree using the researched approach. Write a change summar
 - test-coverage: `.loom/artifacts/{ticket_id}/test-coverage.md`
 
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
-
-run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
 **On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts added to implement's upstream.
 
