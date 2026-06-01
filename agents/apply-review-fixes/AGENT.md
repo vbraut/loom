@@ -28,6 +28,10 @@ description: "Applies fixes based on reviewer feedback. Reads structured finding
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Changes
 
 1. `src/utils/config.ts:42` — {what was changed}

@@ -28,6 +28,10 @@ description: "Produces a human-readable product requirements document from a tic
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Summary
 
 {What this feature/change does and why — 1-2 paragraphs, plain language}

@@ -26,6 +26,10 @@ description: "Verifies mockups cover all PRD requirements. Returns a VERDICT for
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Coverage Matrix
 
 | # | Requirement | Status | Mock Location |

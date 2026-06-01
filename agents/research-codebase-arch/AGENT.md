@@ -31,6 +31,10 @@ description: "Explores project architecture and produces a structured context br
 Six required sections:
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Key Files
 
 {Files most relevant to the ticket — one per line, with a brief description of what it does and why it matters for this task}

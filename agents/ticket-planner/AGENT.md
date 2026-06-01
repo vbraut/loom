@@ -30,6 +30,10 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Proposals
 
 ### 1

@@ -29,6 +29,10 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Methods Selected
 
 | # | Category | Method | Why Selected |

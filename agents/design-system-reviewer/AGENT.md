@@ -29,6 +29,10 @@ description: "Audits code changes for design system compliance. Reads design sys
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Design System Inventory
 
 {Brief summary of components, tokens, and patterns found in the design system docs}

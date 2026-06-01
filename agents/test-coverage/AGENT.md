@@ -27,6 +27,10 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Coverage Matrix
 
 | # | Requirement | Status | Test Evidence |

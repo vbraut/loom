@@ -30,6 +30,10 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Persona: {displayName} — {title}
 
 ## Findings

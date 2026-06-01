@@ -27,6 +27,10 @@ description: "Synthesizes work-phase artifacts into a structured brief for the h
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Changes Overview
 
 {What was changed and why — derived from research brief + change summary.}

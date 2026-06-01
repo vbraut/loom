@@ -36,6 +36,10 @@ Scope: evaluate only complexity introduced by this diff. Domain-inherent complex
 Write simplification analysis to output_path. If the implementation is appropriately scoped and simple, write a brief confirmation.
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
 1. `src/utils/helpers.ts:1-30` — **should-fix** — New helper duplicates `lodash.get` functionality. Behavior preserved because: both handle nested access with undefined fallback.

@@ -28,6 +28,10 @@ tools: [Bash, Read, Write]
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Captured Screenshots
 
 | Page | Viewport | Path |

@@ -32,6 +32,10 @@ description: "Creates HTML mockups from a PRD and design system context. Skips i
 Mock files written to worktree. Manifest written to output_path:
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Mocks Created
 
 | File | Screen | State | PRD Requirement |

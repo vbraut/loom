@@ -1,6 +1,6 @@
 # planning
 
-Technical planning playbook. Produces a PRD validated through cognitive assessment, domain expert review, elicitation, convergence, and optional mocking.
+Technical planning playbook. Produces a PRD validated through cognitive assessment, domain expert review, cross-examination, elicitation, convergence, and optional mocking.
 
 ## Steps
 
@@ -49,7 +49,21 @@ Five cognitive operations evaluate the PRD independently using method diversity 
 
 Domain experts evaluate the PRD through their professional lens — decision rules, boundaries, and evaluation criteria specific to their discipline. Each includes a confidence score for weighted synthesis.
 
-### 5. Synthesize assessments
+### 5. Cross-examine assessments
+
+**Agent:** assess-cross-talk
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
+- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
+- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
+- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
+- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 4)
+**Output path:** `.loom/artifacts/{ticket_id}/cross-talk.md`
+
+Structured cross-examination across all independent perspectives. Identifies where cognitive operations and persona reviews converge (strongest signal), challenges positions with evidence from opposing perspectives, and surfaces blind spots.
+
+### 6. Synthesize assessments
 
 **Agent:** assess-synthesizer
 **Upstream:**
@@ -59,11 +73,12 @@ Domain experts evaluate the PRD through their professional lens — decision rul
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 - `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 4)
+- `.loom/artifacts/{ticket_id}/cross-talk.md`
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-Cross-examine all perspectives — both cognitive operations and domain expertise — resolve disagreements, and produce a synthesized approach with consensus, tensions, and a risk register.
+Cross-examine all perspectives — both cognitive operations and domain expertise — informed by the cross-talk findings, resolve disagreements, and produce a synthesized approach with consensus, tensions, and a risk register.
 
-### 6. Elicit
+### 7. Elicit
 
 **Agent:** elicit-approach
 **Upstream:**
@@ -72,7 +87,7 @@ Cross-examine all perspectives — both cognitive operations and domain expertis
 
 Stress-test the synthesized approach through 10 structured reasoning methods selected from the method registry based on context analysis.
 
-### 7. Revise PRD
+### 8. Revise PRD
 
 **Agent:** apply-review-fixes
 **Upstream:**
@@ -83,7 +98,7 @@ Stress-test the synthesized approach through 10 structured reasoning methods sel
 
 Incorporate assessment and elicitation findings into the PRD.
 
-### 8. Converge PRD
+### 9. Converge PRD
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
@@ -111,9 +126,9 @@ Reviewers evaluate the PRD for completeness and risk. simplification-reviewer pr
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 9. Create mocks
+### 10. Create mocks
 
-**When:** step 2 PRD describes UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 10 is skipped)
+**When:** step 2 PRD describes UI changes (create-mocks self-determines; if no UI changes, it completes with "no UI changes" and step 11 is skipped)
 **Agent:** create-mocks
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -122,9 +137,9 @@ Reviewers evaluate the PRD for completeness and risk. simplification-reviewer pr
 
 Create HTML mockups for all screens and states described in the PRD using the project's design system.
 
-### 10. Converge mocks
+### 11. Converge mocks
 
-**When:** step 9 produced mocks (skip if create-mocks reported "no UI changes")
+**When:** step 10 produced mocks (skip if create-mocks reported "no UI changes")
 **Agents:** mock-alignment-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
@@ -146,7 +161,7 @@ mock-alignment-reviewer verifies every PRD requirement has a visual representati
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/mock-fixes-r{N}.md`
 
-### 11. Completion
+### 12. Completion
 
 ## Pre-completion checklist (verify before transitioning)
 
@@ -154,6 +169,7 @@ mock-alignment-reviewer verifies every PRD requirement has a visual representati
 - [ ] draft-prd produced PRD
 - [ ] Cognitive assessment completed (5 methods)
 - [ ] Domain assessment completed (persona reviewers)
+- [ ] Cross-examination completed
 - [ ] Synthesis produced
 - [ ] Elicitation completed
 - [ ] PRD revised with assessment and elicitation findings

@@ -35,6 +35,10 @@ Scope: evaluate only whether standard alternatives exist for custom implementati
 Write standards analysis to output_path.
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
 1. `src/api/auth.ts:12-45` — **should-fix** — Custom JWT verification reimplements what `jsonwebtoken` (already in package.json) provides, including token parsing, signature validation, and expiry checking. The custom version doesn't handle clock skew.

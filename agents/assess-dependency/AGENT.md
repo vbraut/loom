@@ -25,6 +25,10 @@ description: "Dependency-mapping reasoning in approach assessment. Traces critic
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ### Stance
 
 {One sentence: support, oppose, or conditionally support this approach.}

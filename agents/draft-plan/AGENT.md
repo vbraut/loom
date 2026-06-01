@@ -29,6 +29,10 @@ description: "Creates a technical implementation plan from a PRD or spec and a c
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Requirements Trace
 
 | # | Requirement | Plan Items |

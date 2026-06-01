@@ -24,6 +24,10 @@ description: "Inversion reasoning in approach assessment. Assumes the approach s
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ### Stance
 
 {One sentence: support, oppose, or conditionally support this approach.}

@@ -29,6 +29,10 @@ tools: [Read]
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Comparisons
 
 | Page | Viewport | Reference | Captured | Result |

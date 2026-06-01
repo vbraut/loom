@@ -38,6 +38,10 @@ Scope: evaluate only exported/public interfaces that have external consumers. In
 Write regression analysis to output_path with structured findings.
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## At-Risk Consumers
 
 - `src/api/router.ts:45` imports `processRequest` — **direct** — uses old return type, will fail to compile. **No test coverage for this path.**

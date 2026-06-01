@@ -37,7 +37,21 @@ Five cognitive operations evaluate the proposed fix independently using method d
 
 Domain experts evaluate the proposed fix through their professional lens.
 
-### 4. Synthesize assessments
+### 4. Cross-examine assessments
+
+**Agent:** assess-cross-talk
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/perspective-inversion.md`
+- `.loom/artifacts/{ticket_id}/perspective-decomposition.md`
+- `.loom/artifacts/{ticket_id}/perspective-analogy.md`
+- `.loom/artifacts/{ticket_id}/perspective-dependency.md`
+- `.loom/artifacts/{ticket_id}/perspective-outsider.md`
+- `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 3)
+**Output path:** `.loom/artifacts/{ticket_id}/cross-talk.md`
+
+Structured cross-examination across all independent perspectives. Identifies where cognitive operations and persona reviews converge, challenges positions with evidence, and surfaces blind spots.
+
+### 5. Synthesize assessments
 
 **Agent:** assess-synthesizer
 **Upstream:**
@@ -47,11 +61,12 @@ Domain experts evaluate the proposed fix through their professional lens.
 - `.loom/artifacts/{ticket_id}/perspective-dependency.md`
 - `.loom/artifacts/{ticket_id}/perspective-outsider.md`
 - `.loom/artifacts/{ticket_id}/persona-*.md` (all persona outputs from step 3)
+- `.loom/artifacts/{ticket_id}/cross-talk.md`
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-Cross-examine all perspectives, resolve disagreements, and produce a synthesized fix approach.
+Cross-examine all perspectives, informed by the cross-talk findings, resolve disagreements, and produce a synthesized fix approach.
 
-### 5. Implement
+### 6. Implement
 
 **Agent:** implement
 **Upstream:**
@@ -61,7 +76,7 @@ Cross-examine all perspectives, resolve disagreements, and produce a synthesized
 
 Fix the bug in the worktree using the assessed approach. Write a change summary to the output path.
 
-### 6. Converge
+### 7. Converge
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
@@ -86,7 +101,7 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 7. Verify
+### 8. Verify
 
 **Agents:** run-tests, test-coverage (parallel)
 
@@ -98,9 +113,9 @@ Fix the bug in the worktree using the assessed approach. Write a change summary 
 
 run-tests runs the project's test suite. test-coverage maps ticket requirements to test cases and identifies coverage gaps.
 
-**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 5 with both artifacts added to implement's upstream.
+**On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 6 with both artifacts added to implement's upstream.
 
-### 8. Completion
+### 9. Completion
 
 `pr: true`
 
@@ -109,6 +124,7 @@ run-tests runs the project's test suite. test-coverage maps ticket requirements 
 - [ ] research-codebase-arch produced output
 - [ ] Cognitive assessment completed (5 methods)
 - [ ] Domain assessment completed (persona reviewers)
+- [ ] Cross-examination completed
 - [ ] Synthesis produced
 - [ ] implement produced output and modified worktree
 - [ ] Convergence ran (passed or hit max rounds with note)

@@ -36,6 +36,10 @@ Scope: evaluate only code in the diff. Pre-existing unhandled edge cases, style 
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
 1. `src/api/handler.ts:34` — **must-fix** — `items.length` is checked but `items` itself can be null when the API returns a 204. The `if (items.length > 0)` on line 34 will throw TypeError.

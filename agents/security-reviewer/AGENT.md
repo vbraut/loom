@@ -35,6 +35,10 @@ Scope: evaluate only security implications of the diff. Pre-existing vulnerabili
 Write security analysis to output_path. If no security issues found, write a brief confirmation of what was reviewed and why it passes.
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
 1. `src/api/users.ts:34` — **must-fix** — User-supplied `sortBy` parameter is interpolated directly into SQL query without parameterization. Exploitable via SQL injection.

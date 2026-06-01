@@ -24,6 +24,10 @@ description: "Analogy reasoning in approach assessment. Identifies cross-domain 
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ### Stance
 
 {One sentence: support, oppose, or conditionally support this approach.}

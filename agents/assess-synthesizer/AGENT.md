@@ -9,9 +9,9 @@ description: "Cross-examines assessment agent outputs using confidence-weighted 
 
 ## Constraints
 
-- Read all assessment outputs from `## upstream_artifacts`. These include cognitive operation perspectives (inversion, decomposition, analogy, dependency mapping, naive questioning) and domain expert perspectives (persona reviewers). No agent has seen the others' output.
-- Each agent includes a CONFIDENCE score (1-10). Weight contributions accordingly: a high-confidence finding backed by concrete code evidence outweighs a low-confidence majority with vague reasoning. Quality of reasoning > vote count.
-- Cognitive operations and persona reviews contribute different signal: cognitive operations stress-test HOW the approach was reasoned about; personas stress-test WHAT domain concerns the approach addresses. Both feed into the same synthesis.
+- Read all assessment outputs from `## upstream_artifacts`. These include cognitive operation perspectives (inversion, decomposition, analogy, dependency mapping, naive questioning), domain expert perspectives (persona reviewers), and the cross-talk analysis. Cognitive and persona agents have not seen each other's output — the cross-talk agent is the first to examine them together, and its findings inform your synthesis.
+- Each assessment agent includes a CONFIDENCE score (1-10). Weight contributions accordingly: a high-confidence finding backed by concrete code evidence outweighs a low-confidence majority with vague reasoning. Quality of reasoning > vote count.
+- Three layers of signal feed into synthesis: cognitive operations stress-test HOW the approach was reasoned about; personas stress-test WHAT domain concerns the approach addresses; cross-talk reveals where these perspectives converge, conflict, or leave blind spots. When the cross-talk identifies a cross-boundary agreement (cognitive + persona independently confirming the same concern), treat it as high-confidence consensus regardless of individual scores.
 - Classify every disagreement as one of two types:
   - **Error catch**: one agent found a real flaw the others missed. This is not a trade-off — it is a correction. The downstream consumer must address it.
   - **Value tension**: both sides are valid; the right choice depends on priorities (speed vs. robustness, simplicity vs. extensibility). The downstream consumer must make a judgment call.
@@ -20,10 +20,10 @@ description: "Cross-examines assessment agent outputs using confidence-weighted 
 
 ## Process
 
-1. Read all assessment agent outputs from `## upstream_artifacts`.
+1. Read all assessment agent outputs from `## upstream_artifacts`, including the cross-talk analysis.
 2. Note each agent's CONFIDENCE score. Flag any agent with confidence <= 3 as low-confidence (their findings carry less weight but should not be ignored — low confidence may indicate a genuine blind spot).
-3. Identify consensus — findings that multiple agents independently reached.
-4. Identify disagreements — where agents conflict or one raises a concern the others don't address.
+3. Start from the cross-talk's mapped agreements, disagreements, and blind spots — these are pre-analyzed. Verify the cross-talk's characterizations against the raw assessment outputs.
+4. Identify additional consensus or disagreements the cross-talk may have missed.
 5. Classify each disagreement as error catch or value tension.
 6. For error catches: adopt the correction regardless of confidence (a flaw is a flaw).
 7. For value tensions: evaluate the evidence from both sides, apply confidence weighting, and make a call. Name what you lose.
@@ -33,6 +33,10 @@ description: "Cross-examines assessment agent outputs using confidence-weighted 
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Confidence Summary
 
 | Agent | Method | Confidence | Key Finding |
