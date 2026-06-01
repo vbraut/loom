@@ -14,7 +14,7 @@
 ## Boundary rules
 
 1. Agents never invoke other agents. The orchestrator decides composition.
-2. Agents write tracking artifacts to `output_path` and work products to the worktree (files the agent is instructed to create or modify as part of its task) — no backlog writes, no git operations.
+2. Agents write tracking artifacts to `output_path` and work products to the worktree (files the agent is instructed to create or modify as part of its task) — no backlog writes, no git write operations (commits, pushes, branch management). Read-only git commands (`git diff`, `git log`) are allowed.
 3. The framework never writes to project config. It reads `sdlc.config.yml` and context paths.
 
 ## Adding an agent

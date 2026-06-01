@@ -89,13 +89,13 @@ When spawning `elicit-approach`, include an additional `## method_registry` sect
 
 ### Retry protocol
 
-When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. Track retry count per step — each step has its own counter that persists across re-entries (if step 14 retries from step 10, step 12's counter is not reset when re-entered). If the step has a `**Max retries:**` field, stop retrying after that many attempts — follow the orchestrator's error handling with `ERROR: Step {step} exceeded max retries ({N}).`
+When a step's `**On failure:**` block says "retry from step N", re-execute from step N with the additional upstream artifacts specified. Track retry count per step — each step has its own counter. When a retry is triggered by a DIFFERENT step's `**On failure:**` (e.g., step 14 retries from step 10), reset all retry counters for steps between N and the triggering step (inclusive) — the new implementation makes prior retry counts irrelevant. If the step has a `**Max retries:**` field, stop retrying after that many attempts — follow the orchestrator's error handling with `ERROR: Step {step} exceeded max retries ({N}).`
 
 ### Verify step handling
 
 For verify steps with `**On failure:**` blocks, after agents return `STATUS: complete`, read the output files and evaluate the failure conditions:
 - For agents with VERDICT: check the VERDICT value (`needs-work` = failure condition met).
-- For run-tests: check if the `### Assertion Failures` section exists and contains entries.
+- For run-tests: check if the `### Assertion Failures (if any)` section exists and contains entries.
 
 ### Round number placeholders
 

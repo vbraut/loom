@@ -35,7 +35,7 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve them to absolute paths from the worktree root. When the **Upstream:** contains a retrieval instruction (e.g., "retrieve via MCP `task_view`"), execute the retrieval: call `task_view(ticket_id)`, extract the `references` list, verify each path exists and is non-empty, and use the valid paths.
+2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve each entry independently. Literal paths: resolve to absolute paths from the worktree root. Retrieval instructions (e.g., "retrieve via MCP `task_view`"): execute the retrieval — call `task_view(ticket_id)`, extract the `references` list, verify each path exists and is non-empty, and use the valid paths. A single **Upstream:** block may contain both literal paths and retrieval instructions — process all entries and merge the results into one list.
 3. Spawn via Agent tool: include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` with the resolved paths from step 2. All paths must be absolute. Set `cwd` to the worktree.
 4. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 5. If failed: stop (error handling below).

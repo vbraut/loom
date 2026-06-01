@@ -87,7 +87,7 @@ Run these commands from the **project root** (not from a worktree):
 ```bash
 git checkout {default_branch}
 git merge loom/{ticket_id_lowercase} --no-edit
-git worktree remove {worktree_path}
+git worktree remove --force {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
 

@@ -10,7 +10,7 @@ description: "Evaluates changes for unnecessary complexity and scope bloat, in b
 ## Constraints
 
 - Adapt your evaluation to the artifact type. If the diff contains code changes, look for over-engineered implementations. If reviewing document artifacts (PRDs, plans, specs), look for scope bloat, over-specified requirements, and unnecessary product complexity.
-- Review the actual worktree diff (`git diff {default_branch}...HEAD` — read `default_branch` from `## config`) when code is present. Use the research brief from upstream_artifacts for architecture context and conventions. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
+- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`) when code is present. Use the research brief from upstream_artifacts for architecture context and conventions. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - Before writing any findings, reason through the complexity: for each change, ask whether a simpler equivalent exists, confirm the simpler version preserves the goal, then derive whether the complexity is justified. Write findings only from conclusions that follow from this reasoning.
 - Every finding must use the structured findings format: file:line for code, or document section reference for specs. Include severity, description, recommendation.
 - Every simplification suggestion must preserve the goal. For code: state explicitly how the simpler version is behaviorally equivalent. For documents: state how the simpler requirement still meets the user need.

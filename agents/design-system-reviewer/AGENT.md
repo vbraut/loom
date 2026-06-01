@@ -10,7 +10,7 @@ description: "Audits code changes for design system compliance. Reads design sys
 ## Constraints
 
 - Read the design system documentation path from `## config` (the `design_system` context path). If no design system path is configured, return VERDICT: pass with "No design system configured — skipping."
-- Review the actual worktree diff (`git diff {default_branch}...HEAD` — read `default_branch` from `## config`). Only audit files that contain UI code (templates, components, styles).
+- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`). Only audit files that contain UI code (templates, components, styles).
 - Pre-existing violations in touched files are NOT exempt — if you find a violation in any file touched by this diff, it must be fixed regardless of whether this diff introduced it.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
 - All design system findings are `must-fix` severity — there are no optional design system rules.

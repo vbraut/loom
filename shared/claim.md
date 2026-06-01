@@ -40,6 +40,8 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
    ```
    If `mkdir "$LOCK"` fails (directory already exists and not stale): `ERROR: Dispatch lock contention — another session is claiming a ticket. Try again shortly.`
 
+**Important:** If ANY step below (2-7) fails for any reason, release the dispatch lock (`rmdir "$LOCK"`) before reporting the error. The dispatch lock must not outlive the manual pick sequence.
+
 2. Read ticket via MCP: `task_view(manual_id)`
 
 3. Validate status:
@@ -79,7 +81,7 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 Use the project's `default_branch` from config (defaults to `main`).
 
 **If the worktree already exists** (prior run, rejection, or review pickup):
-- If there are uncommitted changes: `git -C {worktree_path} add -A && git -C {worktree_path} commit -m "loom: preserve partial artifacts from prior run"` (skip if working tree is clean).
+- If there are uncommitted changes: `git -C {worktree_path} add -A -- . ':!.loom' && git -C {worktree_path} commit -m "loom: preserve partial artifacts from prior run"` (skip if working tree is clean). The `:!.loom` pathspec keeps .loom/ artifacts ephemeral.
 - Sync: `git -C {worktree_path} merge {default_branch} --no-edit`
 - On merge conflict: prefer default branch for non-artifact files — config, dependencies, infrastructure (conflicts here break builds/deploys). Prefer worktree for artifact files — specs, plans, reviews, mocks under `.claude/` or `.loom/` (these represent the ticket's work-in-progress). For code files, three-way merge preserving both sides' intent.
 - If unresolvable: `git merge --abort`, report the conflict, stop.

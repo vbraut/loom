@@ -23,11 +23,11 @@ Handle convergence loops declared in playbooks.
 
    If an agent does not respond (timeout), re-spawn it once. If the retry also fails, treat as `STATUS: failed — agent timeout after retry`.
 
-   After all reviewer agents complete successfully, register each reviewer's output_path: `task_edit(ticket_id, addReferences=[path])` for each path.
-
 4. **Parse each STATUS line.** Find the last line beginning exactly with `STATUS: ` (case-sensitive). Extract `VERDICT: pass` or `VERDICT: needs-work` if present. If no VERDICT suffix on a reviewer: treat as `STATUS: failed — missing VERDICT in reviewer response`. If no STATUS line found: treat as `STATUS: failed — no STATUS line in response`.
 
 5. **Check for failures first.** If any agent returned `STATUS: failed`, stop — follow the orchestrator's error handling. Do not proceed to verdict evaluation or the feedback agent (failure takes precedence over needs-work from other agents).
+
+5b. **Register reviewer outputs.** After all reviewers passed the failure check, register each reviewer's output_path: `task_edit(ticket_id, addReferences=[path])` for each path.
 
 6. **Evaluate verdict logic.** AND: all agents must have `VERDICT: pass`. OR: at least one.
 

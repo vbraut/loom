@@ -19,7 +19,7 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 
 1. Extract requirements from `## ticket_notes` and any upstream specifications in `## upstream_artifacts`.
 2. Read the research brief for test conventions and project structure.
-3. Search the worktree for test files covering each requirement. Use `git diff {default_branch}...HEAD --name-only` (read `default_branch` from `## config`) to identify changed files, then search for tests that import or reference those modules.
+3. Search the worktree for test files covering each requirement. Use `git diff {default_branch} --name-only` (read `default_branch` from `## config`) to identify changed files, then search for tests that import or reference those modules.
 4. For each requirement, determine: which test file(s) exercise it, what assertions validate it, or why no test exists.
 5. If a prior test-coverage artifact is provided in `## upstream_artifacts` (retry pass), compare current coverage against it and note which gaps were addressed versus which persist.
 6. Write the coverage report to `## output_path`.

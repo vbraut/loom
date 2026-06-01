@@ -21,7 +21,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Agent:** persona-reviewer (named, parallel)
 **Persona selection:**
   Always: pm, dev
-  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead, ux, craft, analyst, end-user
+  Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead, ux, craft, analyst, end-user, sm, tech-writer
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`
