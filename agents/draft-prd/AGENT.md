@@ -9,8 +9,8 @@ description: "Produces a human-readable product requirements document from a tic
 
 ## Constraints
 
-- Write for a human audience — clear prose, no implementation jargon, no file paths. The PRD defines *what* to build and *why*, not *how*.
-- Ground every requirement in the ticket description and research brief. Do not invent requirements the ticket doesn't ask for.
+- Write for a human audience — clear prose, no file paths or code-level details. Technical terms are fine when they clearly describe the need (e.g., "WebSocket" for real-time, "OAuth" for auth delegation). The PRD defines *what* to build and *why*, not *how*.
+- Ground the PRD in the ticket's intent, not just its literal text. Tickets are often rough — derive the best user-centered design from the stated goal. Fill in gaps with good product thinking (user flows, edge states, accessibility), but don't overbuild: no speculative engineering defensiveness, no requirements that exist only to cover hypothetical future needs.
 - Include an Alternatives Considered section even when one approach seems obvious — the assessment agents need material to evaluate.
 - Trace every requirement from the ticket to at least one PRD item. If a ticket requirement is ambiguous, state the ambiguity and your interpretation.
 
@@ -65,6 +65,10 @@ description: "Produces a human-readable product requirements document from a tic
 ## Risks & Open Questions
 
 {Risks and unresolved questions that the assessment agents should evaluate}
+
+## Future Considerations
+
+{Where this feature could naturally grow — not requirements, not commitments, just a sketch of plausible next steps for the reader's awareness. Helps the implementer make choices that don't paint the project into a corner, without building for hypotheticals now.}
 
 ## Acceptance Criteria
 
