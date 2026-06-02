@@ -188,35 +188,20 @@ The plan is a markdown file in the worktree. After review approval, it merges to
 
 **Testable:** Create a planning ticket from a spec. `/loom:work` produces a plan, convergence reviews it (requirements + regression). `/loom:review` summarizes and proposes implementation tickets. Approve → implementation tickets created. Pick an implementation ticket, `/loom:work` implements from plan, converges, verifies, captures screenshots. `/loom:review` runs standards review, summarizes, proposes follow-ups.
 
-## Step 6: `product-definition` playbook + quality agents — COMPLETE
+## Step 6: `product-definition` playbook + quality agents
 
 **Goal:** Completes the primary feature lifecycle (define → implement → ship).
 
-**What was built:**
-- Renamed `playbooks/planning.md` → `playbooks/product-definition.md` (enriched: 13 steps, MARE/QUARE integration, capture-screenshots conditional, 6-reviewer mock convergence)
-- Renamed `playbooks/planning-review.md` → `playbooks/product-definition-review.md`
-- 4 new agents ported from Reign elevate loop: `agents/critique/AGENT.md`, `agents/optimize/AGENT.md`, `agents/harden/AGENT.md`, `agents/polish/AGENT.md`
-- Enriched `agents/draft-prd/AGENT.md` with MARE 3-phase process (elicit → derive → structure)
-- Enriched `agents/persona-reviewer/AGENT.md` with QUARE quality-attribute framing
-- Enriched `agents/design-system-reviewer/AGENT.md` with normalize concerns (motion, responsive, typographic hierarchy)
-- Enriched `agents/research-codebase-arch/AGENT.md` with UI state documentation
-- Enriched `shared/cross-talk.md` with quality-attribute tension surfacing
+**Deliverables:**
+- `playbooks/product-definition.md`
+- New agents: `agents/write-spec/AGENT.md`, `agents/capture-refs/AGENT.md`, `agents/create-mocks/AGENT.md`, `agents/refine-spec/AGENT.md`, `agents/refine-mocks/AGENT.md`, `agents/prd-mock-alignment/AGENT.md`, `agents/edge-case-hunter/AGENT.md`, `agents/design-system-guardian/AGENT.md`, `agents/critique/AGENT.md`, `agents/polish/AGENT.md`
+- Note: ship skills eliminated — PR creation handled by `shared/transition.md`. No `skills/ship/` domain.
 
-**Divergences from original plan:**
-
-| Original plan | What happened | Why |
-|---|---|---|
-| Separate product-definition playbook | Renamed planning → product-definition, enriched | Same output (PRD + mocks). One playbook, fewer files. |
-| `write-spec` agent | Enriched `draft-prd` with MARE | Agent already exists, MARE enrichment is internal. |
-| `capture-refs` agent | Enriched `research-codebase-arch` + conditional `capture-screenshots` step | Reference gathering is research agent's job. |
-| `refine-spec` / `refine-mocks` agents | `apply-review-fixes` handles both | Already handles structured findings. No need for separate agents. |
-| `prd-mock-alignment` agent | `mock-alignment-reviewer` (already built in Step 5) | — |
-| `edge-case-hunter` agent | Already built in Step 3 | — |
-| `design-system-guardian` agent | `design-system-reviewer` (built Step 5, enriched here) | — |
-| `normalize` agent | Absorbed into `design-system-reviewer` | Overlapping DS compliance concerns. |
-| 10 agents in deliverables | 4 new + 5 enriched | Many agents from original plan already existed or were consolidated. Added `optimize` and `harden` from Reign. |
-
-**Design brief:** `docs/step-6-product-definition.md`
+**Playbook summary:**
+```
+research-codebase-design → write-spec → capture-refs → create-mocks → prd-mock-alignment →
+requirements-reviewer + edge-case-hunter + design-system-guardian [converge] → refine-spec → refine-mocks
+```
 
 ## Step 7: Specialist reviewer agents
 
