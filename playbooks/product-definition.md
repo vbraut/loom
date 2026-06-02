@@ -128,7 +128,7 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 ### 12. Converge mocks
 
 **Skip when:** create-mocks output contains "no UI changes" or step 11 was skipped
-**Agents:** mock-alignment-reviewer, critique, optimize, harden, polish (parallel)
+**Agents:** mock-alignment-reviewer, ui-critique, ui-optimize, ui-harden, ui-polish (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
@@ -145,10 +145,10 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 **Reviewer output paths:**
 - mock-alignment-reviewer: `.loom/artifacts/{ticket_id}/mock-alignment-r{N}.md`
 - design-system-reviewer: `.loom/artifacts/{ticket_id}/mock-design-system-r{N}.md`
-- critique: `.loom/artifacts/{ticket_id}/mock-critique-r{N}.md`
-- optimize: `.loom/artifacts/{ticket_id}/mock-optimize-r{N}.md`
-- harden: `.loom/artifacts/{ticket_id}/mock-harden-r{N}.md`
-- polish: `.loom/artifacts/{ticket_id}/mock-polish-r{N}.md`
+- ui-critique: `.loom/artifacts/{ticket_id}/mock-ui-critique-r{N}.md`
+- ui-optimize: `.loom/artifacts/{ticket_id}/mock-ui-optimize-r{N}.md`
+- ui-harden: `.loom/artifacts/{ticket_id}/mock-ui-harden-r{N}.md`
+- ui-polish: `.loom/artifacts/{ticket_id}/mock-ui-polish-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/mock-fixes-r{N}.md`
 

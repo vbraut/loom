@@ -28,10 +28,10 @@ Ported from Reign's elevate loop agents (`~/dev/reign/.agents/skills/`). In Reig
 
 | Agent | Source | Role |
 |---|---|---|
-| critique | Reign `/critique` (200 lines) | UX quality — visual hierarchy, cognitive load, emotional resonance, discoverability, AI slop detection, Nielsen's heuristics scoring |
-| optimize | Reign `/optimize` (264 lines) | Performance feasibility — patterns that will cause slow loads, janky animations, layout shifts, or excessive bundle size when implemented |
-| harden | Reign `/harden` (353 lines) | Resilience — missing states, unhandled edge cases, i18n failures, accessibility barriers, text overflow scenarios |
-| polish | Reign `/polish` (201 lines) | Micro-details — alignment precision, spacing rhythm, state completeness, copy consistency, responsive behavior |
+| ui-critique | Reign `/critique` (200 lines) | UX quality — visual hierarchy, cognitive load, emotional resonance, discoverability, AI slop detection, Nielsen's heuristics scoring |
+| ui-optimize | Reign `/optimize` (264 lines) | Performance — patterns that will cause slow loads, janky animations, layout shifts, or excessive bundle size |
+| ui-harden | Reign `/harden` (353 lines) | Resilience — missing states, unhandled edge cases, i18n failures, accessibility barriers, text overflow scenarios |
+| ui-polish | Reign `/polish` (201 lines) | Micro-details — alignment precision, spacing rhythm, state completeness, copy consistency, responsive behavior |
 
 **Adaptation from Reign format to Loom format:**
 - Add YAML frontmatter (`name`, `description`)
@@ -104,10 +104,10 @@ These are added as additional audit dimensions in the Evaluation section, condit
 12    │ Reviewers (parallel):                                        │
  │    │   mock-alignment-reviewer  ── PRD requirement coverage       │
  │    │   design-system-reviewer†  ── DS compliance + normalize      │
- │    │   critique                 ── UX quality, hierarchy, load    │
- │    │   optimize                 ── performance feasibility        │
- │    │   harden                   ── states, edge cases, i18n       │
- │    │   polish                   ── alignment, spacing, details    │
+ │    │   ui-critique               ── UX quality, hierarchy, load    │
+ │    │   ui-optimize              ── performance feasibility        │
+ │    │   ui-harden                ── states, edge cases, i18n       │
+ │    │   ui-polish                ── alignment, spacing, details    │
  │    │                                                              │
  │    │ Verdict: AND                                                 │
  │    │ On needs-work: apply-review-fixes                            │
@@ -124,12 +124,12 @@ These are added as additional audit dimensions in the Evaluation section, condit
 - Steps 1-9: internal enrichments (MARE, QUARE), no structural changes
 - Step 10: new conditional step (capture-screenshots for existing UI routes)
 - Step 11: unchanged (create-mocks)
-- Step 12: expanded from 2 reviewers to 6 (was: mock-alignment + design-system; now adds: critique, optimize, harden, polish)
+- Step 12: expanded from 2 reviewers to 6 (was: mock-alignment + design-system; now adds: ui-critique, ui-optimize, ui-harden, ui-polish)
 - Step 13: renumbered from 12 (completion)
 
 ## Agent designs
 
-### critique
+### ui-critique
 
 **Source:** Reign `/critique` — 200 lines. Evaluates design from UX perspective with AI slop detection, Nielsen's 10 heuristics scoring, visual hierarchy, cognitive load, emotional journey, discoverability, composition, typography, color, states, and microcopy.
 
@@ -172,7 +172,7 @@ Pass/Fail — specific AI-generated tells found
 STATUS: complete — VERDICT: pass/needs-work
 ```
 
-### optimize
+### ui-optimize
 
 **Source:** Reign `/optimize` — 264 lines. Performance across loading, rendering, animations, images, bundle size, Core Web Vitals.
 
@@ -206,13 +206,13 @@ STATUS: complete — VERDICT: pass/needs-work
 STATUS: complete — VERDICT: pass/needs-work
 ```
 
-### harden
+### ui-harden
 
 **Source:** Reign `/harden` — 353 lines. Resilience through error handling, i18n, text overflow, edge cases, accessibility, performance resilience.
 
 **Adaptation:** Strip code examples. Keep all assessment dimensions. Findings describe specific edge case AND the handling pattern to add.
 
-**Role:** Evaluate mock designs for resilience gaps — missing states, unhandled edge cases, i18n failures, accessibility barriers, and text overflow scenarios. You own production-readiness of the design — not whether it follows DS (that's design-system-reviewer) or whether it performs well (that's optimize).
+**Role:** Evaluate mock designs for resilience gaps — missing states, unhandled edge cases, i18n failures, accessibility barriers, and text overflow scenarios. You own production-readiness of the design — not whether it follows DS (that's design-system-reviewer) or whether it performs well (that's ui-optimize).
 
 **Evaluation criteria (from Reign, preserved):**
 1. Text overflow & wrapping — long text handling, flex/grid overflow, responsive text sizing
@@ -242,13 +242,13 @@ STATUS: complete — VERDICT: pass/needs-work
 STATUS: complete — VERDICT: pass/needs-work
 ```
 
-### polish
+### ui-polish
 
 **Source:** Reign `/polish` — 201 lines. Final quality pass on alignment, spacing, typography, color, interaction states, micro-interactions, content, icons, forms, responsiveness.
 
 **Adaptation:** Strip code examples and "Final Verification" section (convergence loop handles re-verification). Keep all assessment dimensions. Findings reference exact elements and specify exact values.
 
-**Role:** Catch micro-detail issues that individually seem minor but collectively determine whether a design feels polished or rough. You own the gap between "works" and "feels right" — alignment precision, spacing rhythm, state completeness, copy consistency, responsive behavior. Not UX strategy (that's critique) or DS compliance (that's design-system-reviewer).
+**Role:** Catch micro-detail issues that individually seem minor but collectively determine whether a design feels polished or rough. You own the gap between "works" and "feels right" — alignment precision, spacing rhythm, state completeness, copy consistency, responsive behavior. Not UX strategy (that's ui-critique) or DS compliance (that's design-system-reviewer).
 
 **Evaluation criteria (from Reign, preserved):**
 1. Visual alignment & spacing — pixel-perfect grid alignment, consistent spacing scale, optical alignment, responsive consistency
@@ -341,7 +341,7 @@ This design is informed by the following research, in addition to Loom's existin
 
 **ReqInOne** — LLM-Based Agent for Modular SRS Generation (arXiv 2508.09648). Task decomposition with specialized prompts beats one-shot spec generation. Applied to: reinforces the MARE decomposition in draft-prd.
 
-**Reign define.md** — Production-tested product definition workflow from the Reign project (`~/dev/reign/.claude/skills/sdlc-work/define.md`, 317 lines). Proven patterns: PRD-mock alignment gate before elevation, elevate loop (critique → normalize → optimize → harden → polish), design system compliance gate with zero tolerance, reference screenshot capture. Applied to: mock convergence panel composition, elevate agent selection, capture-screenshots step.
+**Reign define.md** — Production-tested product definition workflow from the Reign project (`~/dev/reign/.claude/skills/sdlc-work/define.md`, 317 lines). Proven patterns: PRD-mock alignment gate before elevation, elevate loop (ui-critique → normalize → ui-optimize → ui-harden → ui-polish), design system compliance gate with zero tolerance, reference screenshot capture. Applied to: mock convergence panel composition, elevate agent selection, capture-screenshots step.
 
 **Cloudflare AI code review** — Production multi-agent review system (7+ specialist agents). Security reviewer: 484 critical findings in 30 days. Performance reviewer: 14,615 findings. Specialist reviewers catch issues generalists miss. Applied to: reinforces the case for domain-specialist reviewers in mock convergence.
 
@@ -358,19 +358,19 @@ The original Step 6 in `docs/plan.md` proposed:
 | `prd-mock-alignment` agent | `mock-alignment-reviewer` (already exists) | Built in Step 5. |
 | `edge-case-hunter` agent | Already exists (Step 3) | Built in Step 3. |
 | `design-system-guardian` agent | `design-system-reviewer` (already exists, enriched) | Built in Step 5, enriched here with normalize's concerns. |
-| `critique` agent | Adapted from Reign as Loom reviewer | Ported from Reign `/critique`, converted from doer to reviewer format. |
-| `polish` agent | Adapted from Reign as Loom reviewer | Ported from Reign `/polish`, converted from doer to reviewer format. |
+| `ui-critique` agent | Adapted from Reign as Loom reviewer | Ported from Reign `/critique`, converted from doer to dual-mode reviewer (mocks + code). |
+| `ui-polish` agent | Adapted from Reign as Loom reviewer | Ported from Reign `/polish`, converted from doer to dual-mode reviewer (mocks + code). |
 | `normalize` dropped | Absorbed into `design-system-reviewer` | Overlapping DS compliance concerns. One agent, richer evaluation. |
-| `optimize` + `harden` not in original plan | Added from Reign elevate loop | Reign's proven elevate sequence includes these. Research (Cloudflare) confirms specialist reviewers catch issues generalists miss. |
+| `ui-optimize` + `ui-harden` not in original plan | Added from Reign elevate loop | Reign's proven elevate sequence includes these. Research (Cloudflare) confirms specialist reviewers catch issues generalists miss. |
 
 ## File changes summary
 
 | Action | File | Description |
 |---|---|---|
-| **New** | `agents/critique/AGENT.md` | UX quality reviewer (from Reign critique) |
-| **New** | `agents/optimize/AGENT.md` | Performance feasibility reviewer (from Reign optimize) |
-| **New** | `agents/harden/AGENT.md` | Resilience/edge-case reviewer (from Reign harden) |
-| **New** | `agents/polish/AGENT.md` | Micro-detail quality reviewer (from Reign polish) |
+| **New** | `agents/ui-critique/AGENT.md` | Dual-mode UX quality reviewer (from Reign critique) |
+| **New** | `agents/ui-optimize/AGENT.md` | Dual-mode performance reviewer (from Reign optimize) |
+| **New** | `agents/ui-harden/AGENT.md` | Dual-mode resilience reviewer (from Reign harden) |
+| **New** | `agents/ui-polish/AGENT.md` | Dual-mode micro-detail reviewer (from Reign polish) |
 | **Rename** | `playbooks/planning.md` → `product-definition.md` | Rename + add steps 10, 12 (expanded convergence) |
 | **Rename** | `playbooks/planning-review.md` → `product-definition-review.md` | Rename only |
 | **Modify** | `agents/research-codebase-arch/AGENT.md` | Add UI state documentation criteria |
@@ -386,4 +386,4 @@ The original Step 6 in `docs/plan.md` proposed:
 
 **4 new agents, 2 renamed files, 9 modified files.**
 
-Note: Agent output format examples in this design brief predate review-round enrichments (persona walkthrough in critique, network dimension in optimize, MARE traceability in draft-prd output, file:line format in elevate findings). The AGENT.md files are canonical.
+Note: Agent output format examples in this design brief predate review-round enrichments (persona walkthrough in ui-critique, network dimension in ui-optimize, MARE traceability in draft-prd output, file:line format in elevate findings). The AGENT.md files are canonical.

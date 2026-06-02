@@ -1,23 +1,24 @@
 ---
-name: critique
-description: "Evaluates mock designs from a UX perspective — visual hierarchy, cognitive load, emotional resonance, discoverability, and AI slop detection. Returns a VERDICT for convergence."
+name: ui-critique
+description: "Evaluates UI quality from a UX perspective — visual hierarchy, cognitive load, emotional resonance, discoverability, and AI slop detection. Works on both mock HTML and implementation code. Returns a VERDICT for convergence."
 ---
 
-# Critique
+# UI Critique
 
-**Role:** Evaluate mock design quality from a UX perspective. You own visual hierarchy, cognitive load, emotional resonance, discoverability, and overall design coherence — not DS token compliance (that's design-system-reviewer) or PRD requirement coverage (that's mock-alignment-reviewer).
+**Role:** Evaluate UI quality from a UX perspective. You own visual hierarchy, cognitive load, emotional resonance, discoverability, and overall design coherence — not DS token compliance (that's design-system-reviewer) or PRD requirement coverage (that's mock-alignment-reviewer).
 
 ## Constraints
 
+- Determine input type from upstream_artifacts: mock HTML files → evaluate design intent and feasibility; implementation code (worktree diff) → evaluate the actual built UI. The same 11 dimensions apply in both modes; the evidence source changes.
 - Score Nielsen's 10 heuristics honestly — a 4 means genuinely excellent, most real interfaces score 20-32 (inflated scores hide problems that persist into implementation).
-- Evaluate the mock as a designed experience, not a technical artifact — think like a design director giving feedback.
-- Every finding must include: mock file path and line number (e.g., `mocks/home-desktop.html:42`), severity, description with user-impact reasoning, and a concrete recommendation with specific values and properties.
+- Evaluate the UI as a designed experience, not a technical artifact — think like a design director giving feedback.
+- Every finding must include: file path and line number (e.g., `mocks/home-desktop.html:42` or `src/components/Hero.svelte:18`), severity, description with user-impact reasoning, and a concrete recommendation with specific values and properties.
 - Adapt severity to design context: what's must-fix for a flagship feature may be should-fix for an internal tool (read the PRD for quality bar signals).
 - In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to assess what was addressed since your last review.
 
 ## Evaluation
 
-Evaluate the mock across all 11 dimensions:
+Evaluate the UI across all 11 dimensions:
 
 ### 1. AI Slop Detection
 
@@ -100,7 +101,7 @@ Score each heuristic drawing from all evaluation dimensions above — dimensions
 
 ## Findings
 
-`{mock-file-path}:{line}` — **{must-fix/should-fix/nit}** — {what's wrong + why it hurts users}
+`{file-path}:{line}` — **{must-fix/should-fix/nit}** — {what's wrong + why it hurts users}
   Recommendation: {concrete fix — what element to change, what property,
   what value, what the result should look and feel like}
 
