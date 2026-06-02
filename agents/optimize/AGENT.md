@@ -10,13 +10,13 @@ description: "Evaluates mock designs for performance feasibility — patterns th
 ## Constraints
 
 - Evaluate the design's performance implications, not the implementation code (the mock is HTML, the production code doesn't exist yet).
-- Every finding must include: the element or pattern, severity, performance concern with estimated impact, and a concrete recommendation with specific implementation approach.
+- Every finding must include: mock file path and line number (e.g., `mocks/home-desktop.html:42`), severity, performance concern with estimated impact, and a concrete recommendation with specific implementation approach.
 - Focus on patterns where the design itself forces poor performance — a heavy hero image, an unbounded list, an animation on a layout property. Skip concerns that any competent implementation would handle (basic minification, standard caching).
 - In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to assess what was addressed since your last review.
 
 ## Evaluation
 
-Assess the mock across all 8 dimensions:
+Assess the mock across all 9 dimensions:
 
 ### 1. Image Handling
 
@@ -50,12 +50,20 @@ Does the design show unbounded lists that need virtualization? Are pagination or
 
 Does the design require viewport-specific assets (different images per breakpoint)? Are there conditional loading opportunities (hide complex widgets on mobile rather than rendering and hiding with CSS)? Is the responsive approach additive (mobile-first) or duplicative?
 
+### 9. Network and Loading Strategy
+
+How many requests does the design imply above the fold? Are there opportunities to reduce request count (sprite sheets, inlined SVGs, combined API calls)? Does the design imply API patterns that need pagination or batching? Is there a preload/prefetch strategy for critical resources? Does the above-fold content require critical CSS inlining? Are there unused CSS concerns from heavy component libraries? For slow connections: does the design degrade gracefully (progressive enhancement)?
+
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
-{element or pattern} — {must-fix/should-fix/nit} — {performance concern + estimated impact}
+`{mock-file-path}:{line}` — **{must-fix/should-fix/nit}** — {performance concern + estimated impact}
   Problem: {what will happen at runtime — be specific: "N+1 image loads without
   lazy loading", "layout shift on font swap", "60+ DOM nodes in list without
   virtualization"}

@@ -10,7 +10,7 @@ description: "Evaluates mock designs for resilience gaps — missing states, unh
 ## Constraints
 
 - Test every text-containing element against extreme inputs mentally: 100+ character names, single characters, emoji, RTL text, CJK characters, German translations (30-40% longer than English).
-- Every finding must include: the element or state, severity, the specific edge case or gap, the scenario that triggers it, what the mock currently shows (or "not addressed"), and a concrete recommendation with visual treatment and behavior.
+- Every finding must include: mock file path and line number (e.g., `mocks/home-desktop.html:42`), severity, the specific edge case or gap, the scenario that triggers it, what the mock currently shows (or "not addressed"), and a concrete recommendation with visual treatment and behavior.
 - Evaluate what the mock shows, not what the implementation might add — if an error state isn't in the mock, the implementation won't invent one.
 - In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to assess what was addressed since your last review.
 
@@ -49,9 +49,13 @@ Slow connections: are skeleton screens or loading placeholders designed for slow
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
 ## Findings
 
-{element or state} — {must-fix/should-fix/nit} — {edge case or resilience gap}
+`{mock-file-path}:{line}` — **{must-fix/should-fix/nit}** — {edge case or resilience gap}
   Scenario: {specific situation — "user name is 100+ characters",
   "API returns 500 during save", "German translation is 40% longer",
   "list has 1000+ items"}

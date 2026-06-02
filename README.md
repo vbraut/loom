@@ -259,7 +259,7 @@ product-definition-review            implementation-review
 | draft-implementation-plan | Create technical plan — map requirements to file changes, ordered by dependency | implementation |
 | implement | Write code following the assessed and converged approach | code-fix, implementation |
 | create-mocks | Build HTML mockups for all screens and states in a PRD | product-definition |
-| capture-screenshots | Screenshot running application at mobile and desktop viewports | implementation |
+| capture-screenshots | Screenshot running application at mobile and desktop viewports | product-definition, implementation |
 
 ### Cognitive assessment agents
 

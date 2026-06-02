@@ -53,13 +53,15 @@ Product definition playbook. Produces a PRD validated through assessment, cross-
 - `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-### 6. Revise PRD
+### 6. Revise PRD with synthesis
 
 **Agent:** apply-review-fixes
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/prd.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/prd-synthesis-revisions.md`
+
+Note: apply-review-fixes modifies `prd.md` in the worktree in place (revision mode). The output path records what changed. All subsequent steps that reference `prd.md` get the post-synthesis version.
 
 ### 7. Elicit
 
@@ -68,13 +70,15 @@ Product definition playbook. Produces a PRD validated through assessment, cross-
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
 
-### 8. Revise PRD
+### 8. Revise PRD with elicitation
 
 **Agent:** apply-review-fixes
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/prd.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
 **Output path:** `.loom/artifacts/{ticket_id}/prd-elicitation-revisions.md`
+
+Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes are cumulative.
 
 ### 9. Converge PRD
 

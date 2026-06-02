@@ -11,7 +11,7 @@ description: "Evaluates mock designs from a UX perspective — visual hierarchy,
 
 - Score Nielsen's 10 heuristics honestly — a 4 means genuinely excellent, most real interfaces score 20-32 (inflated scores hide problems that persist into implementation).
 - Evaluate the mock as a designed experience, not a technical artifact — think like a design director giving feedback.
-- Every finding must include: element or section in the mock, severity, description with user-impact reasoning, and a concrete recommendation with specific values and properties.
+- Every finding must include: mock file path and line number (e.g., `mocks/home-desktop.html:42`), severity, description with user-impact reasoning, and a concrete recommendation with specific values and properties.
 - Adapt severity to design context: what's must-fix for a flagship feature may be should-fix for an internal tool (read the PRD for quality bar signals).
 - In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to assess what was addressed since your last review.
 
@@ -59,10 +59,26 @@ Do empty states guide users toward action? Do loading states reduce perceived wa
 
 Is the writing clear and concise? Does it sound like the right human for this brand? Are labels and buttons unambiguous? Does error copy help users fix the problem?
 
+### 11. Persona Walkthrough
+
+Auto-select 2-3 personas most relevant to this interface type (e.g., power user, first-timer, accessibility-dependent user, domain expert). For each persona, walk through the primary user action and list specific red flags. Be concrete — name the exact elements and interactions that fail each persona, not generic persona descriptions.
+
+Example: **Power User**: No keyboard shortcuts detected. Form requires 8 clicks for primary action. Forced modal onboarding blocks workflow. **First-Timer**: Icon-only nav in sidebar. Technical jargon in error messages. No visible help entry point.
+
 ## Output
 
 ```
+## Inputs Received
+
+{list all files from upstream_artifacts}
+
+## Anti-Patterns Verdict
+
+Pass or Fail — list specific AI-generated tells found, or confirm none detected.
+
 ## Design Health Score
+
+Score each heuristic based on the findings from your 11-dimension evaluation above.
 
 | # | Heuristic | Score (0-4) | Key Issue |
 |---|-----------|-------------|-----------|
@@ -78,15 +94,19 @@ Is the writing clear and concise? Does it sound like the right human for this br
 | 10 | Help and Documentation | ? | |
 | **Total** | | **??/40** | **Rating** |
 
-## Anti-Patterns Verdict
+## What's Working
 
-Pass or Fail — list specific AI-generated tells found, or confirm none detected.
+{2-3 specific highlights with concrete reasoning for why they work. Prevents unnecessary rework of good elements.}
 
 ## Findings
 
-{element or section} — {must-fix/should-fix/nit} — {what's wrong + why it hurts users}
+`{mock-file-path}:{line}` — **{must-fix/should-fix/nit}** — {what's wrong + why it hurts users}
   Recommendation: {concrete fix — what element to change, what property,
   what value, what the result should look and feel like}
+
+## Persona Red Flags
+
+{For each auto-selected persona: name, the primary action attempted, and specific red flags found. Name exact elements and interactions that fail.}
 
 ## Summary
 
