@@ -1,6 +1,6 @@
 ---
 name: draft-prd
-description: "Produces a human-readable product requirements document from a ticket and codebase research. Triggered in the planning playbook before assessment."
+description: "Produces a human-readable product requirements document from a ticket and codebase research. Triggered in the product-definition playbook before assessment."
 ---
 
 # Draft PRD
@@ -16,15 +16,27 @@ description: "Produces a human-readable product requirements document from a tic
 
 ## Process
 
+The process follows three phases — elicit implicit needs, derive traceable requirements, then structure into the PRD. This decomposition surfaces requirements that one-shot drafting misses.
+
+### Phase 1 — Elicit
+
 1. Read the ticket description from `## ticket_notes` and the research brief from `## upstream_artifacts`.
 2. Extract the core problem: what is broken, missing, or needed? Why does it matter?
-3. Derive requirements: what must the solution do? Number them for traceability.
-4. Describe the user experience: how will users interact with this?
-5. Identify constraints: technical, business, or design limitations from the research brief.
-6. Consider alternatives: what other approaches could solve this? Why is the proposed approach preferred?
-7. Define acceptance criteria: testable conditions that prove the requirements are met.
-8. Sketch future considerations: natural extensions that a reader should be aware of. Include directions that would affect architectural choices now (e.g., "multi-tenant support later means avoid hardcoding org ID"). Exclude wishlist items that don't influence current design decisions.
-9. Write the PRD to `## output_path`.
+3. Generate stakeholder perspectives. What would different user types need from this feature? What would the PM prioritize vs. the engineer vs. the end user? Surface implicit requirements the ticket description doesn't state.
+
+### Phase 2 — Derive
+
+4. Map stakeholder needs to concrete requirements. Each requirement gets a unique identifier (R-1, R-2…). Classify each as functional, non-functional, or constraint. Trace each requirement back to the stakeholder need that generated it.
+5. Describe the user experience: how will users interact with this?
+6. Identify constraints: technical, business, or design limitations from the research brief.
+7. Consider alternatives: what other approaches could solve this? Why is the proposed approach preferred?
+8. Define acceptance criteria: testable conditions that prove the requirements are met. Link each criterion to its requirement ID.
+
+### Phase 3 — Structure
+
+9. Organize requirements into the PRD template. Every section of the PRD must trace to identified requirements. Flag requirements that don't fit any section — they indicate a template gap or a scope issue.
+10. Sketch future considerations: natural extensions that a reader should be aware of. Include directions that would affect architectural choices now (e.g., "multi-tenant support later means avoid hardcoding org ID"). Exclude wishlist items that don't influence current design decisions.
+11. Write the PRD to `## output_path`.
 
 ## Output
 
@@ -43,8 +55,9 @@ description: "Produces a human-readable product requirements document from a tic
 
 ## Requirements
 
-1. {Requirement — what the solution must do}
-2. {Requirement}
+R-1 [functional] {Requirement — what the solution must do} — traces to: {stakeholder need from Phase 1}
+R-2 [non-functional] {Requirement} — traces to: {stakeholder need}
+R-3 [constraint] {Requirement} — traces to: {stakeholder need}
 ...
 
 ## User Experience

@@ -36,9 +36,10 @@ Assessment agents from the preceding step must have been spawned with the `name`
    Instructions:
    1. Review the other agents' findings — look for disagreements, gaps, or reinforcements
    2. Challenge specific points where you have counter-evidence (cite file:line)
-   3. Acknowledge findings that strengthen or correct your own analysis
-   4. Revise your assessment — write updated output to the path in ## output_path below
-   5. End your response with exactly one of:
+   3. When other agents surface quality-attribute tensions (e.g., "security requires X but usability requires Y"), respond to those tensions specifically — not just to findings. State whether you agree with the trade-off framing, and if not, why. The goal is to surface and resolve trade-offs, not accumulate concerns.
+   4. Acknowledge findings that strengthen or correct your own analysis
+   5. Revise your assessment — write updated output to the path in ## output_path below
+   6. End your response with exactly one of:
       CROSS-TALK: converged
       CROSS-TALK: unresolved — {comma-separated list of remaining Critical/High concerns}
 
