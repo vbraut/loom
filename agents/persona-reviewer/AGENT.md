@@ -24,7 +24,8 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
 2. Read all upstream artifacts (research brief, PRD or plan, assessment synthesis if available).
 3. For each Evaluation Criteria question in your persona, assess the artifacts and produce findings.
 4. Check your Boundaries — flag anything that violates an ALWAYS or NEVER rule.
-5. Re-read your findings. Confirm each is genuinely a domain-expertise finding, not a generic observation.
+5. After evaluating from your persona's perspective, explicitly state which quality attributes (performance, security, usability, maintainability, reliability, scalability) are in tension with your findings. Name the trade-off: "Improving X requires accepting Y." If no tensions exist, state that explicitly.
+6. Re-read your findings. Confirm each is genuinely a domain-expertise finding, not a generic observation.
 
 ## Output
 

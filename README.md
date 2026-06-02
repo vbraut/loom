@@ -69,9 +69,8 @@ Agents do the work. Humans approve at review gates.
 | Type | Description | Status |
 |------|-------------|--------|
 | code-fix | Bug investigation + fix | Done |
-| planning | PRD from spec or ticket description | Done |
+| product-definition | PRD + mocks with elevated quality review | Done |
 | implementation | Implementation plan + code from a PRD or spec | Done |
-| product-definition | PRD + mocks for a feature | Planned |
 | strategy-definition | Research and decision documents | Planned |
 | brand-exploration | Visual system — palette, typography, logos | Planned |
 | copy-definition | Messaging, tone of voice, copy decks | Planned |
@@ -119,23 +118,25 @@ Used to validate artifacts (PRDs, plans, code) through iterative review.
   Exit: N consecutive clean rounds, or max rounds reached.
 ```
 
-### planning
+### product-definition
 
-Produces a PRD with optional HTML mocks. 12 steps.
+Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
 
 ```
- 1 ── research-codebase-arch ────── explore architecture, product focus
+ 1 ── research-codebase-arch ────── explore architecture, document UI state
  │
- 2 ── draft-prd ─────────────────── problem, requirements, UX, criteria
+ 2 ── draft-prd ─────────────────── 3-phase MARE process: elicit → derive → structure
  │
  │    ┌─ ASSESS PRD (parallel, named) ──────────────────────────────┐
  3    │ assess-inversion      assess-dependency     persona-pm      │
  │    │ assess-decomposition  assess-outsider       persona-dev     │
  │    │ assess-analogy                              persona-{...}   │
+ │    │                                                              │
+ │    │ Persona reviewers surface quality-attribute tensions (QUARE) │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
  4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
- │                                   outputs: *-r2.md, *-r3.md, ...
+ │                                   quality-attribute tensions resolved
  5 ── assess-synthesizer ────────── compile converged positions
  │
  6 ── apply-review-fixes ────────── revise PRD with synthesis findings
@@ -149,16 +150,20 @@ Produces a PRD with optional HTML mocks. 12 steps.
  │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
-10 ── create-mocks‡ ─────────────── HTML mockups from PRD
+10 ── capture-screenshots§ ──────── current app state for mock reference
+11 ── create-mocks‡ ─────────────── HTML mockups from PRD
  │
- │    ┌─ CONVERGE MOCKS (max 3 rounds, 2 consecutive clean, if step 10 produced mocks) ─┐
-11    │ mock-alignment-reviewer  design-system-reviewer†             │
+ │    ┌─ CONVERGE MOCKS (max 5 rounds, 2 consecutive clean) ───────┐
+12    │ mock-alignment-reviewer  design-system-reviewer†             │
+ │    │ critique                 optimize                            │
+ │    │ harden                   polish                              │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
-12 ── completion
+13 ── completion
 
 † when design_system configured  ‡ skipped if no UI changes
+§ when ticket touches existing UI routes
 ```
 
 ### implementation
@@ -233,7 +238,7 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
 Run at the review gate before human approval. Lighter than work playbooks — no assessment or convergence.
 
 ```
-planning-review                     implementation-review
+product-definition-review            implementation-review
 
 1 ─ review-summarizer               1 ─ standards-reviewer
 2 ─ ticket-planner                  2 ─ review-summarizer
@@ -243,17 +248,17 @@ planning-review                     implementation-review
 
 ## Agent catalog
 
-29 agents organized by function.
+33 agents organized by function.
 
 ### Doer agents
 
 | Agent | Purpose | Playbooks |
 |-------|---------|-----------|
 | research-codebase-arch | Explore architecture, produce context brief for all downstream agents | all |
-| draft-prd | Create PRD from ticket — problem, requirements, UX, acceptance criteria | planning |
+| draft-prd | Create PRD from ticket — 3-phase MARE process: elicit, derive, structure | product-definition |
 | draft-implementation-plan | Create technical plan — map requirements to file changes, ordered by dependency | implementation |
 | implement | Write code following the assessed and converged approach | code-fix, implementation |
-| create-mocks | Build HTML mockups for all screens and states in a PRD | planning |
+| create-mocks | Build HTML mockups for all screens and states in a PRD | product-definition |
 | capture-screenshots | Screenshot running application at mobile and desktop viewports | implementation |
 
 ### Cognitive assessment agents
@@ -290,6 +295,10 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 | adversarial-reviewer | Cynical catch-all — minimum 10 issues per review |
 | design-system-reviewer | UI compliance with project design system (conditional) |
 | mock-alignment-reviewer | PRD-to-mock coverage — every requirement has a visual |
+| critique | UX quality — visual hierarchy, cognitive load, emotional resonance, AI slop detection |
+| optimize | Performance feasibility — patterns that cause slow loads, jank, layout shifts |
+| harden | Resilience — missing states, edge cases, i18n failures, accessibility barriers |
+| polish | Micro-details — alignment precision, spacing rhythm, state completeness, copy consistency |
 | visual-parity-reviewer | Screenshot-to-mock comparison |
 
 ### Verification agents
@@ -338,6 +347,12 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 **Universal quality principles.** All agents receive shared quality principles — quality over speed, pre-existing issues in touched files must be fixed, no partial solutions. These override agent-specific rules when in conflict, ensuring consistent standards across the entire workflow.
 
 **50-method elicitation registry.** After assessment synthesis, the elicit-approach agent selects 10 contextually relevant methods from a 50-method registry spanning 11 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
+
+**MARE decomposition for PRD drafting.** MARE — *"Multi-Agents Collaboration Framework for Requirements Engineering"* (arXiv 2405.03256) — decomposes requirements engineering into elicitation → modeling → verification → specification with specialized agents, achieving up to 23.9% improvement in F1 for requirements modeling. Loom's draft-prd agent applies a 3-phase internal process inspired by MARE: Phase 1 elicits stakeholder perspectives, Phase 2 derives traceable requirements with unique identifiers, Phase 3 structures them into the PRD template with traceability.
+
+**QUARE quality-attribute negotiation.** QUARE — *"Multi-Agent Negotiation for Balancing Quality Attributes in RE"* (arXiv 2603.11890, March 2026) — formulates requirements analysis as structured negotiation among quality-specialized agents, achieving 98.2% compliance coverage (+105% over baselines). Loom applies this through persona-reviewer agents that explicitly surface quality-attribute tensions (performance vs. usability, security vs. maintainability) and cross-talk rounds that resolve those tensions rather than accumulating concerns.
+
+**Reign elevate loop.** Four specialist mock reviewers (critique, optimize, harden, polish) are ported from the Reign project's production-tested elevate workflow. Each applies domain-specific evaluation criteria developed through real-world use. In Loom these run as parallel convergence reviewers rather than Reign's sequential doer pattern, producing rich findings that apply-review-fixes executes.
 
 ## Project footprint
 

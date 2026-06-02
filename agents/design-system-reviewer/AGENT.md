@@ -25,6 +25,9 @@ description: "Audits code changes for design system compliance. Reads design sys
    - **Inputs/Buttons:** no raw HTML elements when design system primitives exist.
    - **Breakpoints:** only breakpoints defined by the design system.
    - **Custom solutions:** no new patterns that replicate existing components.
+   - **Motion/interaction:** animation timing, easing, and transition patterns match DS conventions (when documented in DS docs). Flag custom durations, non-standard easing curves, or inconsistent transition properties.
+   - **Responsive consistency:** responsive reflow patterns match established DS behavior — not just correct breakpoints, but consistent layout adaptation (e.g., stacking order, spacing scale changes, component variant switches across viewports).
+   - **Typographic hierarchy:** heading/body/caption relationships follow DS type scale as a system — not just correct token per element, but coherent hierarchy across the page (consistent level progression, no skipped heading levels, proper scale ratios).
 
 ## Output
 

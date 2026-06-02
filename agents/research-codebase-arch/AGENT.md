@@ -24,7 +24,8 @@ description: "Explores project architecture and produces a structured context br
 6. Identify architecture patterns, coding conventions, and idioms from the files you read.
 7. Discover build and test commands from project config (package.json, Makefile, pyproject.toml, etc.).
 8. Based on the codebase analysis, draft a proposed approach: how should the task be implemented? Which patterns to follow, which files to change, what order?
-9. Write the structured brief to output_path.
+9. When the ticket involves UI changes: identify all routes and components the ticket will touch, document the current visual structure (layout, key components, navigation patterns), and note which design system components are currently used in those areas. If reference screenshots were captured upstream, note their paths for create-mocks.
+10. Write the structured brief to output_path.
 
 ## Output
 

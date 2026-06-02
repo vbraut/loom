@@ -1,6 +1,6 @@
-# planning
+# product-definition
 
-Technical planning playbook. Produces a PRD validated through assessment, cross-talk, elicitation, convergence, and optional mocking.
+Product definition playbook. Produces a PRD validated through assessment, cross-talk, elicitation, convergence, and optional mocking with elevated quality review.
 
 ## Steps
 
@@ -102,22 +102,33 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
-### 10. Create mocks
+### 10. Capture screenshots
 
+**When:** ticket touches existing UI routes (orchestrator checks whether the converged PRD references routes that exist in the codebase)
+**Agent:** capture-screenshots
+**Upstream:**
+- `.loom/artifacts/{ticket_id}/research.md`
+- `.loom/artifacts/{ticket_id}/prd.md`
+**Output path:** `.loom/artifacts/{ticket_id}/screenshots-manifest.md`
+
+### 11. Create mocks
+
+**Skip when:** no UI changes (PRD contains no user-facing interface requirements)
 **Agent:** create-mocks
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/prd.md`
+- `.loom/artifacts/{ticket_id}/screenshots-manifest.md` (when step 10 ran)
 **Output path:** `.loom/artifacts/{ticket_id}/mock-manifest.md`
 
-### 11. Converge mocks
+### 12. Converge mocks
 
-**Skip when:** create-mocks output contains "no UI changes"
-**Agents:** mock-alignment-reviewer (parallel)
+**Skip when:** create-mocks output contains "no UI changes" or step 11 was skipped
+**Agents:** mock-alignment-reviewer, critique, optimize, harden, polish (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
-**Max rounds:** 3
+**Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
   "Mock convergence: {round} rounds, unresolved feedback — see artifacts."
@@ -129,10 +140,14 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 **Reviewer output paths:**
 - mock-alignment-reviewer: `.loom/artifacts/{ticket_id}/mock-alignment-r{N}.md`
 - design-system-reviewer: `.loom/artifacts/{ticket_id}/mock-design-system-r{N}.md`
+- critique: `.loom/artifacts/{ticket_id}/mock-critique-r{N}.md`
+- optimize: `.loom/artifacts/{ticket_id}/mock-optimize-r{N}.md`
+- harden: `.loom/artifacts/{ticket_id}/mock-harden-r{N}.md`
+- polish: `.loom/artifacts/{ticket_id}/mock-polish-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/mock-fixes-r{N}.md`
 
-### 12. Completion
+### 13. Completion
 
 ## Pre-completion checklist (verify before transitioning)
 
@@ -145,5 +160,7 @@ Technical planning playbook. Produces a PRD validated through assessment, cross-
 - [ ] Elicitation completed
 - [ ] PRD revised with elicitation findings
 - [ ] PRD convergence ran (passed or hit max rounds with note)
+- [ ] Screenshots captured (or skipped if no existing UI routes)
 - [ ] Mocking completed (or skipped if no UI changes)
+- [ ] Mock convergence ran with all 6 reviewers (or skipped if no mocks)
 - [ ] All output paths registered via addReferences

@@ -1,6 +1,6 @@
-# planning-review
+# product-definition-review
 
-Review playbook for planning tickets. Runs before the human gate.
+Review playbook for product-definition tickets. Runs before the human gate.
 
 ## Steps
 
