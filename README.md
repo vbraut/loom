@@ -352,7 +352,7 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 
 **QUARE quality-attribute negotiation.** QUARE — *"Multi-Agent Negotiation for Balancing Quality Attributes in RE"* (arXiv 2603.11890, March 2026) — formulates requirements analysis as structured negotiation among quality-specialized agents, achieving 98.2% compliance coverage (+105% over baselines). Loom applies this through persona-reviewer agents that explicitly surface quality-attribute tensions (performance vs. usability, security vs. maintainability) and cross-talk rounds that resolve those tensions rather than accumulating concerns.
 
-**Elevate loop.** Four specialist UI reviewers (ui-critique, ui-optimize, ui-harden, ui-polish) are ported from the a production-tested elevate workflow. Each applies domain-specific evaluation criteria developed through real-world use. In Loom these run as parallel convergence reviewers rather than a sequential doer pattern, producing rich findings that apply-review-fixes executes. Dual-mode: they work on both mock HTML and implementation code, adapting their evaluation to the input type.
+**Elevate loop.** Four specialist UI reviewers (ui-critique, ui-optimize, ui-harden, ui-polish) apply domain-specific evaluation criteria developed through production use. They run as parallel convergence reviewers, producing rich findings that apply-review-fixes executes. Dual-mode: they work on both mock HTML and implementation code, adapting their evaluation to the input type.
 
 ## Project footprint
 
