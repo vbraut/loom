@@ -55,8 +55,9 @@ The process follows three phases — elicit implicit needs, derive traceable req
 
 ## Requirements
 
-1. {Requirement — what the solution must do}
-2. {Requirement}
+R-1 [functional] {Requirement — what the solution must do} — traces to: {stakeholder need from Phase 1}
+R-2 [non-functional] {Requirement} — traces to: {stakeholder need}
+R-3 [constraint] {Requirement} — traces to: {stakeholder need}
 ...
 
 ## User Experience

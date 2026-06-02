@@ -17,7 +17,7 @@ description: "Evaluates mock designs from a UX perspective — visual hierarchy,
 
 ## Evaluation
 
-Evaluate the mock across all 10 dimensions:
+Evaluate the mock across all 11 dimensions:
 
 ### 1. AI Slop Detection
 
@@ -78,7 +78,7 @@ Pass or Fail — list specific AI-generated tells found, or confirm none detecte
 
 ## Design Health Score
 
-Score each heuristic based on the findings from your 11-dimension evaluation above.
+Score each heuristic drawing from all evaluation dimensions above — dimensions do not map 1:1 to heuristics.
 
 | # | Heuristic | Score (0-4) | Key Issue |
 |---|-----------|-------------|-----------|

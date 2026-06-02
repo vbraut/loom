@@ -379,7 +379,11 @@ The original Step 6 in `docs/plan.md` proposed:
 | **Modify** | `agents/design-system-reviewer/AGENT.md` | Absorb normalize concerns (motion, responsive, typography hierarchy) |
 | **Modify** | `shared/cross-talk.md` | Add quality-attribute tension surfacing |
 | **Modify** | `README.md` | Rename planning → product-definition in ticket types table + playbook pipeline diagram |
-| **Modify** | `scripts/validate.sh` | Update for renamed playbooks |
+| **No change** | `scripts/validate.sh` | Discovers playbooks dynamically via glob — no update needed for rename |
 | **Modify** | `docs/plan.md` | Mark Step 6 status, note divergences |
+| **Modify** | `agents/adversarial-reviewer/AGENT.md` | Nit-only findings don't block VERDICT on documents |
+| **Modify** | `agents/capture-screenshots/AGENT.md` | Updated scope for both playbooks |
 
-**4 new agents, 2 renamed files, 8 modified files.**
+**4 new agents, 2 renamed files, 9 modified files.**
+
+Note: Agent output format examples in this design brief predate review-round enrichments (persona walkthrough in critique, network dimension in optimize, MARE traceability in draft-prd output, file:line format in elevate findings). The AGENT.md files are canonical.

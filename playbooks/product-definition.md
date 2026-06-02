@@ -138,6 +138,7 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
   "Mock convergence: {round} rounds, unresolved feedback — see artifacts."
 
 **Upstream for reviewers:**
+- `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/prd.md`
 - `.loom/artifacts/{ticket_id}/mock-manifest.md`
 
