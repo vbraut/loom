@@ -20,3 +20,4 @@ project:
     # brand_voice: docs/brand/copy/brand-context.md
     # design_system: src/app.css
     # design_system_rules: src/lib/components/app/AI_USAGE.md
+    # architecture_rules: docs/ARCHITECTURE.md
