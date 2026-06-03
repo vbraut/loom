@@ -20,7 +20,6 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
-**When:** config.context.architecture_rules → also include architecture-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 6
@@ -40,7 +39,6 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 - edge-case-hunter: `.loom/artifacts/{ticket_id}/edge-cases-r{N}.md`
 - performance-reviewer: `.loom/artifacts/{ticket_id}/performance-r{N}.md`
 - design-system-reviewer: `.loom/artifacts/{ticket_id}/design-system-r{N}.md`
-- architecture-reviewer: `.loom/artifacts/{ticket_id}/architecture-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 

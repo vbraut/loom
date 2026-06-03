@@ -147,8 +147,7 @@ Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
  9    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  adversarial-reviewer                │
- │    │ design-system-reviewer†  architecture-reviewer‡              │
- │    │ ↻ apply-review-fixes                                        │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
 10 ── capture-screenshots§ ──────── current app state for mock reference
@@ -163,8 +162,8 @@ Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
  │
 13 ── completion
 
-† when design_system configured  ‡ when architecture_rules configured
-¶ skipped if no UI changes  § when ticket touches existing UI routes
+† when design_system configured  ¶ skipped if no UI changes
+§ when ticket touches existing UI routes
 ```
 
 ### implementation
@@ -227,14 +226,13 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
  3    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  performance-reviewer                │
- │    │ design-system-reviewer†  architecture-reviewer‡              │
- │    │ ↻ apply-review-fixes                                        │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
  4 ── run-tests + test-coverage ─── parallel; ↻ retry from 2 on failure
  5 ── completion (PR required)
 
-† when design_system configured  ‡ when architecture_rules configured
+† when design_system configured
 ```
 
 ### Review playbooks
