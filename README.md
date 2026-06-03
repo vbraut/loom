@@ -151,18 +151,18 @@ Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
  │    └─────────────────────────────────────────────────────────────┘
  │
 10 ── capture-screenshots§ ──────── current app state for mock reference
-11 ── create-mocks‡ ─────────────── HTML mockups from PRD
+11 ── create-mocks¶ ─────────────── HTML mockups from PRD
  │
  │    ┌─ CONVERGE MOCKS (max 5 rounds, 2 consecutive clean) ───────┐
 12    │ mock-alignment-reviewer  design-system-reviewer†             │
- │    │ ui-critique               ui-optimize                         │
+ │    │ ui-critique              ui-optimize                          │
  │    │ ui-harden                ui-polish                           │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
 13 ── completion
 
-† when design_system configured  ‡ skipped if no UI changes
+† when design_system configured  ¶ skipped if no UI changes
 § when ticket touches existing UI routes
 ```
 
@@ -192,7 +192,8 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
  9    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  adversarial-reviewer                │
- │    │ design-system-reviewer†  ↻ apply-review-fixes               │
+ │    │ performance-reviewer     design-system-reviewer†             │
+ │    │ architecture-reviewer‡   ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
 10 ── implement ─────────────────── execute the converged plan
@@ -200,7 +201,8 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
  │    ┌─ CONVERGE CODE (max 6 rounds, 2 consecutive clean) ────────┐
 11    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
- │    │ simplification-reviewer  design-system-reviewer†             │
+ │    │ simplification-reviewer  performance-reviewer                │
+ │    │ design-system-reviewer†  architecture-reviewer‡              │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
@@ -209,7 +211,7 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
 14 ── visual-parity-reviewer ────── compare to mocks; ↻ retry from 10
 15 ── completion (PR required)
 
-† when design_system configured
+† when design_system configured  ‡ when architecture_rules configured
 ```
 
 ### code-fix
@@ -223,8 +225,8 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
  │    ┌─ CONVERGE (max 6 rounds, 2 consecutive clean) ─────────────┐
  3    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
- │    │ simplification-reviewer  design-system-reviewer†             │
- │    │ ↻ apply-review-fixes                                        │
+ │    │ simplification-reviewer  performance-reviewer                │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
  4 ── run-tests + test-coverage ─── parallel; ↻ retry from 2 on failure
@@ -248,7 +250,7 @@ product-definition-review            implementation-review
 
 ## Agent catalog
 
-33 agents organized by function.
+35 agents organized by function.
 
 ### Doer agents
 
@@ -293,6 +295,8 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 | security-reviewer | Injection, auth bypass, data exposure, cryptographic misuse |
 | edge-case-hunter | Boundary conditions, unhandled paths, undefined states |
 | adversarial-reviewer | Cynical catch-all — minimum 10 issues per review |
+| performance-reviewer | Algorithmic complexity, query patterns, memory allocation, I/O efficiency |
+| architecture-reviewer | Project-specific architectural rules and coding conventions (conditional) |
 | design-system-reviewer | UI compliance with project design system (conditional) |
 | mock-alignment-reviewer | PRD-to-mock coverage — every requirement has a visual |
 | ui-critique | UX quality — visual hierarchy, cognitive load, emotional resonance, AI slop detection |

@@ -78,8 +78,9 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 ### 9. Converge plan
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer, performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
+**When:** config.context.architecture_rules → also include architecture-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 5
@@ -98,7 +99,9 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - security-reviewer: `.loom/artifacts/{ticket_id}/plan-security-r{N}.md`
 - edge-case-hunter: `.loom/artifacts/{ticket_id}/plan-edge-cases-r{N}.md`
 - adversarial-reviewer: `.loom/artifacts/{ticket_id}/plan-adversarial-r{N}.md`
+- performance-reviewer: `.loom/artifacts/{ticket_id}/plan-performance-r{N}.md`
 - design-system-reviewer: `.loom/artifacts/{ticket_id}/plan-design-system-r{N}.md`
+- architecture-reviewer: `.loom/artifacts/{ticket_id}/plan-architecture-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/plan-fixes-r{N}.md`
 
@@ -112,8 +115,9 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 ### 11. Converge code
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
+**When:** config.context.architecture_rules → also include architecture-reviewer
 **Verdict logic:** AND
 **Consecutive clean rounds:** 2
 **Max rounds:** 6
@@ -132,7 +136,9 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - simplification-reviewer: `.loom/artifacts/{ticket_id}/simplification-r{N}.md`
 - security-reviewer: `.loom/artifacts/{ticket_id}/security-r{N}.md`
 - edge-case-hunter: `.loom/artifacts/{ticket_id}/edge-cases-r{N}.md`
+- performance-reviewer: `.loom/artifacts/{ticket_id}/performance-r{N}.md`
 - design-system-reviewer: `.loom/artifacts/{ticket_id}/design-system-r{N}.md`
+- architecture-reviewer: `.loom/artifacts/{ticket_id}/architecture-r{N}.md`
 
 **Feedback agent output path:** `.loom/artifacts/{ticket_id}/fixes-r{N}.md`
 
