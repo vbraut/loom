@@ -1,6 +1,6 @@
 ---
 name: draft-strategy
-description: "Produces a market or product strategy document — positioning, competitive analysis, go-to-market. Triggered in the strategy-definition playbook before assessment."
+description: "Produces a market or product strategy document — positioning, competitive analysis, go-to-market. Triggered in the market-strategy playbook before assessment."
 ---
 
 # Draft Strategy

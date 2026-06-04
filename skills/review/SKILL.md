@@ -81,7 +81,7 @@ Collect only approved (possibly modified) proposals. Pass them to Phase 4 as `{a
 
 ### On approval:
 
-Read `shared/transition.md` and follow "Review approval transition". Pass `{approved_proposals}` (may be empty if all were rejected or no ticket-planner ran).
+Read `shared/transition.md` and follow "Review approval transition". Pass `{approved_proposals}` (may be empty if all proposals were rejected).
 
 ### On rejection:
 

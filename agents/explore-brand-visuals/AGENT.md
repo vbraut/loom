@@ -11,6 +11,7 @@ description: "Creates a brand visual system from an assessed brand spec. Trigger
 
 - Pass brand context (personality, visual territory, constraints, audience) to each skill invocation. Each design discipline needs this context to produce cohesive results.
 - After each skill invocation, verify that files were created or modified in the worktree. If a skill produces no changes, note it and continue.
+- Write only the asset manifest to output_path. The visual assets themselves live in the worktree where Impeccable places them.
 
 ## Process
 

@@ -1,6 +1,6 @@
-# strategy-definition
+# copy-deck
 
-Market and product strategy playbook. Produces positioning, competitive analysis, and go-to-market documents validated through assessment, cross-talk, elicitation, and convergence. For technical architecture decisions, use `type:planning` instead. Artifact-only — no code, no PR.
+Messaging framework playbook. Produces a copy deck (tone of voice, registers, do/don't examples, terminology, messaging hierarchy) validated through assessment, cross-talk, elicitation, and convergence. Artifact-only — no code, no PR.
 
 ## Steps
 
@@ -9,22 +9,22 @@ Market and product strategy playbook. Produces positioning, competitive analysis
 **Agent:** research-codebase-arch
 **Output path:** `.loom/artifacts/{ticket_id}/research.md`
 
-### 2. Draft strategy
+### 2. Draft copy deck
 
-**Agent:** draft-strategy
+**Agent:** draft-copy-deck
 **Upstream:** `.loom/artifacts/{ticket_id}/research.md`
-**Output path:** `.loom/artifacts/{ticket_id}/strategy.md`
+**Output path:** `.loom/artifacts/{ticket_id}/copy-deck.md`
 
-### 3. Assess strategy
+### 3. Assess copy deck
 
 **Agents:** assess-inversion, assess-decomposition, assess-analogy, assess-dependency, assess-outsider (named, parallel)
 **Agent:** persona-reviewer (named, parallel)
 **Persona selection:**
   Always: pm
-  Dynamic (select 1-3 based on ticket content): dev, analyst, architect, data, end-user, tech-lead, security, sm, qa, devops, ux, craft, tech-writer
+  Dynamic (select 1-3 based on ticket content): dev, ux, craft, tech-writer, end-user, analyst, architect, tech-lead, security, data, qa, devops, sm
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/strategy.md`
+- `.loom/artifacts/{ticket_id}/copy-deck.md`
 
 **Agent output paths:**
 - assess-inversion: `.loom/artifacts/{ticket_id}/perspective-inversion-r{R}.md`
@@ -53,15 +53,15 @@ Market and product strategy playbook. Produces positioning, competitive analysis
 - `.loom/artifacts/{ticket_id}/persona-*-r{R}.md` (all persona outputs)
 **Output path:** `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 
-### 6. Revise strategy with synthesis
+### 6. Revise copy deck with synthesis
 
 **Agent:** apply-review-fixes
 **Upstream:**
-- `.loom/artifacts/{ticket_id}/strategy.md`
+- `.loom/artifacts/{ticket_id}/copy-deck.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
-**Output path:** `.loom/artifacts/{ticket_id}/strategy-synthesis-revisions.md`
+**Output path:** `.loom/artifacts/{ticket_id}/copy-synthesis-revisions.md`
 
-Note: apply-review-fixes modifies the strategy document in the worktree in place (revision mode). The output path records what changed.
+Note: apply-review-fixes modifies the copy deck in the worktree in place (revision mode). The output path records what changed.
 
 ### 7. Elicit
 
@@ -70,13 +70,13 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
 
-### 8. Revise strategy with elicitation
+### 8. Revise copy deck with elicitation
 
 **Agent:** apply-review-fixes
 **Upstream:**
-- `.loom/artifacts/{ticket_id}/strategy.md`
+- `.loom/artifacts/{ticket_id}/copy-deck.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
-**Output path:** `.loom/artifacts/{ticket_id}/strategy-elicitation-revisions.md`
+**Output path:** `.loom/artifacts/{ticket_id}/copy-elicitation-revisions.md`
 
 ### 9. Converge
 
@@ -90,7 +90,7 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/strategy.md`
+- `.loom/artifacts/{ticket_id}/copy-deck.md`
 
 **Reviewer output paths:**
 - requirements-reviewer: `.loom/artifacts/{ticket_id}/requirements-review-r{N}.md`
@@ -105,12 +105,12 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
-- [ ] draft-strategy produced strategy document
+- [ ] draft-copy-deck produced copy deck
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
 - [ ] Cross-talk completed (converged or hit max rounds with note)
 - [ ] Synthesis produced
-- [ ] Strategy revised with synthesis findings
+- [ ] Copy deck revised with synthesis findings
 - [ ] Elicitation completed
-- [ ] Strategy revised with elicitation findings
+- [ ] Copy deck revised with elicitation findings
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] All output paths registered via addReferences

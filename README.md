@@ -71,9 +71,9 @@ Agents do the work. Humans approve at review gates.
 | code-fix | Bug investigation + fix | Done |
 | product-definition | PRD + mocks with elevated quality review | Done |
 | implementation | Implementation plan + code from a PRD or spec | Done |
-| strategy-definition | Market strategy, positioning, competitive analysis | Done |
+| market-strategy | Market strategy, positioning, competitive analysis | Done |
 | brand-exploration | Visual system — palette, typography, logos | Done |
-| copy-definition | Messaging, tone of voice, copy decks | Done |
+| copy-deck | Messaging, tone of voice, copy decks | Done |
 
 ## Playbook pipelines
 
@@ -235,9 +235,9 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
 † when design_system configured
 ```
 
-### strategy-definition
+### market-strategy
 
-Market and product strategy — positioning, competitive analysis, go-to-market. For technical architecture decisions, use `type:planning`. Artifact-only — no code, no PR. 10 steps.
+Market and product strategy — positioning, competitive analysis, go-to-market. For technical architecture decisions, use `type:implementation`. Artifact-only — no code, no PR. 10 steps.
 
 ```
  1 ── research-codebase-arch ────── explore product/market context
@@ -245,8 +245,8 @@ Market and product strategy — positioning, competitive analysis, go-to-market.
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
  3    │ assess-inversion      assess-dependency     persona-pm      │
- │    │ assess-decomposition  assess-outsider       persona-dev     │
- │    │ assess-analogy                              persona-{...}   │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
  4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
@@ -275,8 +275,8 @@ Brand visual system — palette, typography, identity. Dual-artifact flow: asses
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
  3    │ assess-inversion      assess-dependency     persona-pm      │
- │    │ assess-decomposition  assess-outsider       persona-dev     │
- │    │ assess-analogy                              persona-{...}   │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
  4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
@@ -304,7 +304,7 @@ Brand visual system — palette, typography, identity. Dual-artifact flow: asses
 † when design_system configured
 ```
 
-### copy-definition
+### copy-deck
 
 Messaging framework — tone of voice, registers, copy decks. Artifact-only — no code, no PR. 10 steps.
 
@@ -314,8 +314,8 @@ Messaging framework — tone of voice, registers, copy decks. Artifact-only — 
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
  3    │ assess-inversion      assess-dependency     persona-pm      │
- │    │ assess-decomposition  assess-outsider       persona-dev     │
- │    │ assess-analogy                              persona-{...}   │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
  4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
@@ -361,9 +361,9 @@ default (all types)                  implementation-review (override)
 | implement | Write code following the assessed and converged approach | code-fix, implementation |
 | create-mocks | Build HTML mockups for all screens and states in a PRD | product-definition |
 | capture-screenshots | Screenshot running application at mobile and desktop viewports | product-definition, implementation |
-| draft-strategy | Produce strategy documents — delegates to installed strategy plugins, assembles deliverable | strategy-definition |
+| draft-strategy | Produce strategy documents — delegates to installed strategy plugins, assembles deliverable | market-strategy |
 | explore-brand-visuals | Create brand visual system — delegates to Impeccable's design disciplines | brand-exploration |
-| draft-copy-deck | Produce messaging framework — delegates to installed copy/brand-voice plugins, assembles deliverable | copy-definition |
+| draft-copy-deck | Produce messaging framework — delegates to installed copy/brand-voice plugins, assembles deliverable | copy-deck |
 
 ### Cognitive assessment agents
 

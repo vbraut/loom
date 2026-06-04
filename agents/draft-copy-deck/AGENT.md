@@ -1,6 +1,6 @@
 ---
 name: draft-copy-deck
-description: "Produces a messaging framework and brand voice document from a ticket and codebase research. Triggered in the copy-definition playbook before assessment."
+description: "Produces a messaging framework and brand voice document from a ticket and codebase research. Triggered in the copy-deck playbook before assessment."
 ---
 
 # Draft Copy Deck
@@ -14,6 +14,7 @@ description: "Produces a messaging framework and brand voice document from a tic
 - Every register or voice dimension must include at least 3 do/don't example pairs. Abstract guidelines without examples are not actionable.
 - Write for a human stakeholder audience — creative teams, developers, and translators will reference the copy deck. Clear structure, concrete examples, do/don't pairs.
 - Include a Terminology section — preferred terms vs. avoided terms, with rationale.
+- Include an Alternatives Considered section with different voice directions and why the proposed direction was chosen — the assessment agents need material to challenge.
 
 ## Process
 
@@ -71,6 +72,14 @@ Write the copy deck directly to output_path.
 ## Implementation Notes
 
 {Enforcement guidance — lint rules, review checklist, forbidden vocabulary}
+
+## Alternatives Considered
+
+### {Alternative voice direction}
+
+**Description:** {what this direction would sound like}
+**Rejected because:** {concrete reason}
+**What you lose:** {benefit sacrificed}
 ```
 
 The last line of your response must be one of:
