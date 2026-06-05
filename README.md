@@ -237,69 +237,79 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
 
 ### market-strategy
 
-Market and product strategy — positioning, competitive analysis, go-to-market. For technical architecture decisions, use `type:implementation`. Artifact-only — no code, no PR. 10 steps.
+Market and product strategy — positioning, competitive analysis, go-to-market. Grounded in interactive discovery and web research. For technical architecture decisions, use `type:implementation`. Artifact-only — no code, no PR. 11 steps.
 
 ```
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
  1 ── research-codebase-arch ────── explore product/market context
- 2 ── draft-strategy ────────────── delegate to strategy plugins, assemble deliverable
+ 2 ── await external research ───── web competitor + market data
+ 3 ── draft-strategy ────────────── synthesize intake + research into strategy
+ │    CHECKPOINT ────────────────── human approves direction
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
- 3    │ assess-inversion      assess-dependency     persona-pm      │
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
  │    │ assess-decomposition  assess-outsider       persona-{...}   │
  │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
- 4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
- 5 ── assess-synthesizer ────────── compile converged positions
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
  │
- 6 ── apply-review-fixes ────────── revise strategy with synthesis
- 7 ── elicit-approach ───────────── 10 methods from registry
- 8 ── apply-review-fixes ────────── revise strategy with elicitation
+ 7 ── apply-review-fixes ────────── revise strategy with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise strategy with elicitation
  │
  │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
- 9    │ requirements-reviewer    adversarial-reviewer                │
+10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
-10 ── completion
+11 ── completion
 ```
 
 ### brand-exploration
 
-Brand visual system — palette, typography, identity. Dual-artifact flow: assessed spec + Impeccable-created visuals. 12 steps.
+Brand visual system — palette, typography, identity. Grounded in interactive discovery and web research. Dual-artifact flow: assessed spec + Impeccable-created visuals. 13 steps.
 
 ```
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
  1 ── research-codebase-arch ────── explore existing brand, design system
- 2 ── draft-brand-spec ───────────── visual territory, personality, mood references
+ 2 ── await external research ───── web competitor visuals + design trends
+ 3 ── draft-brand-spec ───────────── visual territory, personality, mood references
+ │    CHECKPOINT ────────────────── human approves direction
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
- 3    │ assess-inversion      assess-dependency     persona-pm      │
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
  │    │ assess-decomposition  assess-outsider       persona-{...}   │
  │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
- 4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
- 5 ── assess-synthesizer ────────── compile converged positions
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
  │
- 6 ── apply-review-fixes ────────── revise brand spec with synthesis
- 7 ── elicit-approach ───────────── 10 methods from registry
- 8 ── apply-review-fixes ────────── revise brand spec with elicitation
+ 7 ── apply-review-fixes ────────── revise brand spec with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise brand spec with elicitation
  │
  │    ┌─ CONVERGE SPEC (max 5 rounds, 2 consecutive clean) ────────┐
- 9    │ requirements-reviewer    adversarial-reviewer                │
+10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
-10 ── explore-brand-visuals ─────── delegate to Impeccable (colorize, typeset, arrange)
+11 ── explore-brand-visuals ─────── delegate to Impeccable (colorize, typeset, arrange)
  │
  │    ┌─ CONVERGE VISUALS (max 3 rounds, 2 consecutive clean) ─────┐
-11    │ ui-critique              ui-polish                           │
+12    │ ui-critique              ui-polish                           │
  │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
  │
-12 ── completion
+13 ── completion
 
 † when design_system configured
 ```
@@ -348,20 +358,21 @@ default (all types)                  implementation-review (override)
 
 ## Agent catalog
 
-39 agents organized by function.
+40 agents organized by function.
 
 ### Doer agents
 
 | Agent | Purpose | Playbooks |
 |-------|---------|-----------|
 | research-codebase-arch | Explore architecture, produce context brief for all downstream agents | all |
+| research-external | Gather external context via web research — competitor analysis, market data, visual identity | market-strategy, brand-exploration |
 | draft-prd | Create PRD from ticket — 3-phase MARE process: elicit, derive, structure | product-definition |
-| draft-brand-spec | Create brand creative brief — visual territory, personality, mood references, deliverables | brand-exploration |
+| draft-brand-spec | Structure user-articulated brand direction into creative brief — visual territory, personality, mood references, deliverables | brand-exploration |
 | draft-implementation-plan | Create technical plan — map requirements to file changes, ordered by dependency | implementation |
 | implement | Write code following the assessed and converged approach | code-fix, implementation |
 | create-mocks | Build HTML mockups for all screens and states in a PRD | product-definition |
 | capture-screenshots | Screenshot running application at mobile and desktop viewports | product-definition, implementation |
-| draft-strategy | Produce strategy documents — delegates to installed strategy plugins, assembles deliverable | market-strategy |
+| draft-strategy | Synthesize user intent + external research + codebase context into strategy document | market-strategy |
 | explore-brand-visuals | Create brand visual system — delegates to Impeccable's design disciplines | brand-exploration |
 | draft-copy-deck | Produce messaging framework — delegates to installed copy/brand-voice plugins, assembles deliverable | copy-deck |
 
