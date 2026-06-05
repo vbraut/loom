@@ -6,9 +6,10 @@
 version: 1
 
 project:
-  # Path to the Backlog.md repository (absolute or ~/...).
+  # Absolute path to the Backlog.md repository.
   # Must match the --cwd argument in your .mcp.json backlog server config.
-  backlog_cwd: ~/dev/my-project-backlog
+  # Use a full path — .mcp.json does not expand ~ (tilde).
+  backlog_cwd: /Users/you/dev/my-project-backlog
 
   # Git default branch name. Omit to use "main".
   # default_branch: main

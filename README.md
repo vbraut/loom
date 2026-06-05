@@ -30,7 +30,7 @@ claude plugin install loom
    ```yaml
    version: 1
    project:
-     backlog_cwd: ~/dev/my-project-backlog
+     backlog_cwd: /absolute/path/to/my-project-backlog
      context:
        brand_voice: docs/brand/copy/brand-context.md
        design_system: src/app.css
@@ -42,7 +42,7 @@ claude plugin install loom
      "mcpServers": {
        "backlog": {
          "command": "backlog",
-         "args": ["mcp", "start", "--cwd", "~/dev/my-project-backlog"]
+         "args": ["mcp", "start", "--cwd", "/absolute/path/to/my-project-backlog"]
        }
      }
    }
