@@ -58,6 +58,14 @@ LOCK_DIR="$BACKLOG_CWD/.loom/dispatch.lock"
 
 log() { echo "$@" >&2; }
 
+if command -v timeout &>/dev/null; then
+  TIMEOUT="$TIMEOUT"
+elif command -v gtimeout &>/dev/null; then
+  TIMEOUT="g$TIMEOUT"
+else
+  TIMEOUT=""
+fi
+
 # Check if an assignee string means "free" (empty, @none, @released, or stale timestamp).
 is_free() {
   local assignee="$1"
@@ -81,7 +89,7 @@ get_assignee() {
     return
   fi
   local raw
-  if ! raw=$(timeout 60 backlog task "$tid" --plain 2>/dev/null); then
+  if ! raw=$($TIMEOUT backlog task "$tid" --plain 2>/dev/null); then
     ASSIGNEE_CACHE[$tid]="__ERROR__"
     echo "__ERROR__"
     return
@@ -217,7 +225,7 @@ pick_task() {
   local check_sequences="$2"
 
   local grouped_raw
-  if ! grouped_raw=$(timeout 60 backlog task list --plain 2>/dev/null); then
+  if ! grouped_raw=$($TIMEOUT backlog task list --plain 2>/dev/null); then
     log "Warning: backlog task list failed"
     return
   fi
@@ -229,7 +237,7 @@ pick_task() {
   local unblocked=""
   if [[ "$check_sequences" == "true" ]]; then
     local seq_output
-    if seq_output=$(timeout 60 backlog sequence list --plain 2>/dev/null); then
+    if seq_output=$($TIMEOUT backlog sequence list --plain 2>/dev/null); then
       unblocked=$(echo "$seq_output" | parse_unblocked)
       if [[ -z "$unblocked" ]]; then
         log "Warning: sequence list returned no unblocked tasks; skipping sequence filtering"
@@ -306,7 +314,7 @@ if [[ -z "$PICKED" ]]; then
 fi
 
 # Claim the task
-EDIT_ERR=$(timeout 60 backlog task edit "$PICKED" -a "$ASSIGNEE" --plain 2>&1 >/dev/null) || {
+EDIT_ERR=$($TIMEOUT backlog task edit "$PICKED" -a "$ASSIGNEE" --plain 2>&1 >/dev/null) || {
   log "Failed to claim $PICKED: $EDIT_ERR"
   exit 4
 }
