@@ -8,40 +8,57 @@ Loom weaves agents into declarative workflows driven by ticket type.
 You write a config file. Loom handles the rest — planning, implementation,
 review gates, feedback loops.
 
-## Quick start
+## Installation
 
-1. Add the plugin:
-   ```bash
-   claude --plugin-dir ~/dev/loom
-   ```
+Add the marketplace and install the plugin (one-time setup):
 
-2. Create `sdlc.config.yml` in your project root:
+```bash
+claude plugin marketplace add vbraut/loom    # from GitHub
+claude plugin install loom
+```
+
+For local development, use a local path instead:
+
+```bash
+claude plugin marketplace add ~/dev/loom     # from local clone
+claude plugin install loom
+```
+
+## Project setup
+
+1. Create `sdlc.config.yml` in your project root:
    ```yaml
    version: 1
    project:
      backlog_cwd: ~/dev/my-project-backlog
      context:
        brand_voice: docs/brand/copy/brand-context.md
+       design_system: src/app.css
    ```
 
-3. Configure the Backlog.md MCP server in `.mcp.json`:
+2. Configure the Backlog.md MCP server in `.mcp.json`:
    ```json
    {
      "mcpServers": {
        "backlog": {
          "command": "backlog",
-         "args": ["mcp", "start", "--cwd", "/path/to/backlog-repo"]
+         "args": ["mcp", "start", "--cwd", "~/dev/my-project-backlog"]
        }
      }
    }
    ```
 
-4. Run:
-   ```
-   /loom:work           # pick up next ticket
-   /loom:work BL-042    # work on specific ticket
-   /loom:review         # review next ticket at a gate
-   ```
+3. Add `.loom/` to your project's `.gitignore`.
+
+4. Ensure tickets have a `type:` label (e.g., `type:code-fix`). Loom routes each ticket to its matching playbook.
+
+## Usage
+
+```
+/loom:work           # pick up next ticket from todo queue
+/loom:work BL-042    # work on a specific ticket
+/loom:review         # review next ticket at review gate
+```
 
 ## How it works
 
@@ -475,13 +492,6 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 **QUARE quality-attribute negotiation.** QUARE — *"Multi-Agent Negotiation for Balancing Quality Attributes in RE"* (arXiv 2603.11890, March 2026) — formulates requirements analysis as structured negotiation among quality-specialized agents, achieving 98.2% compliance coverage (+105% over baselines). Loom applies this through persona-reviewer agents that explicitly surface quality-attribute tensions (performance vs. usability, security vs. maintainability) and cross-talk rounds that resolve those tensions rather than accumulating concerns.
 
 **Elevate loop.** Four specialist UI reviewers (ui-critique, ui-optimize, ui-harden, ui-polish) apply domain-specific evaluation criteria developed through production use. They run as parallel convergence reviewers, producing rich findings that apply-review-fixes executes. Dual-mode: they work on both mock HTML and implementation code, adapting their evaluation to the input type.
-
-## Project footprint
-
-Your project needs two files: `sdlc.config.yml` (Loom config) and `.mcp.json` (Backlog.md MCP server).
-Context (brand voice, design system) points to docs you already have.
-
-Add `.loom/` to your project's `.gitignore` — Loom creates worktrees at `.loom/worktrees/` during execution.
 
 ## Development
 

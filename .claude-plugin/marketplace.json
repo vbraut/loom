@@ -1,0 +1,40 @@
+{
+  "name": "loom",
+  "owner": {
+    "name": "Viktor Braut"
+  },
+  "plugins": [
+    {
+      "name": "loom",
+      "source": {
+        "source": "github",
+        "repo": "vbraut/loom"
+      },
+      "description": "AI-driven SDLC framework. One plugin, any project."
+    },
+    {
+      "name": "impeccable",
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      },
+      "description": "Design fluency for frontend development."
+    },
+    {
+      "name": "brand-toolkit",
+      "source": {
+        "source": "github",
+        "repo": "jgerton/brand-toolkit"
+      },
+      "description": "Methodology-grounded brand building toolkit for Claude Code."
+    },
+    {
+      "name": "brand-voice",
+      "source": {
+        "source": "github",
+        "repo": "TribeAI/claude-cowork-brand-voice-plugin"
+      },
+      "description": "Discover brand materials, generate guidelines, and enforce brand voice on AI content."
+    }
+  ]
+}
