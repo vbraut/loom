@@ -1,29 +1,28 @@
 ---
 name: draft-strategy
-description: "Produces a market or product strategy document — positioning, competitive analysis, go-to-market. Triggered in the market-strategy playbook before assessment."
+description: "Produces a market or product strategy document by synthesizing user intent from the intake brief, external research, and codebase context. Triggered in the market-strategy playbook after intake and research."
 ---
 
 # Draft Strategy
 
-**Role:** Transform a ticket into a market or product strategy document that a human reviewer can evaluate. You own the strategic framing — positioning, competitive landscape, go-to-market, and success metrics. Leave codebase exploration to research-codebase-arch and quality assessment to convergence reviewers.
+**Role:** Synthesize user intent from the intake brief, real market data from external research, and product context from codebase research into a strategy document that a human reviewer can evaluate. Leave discovery to the intake process and codebase exploration to research-codebase-arch.
 
 ## Constraints
 
-- Write for a human stakeholder audience — clear prose, structured sections, explicit recommendations with rationale. Strategy documents define *what to do and why*, not implementation details.
-- Ground the strategy in the ticket's goal and the research brief from upstream_artifacts. The research brief provides product/market context; the ticket defines the strategic question to answer.
-- Every recommendation must include an Alternatives Considered section with trade-offs. The assessment agents need material to challenge.
-- Include a Decision Log section — decisions made during drafting with rationale, so reviewers can trace your reasoning.
+1. Ground the strategy in the intake brief first — the user's own words about their strategic question, competitors, audience, and constraints are the primary source of truth. Strategy documents define *what to do and why*, not implementation details.
+2. Treat external research (competitor analysis, market data) as evidence that supports or challenges the user's framing. Cite sources from external-research.md when referencing market claims.
+3. Brand-toolkit skills are optional enrichment — invoke via the Skill tool only when the intake brief suggests brand-adjacent strategic questions (positioning, messaging). Don't use them as the backbone of the analysis.
+4. Every recommendation must include an Alternatives Considered section with trade-offs (the assessment agents need material to challenge).
+5. Include a Decision Log section — decisions made during drafting with rationale, so reviewers can trace reasoning.
 
 ## Process
 
-1. Read the ticket requirements and research brief from upstream_artifacts to understand the strategic question, constraints, and context.
-2. Invoke brand-toolkit skills via the Skill tool to gather analytical frameworks:
-   - `/brand-toolkit:brand-positioning` — competitive alternatives, unique attributes, value mapping, customer segmentation (Dunford's 5-component framework + Neumeier's Onlyness test)
-   - `/brand-toolkit:brand-competitor-scan` — competitive landscape analysis across framework lenses
-   - `/brand-toolkit:brand-messaging` — core messaging via StoryBrand (tagline, trueline, brand script)
-3. Synthesize plugin outputs into a cohesive strategy document. Remove redundancy across outputs, resolve contradictions, and ensure a consistent narrative thread.
-4. Structure the document: Executive Summary → Strategic Question → Market Context → Positioning (from brand-toolkit) → Competitive Landscape → Recommendations (with alternatives) → Decision Log → Success Metrics → Next Steps.
-5. Write the strategy document to output_path.
+1. Read the intake brief, external research, and codebase research from upstream_artifacts. The intake brief is primary — it contains the user's strategic question, named competitors, audience definition, constraints, and success criteria.
+2. Map the user's strategic question (from intake) to the evidence gathered (from external research). Where the user's assumptions about competitors or market differ from web research findings, note the discrepancy explicitly in the strategy document.
+3. If the intake brief suggests brand-adjacent questions AND brand-toolkit plugins are available, invoke relevant brand-toolkit skills via the Skill tool as supplementary analysis. Otherwise skip.
+4. Synthesize into a cohesive strategy document: the user's intent provides direction, external research provides evidence, codebase research provides product context.
+5. Structure the document: Executive Summary → Strategic Question → Market Context → Positioning → Competitive Landscape → Recommendations (with alternatives) → Decision Log → Success Metrics → Next Steps.
+6. Write the strategy document to output_path.
 
 ## Output
 
