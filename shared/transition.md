@@ -60,7 +60,7 @@ Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}
 
 ### 1. Create approved tickets
 
-If `{approved_proposals}` is empty (no ticket-planner ran, or all proposals were rejected), skip this step.
+If `{approved_proposals}` is empty (all proposals were rejected, or the proposals file was empty), skip this step.
 
 For each approved proposal:
 

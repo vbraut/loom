@@ -69,7 +69,7 @@ Read the `type:` label from `ticket_data` (e.g., `type:code-fix` → type is `co
 - **Multiple `type:` labels**: `ERROR: Ticket {ticket_id} has multiple type: labels: [{values}].`
 - **Playbook resolution**: resolve the playbook filename based on mode:
   - `work` mode: `{type}.md` — must exist. If not: `ERROR: No playbook for type '{type}' in work mode (expected: playbooks/{type}.md)`
-  - `review` mode: `{type}-review.md` — optional. If it exists, set `{review_playbook}` to the path. If not, set `{review_playbook}` to empty (the review orchestrator will skip straight to the human gate).
+  - `review` mode: `{type}-review.md` — optional. If it exists, set `{review_playbook}` to the path. If not, set `{review_playbook}` to empty (the review orchestrator will run the default review sequence: review-summarizer → ticket-planner).
 
 ## 3. Ensure worktree
 

@@ -46,21 +46,26 @@ When a step names an agent to invoke:
 
 If `{review_playbook}` is set (from claim.md), read it and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step.
 
-If `{review_playbook}` is empty, skip Phase 2 — no review playbook agents to run. Retrieve work-phase artifact references via MCP `task_view(ticket_id)` and present them directly in the human gate.
+If `{review_playbook}` is empty, run the **default review sequence** instead. Each agent invocation follows the same protocol as above (read AGENT.md, spawn via Agent tool, check STATUS, register output via task_edit):
+
+1. Retrieve work-phase artifact references via MCP `task_view(ticket_id)`.
+2. Invoke **review-summarizer** (agent invocation protocol): pass all work-phase artifact paths as upstream. Output to `.loom/artifacts/{ticket_id}/review-summary.md`.
+3. Pre-fetch the backlog snapshot: call `task_list()` via MCP, filter client-side to id/title/type/status, truncate to 200 most recent, write to `.loom/artifacts/{ticket_id}/backlog-snapshot.md`. If `task_list()` fails, create the file with: "Backlog snapshot unavailable — proposals may overlap with existing tickets."
+4. Invoke **ticket-planner** (agent invocation protocol): pass `.loom/artifacts/{ticket_id}/review-summary.md` and `.loom/artifacts/{ticket_id}/backlog-snapshot.md` as upstream. Output to `.loom/artifacts/{ticket_id}/successor-proposals.md`.
 
 ## Phase 3: HUMAN GATE
 
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
-2. **Artifacts**: list all output files produced during playbook execution (or work-phase artifacts if no review playbook ran).
-3. **Agent findings**: reports or summaries from Phase 2 (skip if no review playbook ran).
+2. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
+3. **Agent findings**: reports or summaries from Phase 2.
 
 Ask: **Approve or Reject?**
 
 ### Proposal handling
 
-If the playbook included a ticket-planner step, read its output file. Parse each `### N` block under `## Proposals` as a proposal — extract Title, Type, Description, and Rationale fields. If no `### N` blocks exist under `## Proposals`, skip proposal handling.
+If `.loom/artifacts/{ticket_id}/successor-proposals.md` exists and is non-empty, parse it. Extract each `### N` block under `## Proposals` as a proposal — read Title, Type, Description, and Rationale fields. If the file doesn't exist or has no `### N` blocks under `## Proposals`, skip proposal handling.
 
 For each proposal:
 
@@ -76,7 +81,7 @@ Collect only approved (possibly modified) proposals. Pass them to Phase 4 as `{a
 
 ### On approval:
 
-Read `shared/transition.md` and follow "Review approval transition". Pass `{approved_proposals}` (may be empty if all were rejected or no ticket-planner ran).
+Read `shared/transition.md` and follow "Review approval transition". Pass `{approved_proposals}` (may be empty if all proposals were rejected).
 
 ### On rejection:
 

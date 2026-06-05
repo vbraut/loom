@@ -71,9 +71,9 @@ Agents do the work. Humans approve at review gates.
 | code-fix | Bug investigation + fix | Done |
 | product-definition | PRD + mocks with elevated quality review | Done |
 | implementation | Implementation plan + code from a PRD or spec | Done |
-| strategy-definition | Research and decision documents | Planned |
-| brand-exploration | Visual system — palette, typography, logos | Planned |
-| copy-definition | Messaging, tone of voice, copy decks | Planned |
+| market-strategy | Market strategy, positioning, competitive analysis | Done |
+| brand-exploration | Visual system — palette, typography, logos | Done |
+| copy-deck | Messaging, tone of voice, copy decks | Done |
 
 ## Playbook pipelines
 
@@ -97,7 +97,7 @@ Shared by all work playbooks. Prevents anchoring bias through independent assess
   └────────────────────────┘   └────────────────────────┘   └──────────────────┘
 ```
 
-Cognitive agents apply method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, naive questioning. Persona reviewers apply domain expertise: PM and Dev always, plus 1-3 selected dynamically from the [persona pool](#personas).
+Cognitive agents apply method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, naive questioning. Persona reviewers apply domain expertise: PM always; Dev always for code playbooks, dynamic for non-code playbooks; plus 1-3 selected dynamically from the [persona pool](#personas).
 
 ### Convergence loops
 
@@ -235,33 +235,151 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
 † when design_system configured
 ```
 
-### Review playbooks
+### market-strategy
 
-Run at the review gate before human approval. Lighter than work playbooks — no assessment or convergence.
+Market and product strategy — positioning, competitive analysis, go-to-market. Grounded in interactive discovery and web research. For technical architecture decisions, use `type:implementation`. Artifact-only — no code, no PR. 11 steps.
 
 ```
-product-definition-review            implementation-review
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
+ 1 ── research-codebase-arch ────── explore product/market context
+ 2 ── await external research ───── web competitor + market data
+ 3 ── draft-strategy ────────────── synthesize intake + research into strategy
+ │    CHECKPOINT ────────────────── human approves direction
+ │
+ │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
+ │    └────────────────── outputs: *-r1.md (initial round) ────────┘
+ │
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
+ │
+ 7 ── apply-review-fixes ────────── revise strategy with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise strategy with elicitation
+ │
+ │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
+10    │ requirements-reviewer    adversarial-reviewer                │
+ │    │ simplification-reviewer  edge-case-hunter                    │
+ │    │ ↻ apply-review-fixes                                        │
+ │    └─────────────────────────────────────────────────────────────┘
+ │
+11 ── completion
+```
+
+### brand-exploration
+
+Brand visual system — palette, typography, identity. Grounded in interactive discovery and web research. Dual-artifact flow: assessed spec + Impeccable-created visuals. 13 steps.
+
+```
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
+ 1 ── research-codebase-arch ────── explore existing brand, design system
+ 2 ── await external research ───── web competitor visuals + design trends
+ 3 ── draft-brand-spec ───────────── visual territory, personality, mood references
+ │    CHECKPOINT ────────────────── human approves direction
+ │
+ │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
+ │    └────────────────── outputs: *-r1.md (initial round) ────────┘
+ │
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
+ │
+ 7 ── apply-review-fixes ────────── revise brand spec with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise brand spec with elicitation
+ │
+ │    ┌─ CONVERGE SPEC (max 5 rounds, 2 consecutive clean) ────────┐
+10    │ requirements-reviewer    adversarial-reviewer                │
+ │    │ simplification-reviewer  edge-case-hunter                    │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
+ │    └─────────────────────────────────────────────────────────────┘
+ │
+11 ── explore-brand-visuals ─────── delegate to Impeccable (colorize, typeset, arrange)
+ │
+ │    ┌─ CONVERGE VISUALS (max 3 rounds, 2 consecutive clean) ─────┐
+12    │ ui-critique              ui-polish                           │
+ │    │ design-system-reviewer†  ↻ apply-review-fixes               │
+ │    └─────────────────────────────────────────────────────────────┘
+ │
+13 ── completion
+
+† when design_system configured
+```
+
+### copy-deck
+
+Messaging framework — tone of voice, registers, copy decks. Grounded in interactive discovery and web research. Artifact-only — no code, no PR. 11 steps.
+
+```
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
+ 1 ── research-codebase-arch ────── explore existing copy, brand voice
+ 2 ── await external research ───── web competitor voice + messaging data
+ 3 ── draft-copy-deck ───────────── synthesize intake + research into copy deck
+ │    CHECKPOINT ────────────────── human approves direction
+ │
+ │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
+ │    │ assess-decomposition  assess-outsider       persona-{...}   │
+ │    │ assess-analogy                                              │
+ │    └────────────────── outputs: *-r1.md (initial round) ────────┘
+ │
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
+ │
+ 7 ── apply-review-fixes ────────── revise copy deck with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise copy deck with elicitation
+ │
+ │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
+10    │ requirements-reviewer    adversarial-reviewer                │
+ │    │ simplification-reviewer  edge-case-hunter                    │
+ │    │ ↻ apply-review-fixes                                        │
+ │    └─────────────────────────────────────────────────────────────┘
+ │
+11 ── completion
+```
+
+### Review playbooks
+
+The review orchestrator runs a **default review sequence** (review-summarizer → ticket-planner) for all ticket types. Types that need extra review steps override with a type-specific review playbook.
+
+```
+default (all types)                  implementation-review (override)
 
 1 ─ review-summarizer               1 ─ standards-reviewer
 2 ─ ticket-planner                  2 ─ review-summarizer
-    (decompose PRD into             3 ─ ticket-planner
-     implementation tickets)            (propose follow-up tickets)
+    (propose follow-up tickets)     3 ─ ticket-planner
 ```
 
 ## Agent catalog
 
-35 agents organized by function.
+40 agents organized by function.
 
 ### Doer agents
 
 | Agent | Purpose | Playbooks |
 |-------|---------|-----------|
 | research-codebase-arch | Explore architecture, produce context brief for all downstream agents | all |
+| research-external | Gather external context via web research — competitor analysis, market data, visual identity, voice/messaging | market-strategy, brand-exploration, copy-deck |
 | draft-prd | Create PRD from ticket — 3-phase MARE process: elicit, derive, structure | product-definition |
+| draft-brand-spec | Structure user-articulated brand direction into creative brief — visual territory, personality, mood references, deliverables | brand-exploration |
 | draft-implementation-plan | Create technical plan — map requirements to file changes, ordered by dependency | implementation |
 | implement | Write code following the assessed and converged approach | code-fix, implementation |
 | create-mocks | Build HTML mockups for all screens and states in a PRD | product-definition |
 | capture-screenshots | Screenshot running application at mobile and desktop viewports | product-definition, implementation |
+| draft-strategy | Synthesize user intent + external research + codebase context into strategy document | market-strategy |
+| explore-brand-visuals | Create brand visual system — delegates to Impeccable's design disciplines | brand-exploration |
+| draft-copy-deck | Produce messaging framework from user-articulated voice direction (intake brief), external research, and copy/brand-voice plugins | copy-deck |
 
 ### Cognitive assessment agents
 
@@ -323,16 +441,16 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 | Agent | Purpose | Playbooks |
 |-------|---------|-----------|
 | standards-reviewer | Flag custom code where industry-standard alternatives exist | implementation-review |
-| review-summarizer | Synthesize work-phase artifacts into structured brief for human reviewer | both review playbooks |
-| ticket-planner | Propose follow-up tickets from review findings and backlog context | both review playbooks |
+| review-summarizer | Synthesize work-phase artifacts into structured brief for human reviewer | default review sequence, implementation-review |
+| ticket-planner | Propose follow-up tickets from review findings and backlog context | default review sequence, implementation-review |
 
 ### Personas
 
-14 domain expert profiles injected into the persona-reviewer agent. PM and Dev are always included; others are selected dynamically based on ticket content.
+14 domain expert profiles injected into the persona-reviewer agent. PM is always included across all playbooks. Dev is always included for code playbooks (code-fix, implementation, product-definition) and dynamically selected for non-code playbooks. Others are selected dynamically based on ticket content.
 
-| Always | Dynamic pool |
-|--------|-------------|
-| pm, dev | analyst, architect, craft, data, devops, end-user, qa, security, sm, tech-lead, tech-writer, ux |
+| Always (all playbooks) | Always (code playbooks) | Dynamic pool |
+|------------------------|------------------------|-------------|
+| pm | dev | analyst, architect, craft, data, devops, end-user, qa, security, sm, tech-lead, tech-writer, ux |
 
 ## Research foundations
 

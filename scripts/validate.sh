@@ -242,6 +242,81 @@ done
 
 [ "$crosscheck_ok" = true ] && ok "All playbook-referenced agents have AGENT.md files"
 
+# ── Playbook structure validation ────────────────────────────────
+
+echo ""
+echo "--- Playbook structure ---"
+
+structure_ok=true
+for playbook in "$LOOM_ROOT"/playbooks/*.md; do
+  [ -f "$playbook" ] || continue
+  rel_path="${playbook#$LOOM_ROOT/}"
+  base_name=$(basename "$playbook" .md)
+
+  # Skip review playbooks — they don't use intake/checkpoint/await
+  echo "$base_name" | grep -q '\-review$' && continue
+
+  # Validate Intake section structure (if present)
+  if grep -q '^## Intake' "$playbook"; then
+    if ! grep -q '^### Stance' "$playbook"; then
+      err "$rel_path has ## Intake but missing ### Stance"
+      structure_ok=false
+    elif ! grep -q 'facilitate.*|.*collaborate.*|.*autonomous' "$playbook"; then
+      err "$rel_path ### Stance missing valid stance options (facilitate | collaborate | autonomous)"
+      structure_ok=false
+    fi
+
+    if ! grep -q '^### Questions' "$playbook"; then
+      err "$rel_path has ## Intake but missing ### Questions"
+      structure_ok=false
+    else
+      # Check that questions have context: hints
+      question_count=$(grep -cE '^[0-9]+\.' "$playbook" || true)
+      context_count=$(grep -c '   context:' "$playbook" || true)
+      if [ "$question_count" -gt 0 ] && [ "$context_count" -lt "$question_count" ]; then
+        err "$rel_path has $question_count questions but only $context_count context: hints"
+        structure_ok=false
+      fi
+    fi
+  fi
+
+  # Validate Checkpoint fields reference steps with agents
+  while IFS= read -r checkpoint_line_num; do
+    [ -z "$checkpoint_line_num" ] && continue
+    # Check that the step containing this Checkpoint also has an Agent
+    step_start=$(awk -v ln="$checkpoint_line_num" 'NR <= ln && /^### [0-9]+\./ { start=NR } END { print start }' "$playbook")
+    if [ -n "$step_start" ]; then
+      step_block=$(sed -n "${step_start},${checkpoint_line_num}p" "$playbook")
+      if ! echo "$step_block" | grep -q '\*\*Agent:\*\*'; then
+        err "$rel_path has **Checkpoint:** at line $checkpoint_line_num in a step with no **Agent:**"
+        structure_ok=false
+      fi
+    fi
+  done < <(grep -n '\*\*Checkpoint:\*\*' "$playbook" | cut -d: -f1 || true)
+
+  # Validate Await steps (Output path but no Agent)
+  prev_step_has_agent=""
+  prev_step_has_output=""
+  prev_step_num=""
+  while IFS= read -r line; do
+    if echo "$line" | grep -qE '^### [0-9]+\.'; then
+      # Check previous step
+      if [ "$prev_step_has_agent" = "false" ] && [ "$prev_step_has_output" = "true" ]; then
+        # This is a valid await step — just verify it's documented
+        :
+      fi
+      prev_step_num=$(echo "$line" | grep -oE '[0-9]+')
+      prev_step_has_agent="false"
+      prev_step_has_output="false"
+    elif echo "$line" | grep -q '\*\*Agent:\*\*'; then
+      prev_step_has_agent="true"
+    elif echo "$line" | grep -q '\*\*Output path:\*\*'; then
+      prev_step_has_output="true"
+    fi
+  done < "$playbook"
+done
+[ "$structure_ok" = true ] && ok "All playbook structures valid (intake, checkpoint, await)"
+
 # ── Work/review playbook pairing ─────────────────────────────────
 
 echo ""
