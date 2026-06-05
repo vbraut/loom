@@ -105,6 +105,41 @@ Playbooks use two distinct round-number placeholders:
 
 These are independent counters for different loops and never appear in the same step.
 
+### Intake handling
+
+After reading the playbook (but before executing step 1), check for a `## Intake` section. If absent, skip to step 1 as normal.
+
+If present:
+
+1. Read the `### Stance` line. Present the three-stance choice to the user: "(a) Facilitate — I ask structured questions, you provide the vision. (b) Collaborate — we trade ideas back and forth. (c) Autonomous — I infer from the ticket and existing context, ask only if blocked."
+
+2. Based on stance:
+   - **Facilitate:** Read `### Questions`. Ask them one at a time. Each question has a `context:` hint — use it to assess answer sufficiency. If the answer is thin (one word, no specifics), probe once: "Can you say more about [specific aspect from context hint]?" Then move on regardless. After all questions, present a summary: "Here's what I captured: [bullets]. Anything to add or correct?" Loop until the user confirms.
+   - **Collaborate:** Same questions but conversational — offer observations between questions based on what is being learned. "Based on what you said about X, it sounds like Y might also be relevant — is that right?" Still one question at a time.
+   - **Autonomous:** Map each question to the ticket description. A question is "answered" if the ticket contains a concrete response matching the context hint (named entities, specific constraints, measurable criteria — not vague aspirations). If fewer than 3 of the 7 questions are answered by the ticket, halt: "Autonomous mode blocked — ticket is too sparse. Missing: [list unanswerable questions]. Switch to facilitate/collaborate, or enrich the ticket." If 3+ are answered, infer the rest from codebase/config context and note inferences in the Orchestrator Notes section of the intake brief.
+
+3. **Scope policing:** If answers suggest scope exceeds one playbook run (multiple product lines, multiple markets, multiple brands), flag: "This sounds like N separate [strategy/brand] tickets. Want to narrow scope, or proceed with everything?"
+
+4. **Parallel fan-out:** After the user answers the competitors/landscape question, spawn `research-external` in the background via Agent tool with `run_in_background: true`. Pass a partial intake brief (playbook type + strategic question/brand goal + competitive context) as upstream. Read `{loom_plugin_dir}/agents/research-external/AGENT.md` for the agent content. If WebSearch tool is unavailable, skip — log "External research skipped (WebSearch unavailable)" and proceed without it.
+
+5. Write the intake brief to `.loom/artifacts/{ticket_id}/intake-brief.md` with sections: `## Playbook Type`, `## Strategic Question / Brand Goal`, `## Audience`, `## Competitive Context`, `## Current State`, `## Constraints & Non-Negotiables`, `## Success Criteria`, `## References & Existing Research`, `## Anti-References` (brand-exploration only), `## Orchestrator Notes`. Register via `task_edit(ticket_id, addReferences=[path])`.
+
+### Checkpoint handling
+
+When a playbook step has a `**Checkpoint:**` field and the agent completes successfully:
+
+1. Read the agent's output artifact.
+2. Extract section headers and first sentence of each section as summary bullets.
+3. Present to user: "Draft [type] ready. Key points: [bullets]. The assessment pipeline runs next — redirecting now is cheap, redirecting after is expensive. Approve, redirect, or abort?"
+4. Responses:
+   - **Approve:** proceed to next step.
+   - **Redirect:** user provides notes on what's wrong. Spawn `apply-review-fixes` with the redirect notes and the draft artifact as upstream. Revise draft in place. Re-present checkpoint. Loop until approved.
+   - **Abort:** follow error handling (revert ticket status, release lock, stop).
+
+### Await step handling
+
+When a playbook step has no `**Agent:**` field but has an `**Output path:**`, it is a synchronization point for a background agent spawned during intake. Check if the background agent has completed. If not yet complete, wait for it. When complete: verify the output file exists and is non-empty. If the background agent failed or its output is missing, log the failure and continue without the artifact — do not block the pipeline.
+
 ### Playbook execution
 
 Read `{loom_plugin_dir}/playbooks/{type}.md` and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step. If a step contains cross-talk fields (`**Named agents:**`, `**Max rounds:**` without `**Verdict logic:**`), read `shared/cross-talk.md` and follow it for that step.
