@@ -13,20 +13,20 @@ facilitate | collaborate | autonomous
 1. What should this brand communicate — what's the core message or feeling?
    context: Emotional territory, not features. "Trustworthy but not boring", "innovative without being intimidating". If the user gives features, redirect to feelings.
 
-2. Who is the audience, and what visual language do they respond to?
+2. What's the competitive visual landscape — how do competitors look, and where do you want to differentiate?
+   context: If competitors all use blue and white, "we want to stand out" means specific differentiation. Drives the web research agent's visual competitor analysis.
+
+3. Who is the audience, and what visual language do they respond to?
    context: Audience demographics AND their design sensibilities. A developer audience expects different visuals than a consumer audience.
 
-3. Name 2-4 brands whose visual feel you admire, and what specifically you like about each.
+4. Name 2-4 brands whose visual feel you admire, and what specifically you like about each.
    context: Concrete references, not adjectives. "Stripe's clean confidence" communicates more than "modern and professional". These become mood board anchors.
 
-4. What should this brand absolutely NOT look like?
+5. What should this brand absolutely NOT look like?
    context: Anti-references are as important as references. "Not clinical like medical software", "not playful like a kids' app". These prevent drift in visual exploration.
 
-5. What existing brand assets or design constraints exist?
+6. What existing brand assets or design constraints exist?
    context: Current logo, colors, typography, design system, WCAG requirements, dark mode needs. These are hard constraints, not suggestions.
-
-6. What's the competitive visual landscape — how do competitors look, and where do you want to differentiate?
-   context: If competitors all use blue and white, "we want to stand out" means specific differentiation. Drives the web research agent's visual competitor analysis.
 
 7. Is there a timeline or deliverable trigger — what will these brand visuals be used for?
    context: "Website redesign next quarter" vs "exploring identity from scratch" changes the specificity needed. Tight timelines need tighter deliverable definitions.
@@ -49,7 +49,7 @@ facilitate | collaborate | autonomous
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 **Output path:** `.loom/artifacts/{ticket_id}/brand-spec.md`
 **Checkpoint:** Approve draft direction before assessment pipeline
 
@@ -63,7 +63,7 @@ facilitate | collaborate | autonomous
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 - `.loom/artifacts/{ticket_id}/brand-spec.md`
 
 **Agent output paths:**
@@ -132,7 +132,7 @@ Note: apply-review-fixes modifies the brand spec in the worktree in place (revis
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 - `.loom/artifacts/{ticket_id}/brand-spec.md`
 
 **Reviewer output paths:**

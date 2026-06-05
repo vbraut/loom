@@ -49,7 +49,7 @@ facilitate | collaborate | autonomous
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 **Output path:** `.loom/artifacts/{ticket_id}/strategy.md`
 **Checkpoint:** Approve draft direction before assessment pipeline
 
@@ -63,7 +63,7 @@ facilitate | collaborate | autonomous
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 - `.loom/artifacts/{ticket_id}/strategy.md`
 
 **Agent output paths:**
@@ -131,7 +131,7 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 **Upstream for reviewers:**
 - `.loom/artifacts/{ticket_id}/intake-brief.md`
 - `.loom/artifacts/{ticket_id}/research.md`
-- `.loom/artifacts/{ticket_id}/external-research.md`
+- `.loom/artifacts/{ticket_id}/external-research.md` (optional)
 - `.loom/artifacts/{ticket_id}/strategy.md`
 
 **Reviewer output paths:**

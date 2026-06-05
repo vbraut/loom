@@ -97,7 +97,7 @@ Shared by all work playbooks. Prevents anchoring bias through independent assess
   └────────────────────────┘   └────────────────────────┘   └──────────────────┘
 ```
 
-Cognitive agents apply method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, naive questioning. Persona reviewers apply domain expertise: PM and Dev always, plus 1-3 selected dynamically from the [persona pool](#personas).
+Cognitive agents apply method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, naive questioning. Persona reviewers apply domain expertise: PM always; Dev always for code playbooks, dynamic for non-code playbooks; plus 1-3 selected dynamically from the [persona pool](#personas).
 
 ### Convergence loops
 
@@ -316,32 +316,37 @@ Brand visual system — palette, typography, identity. Grounded in interactive d
 
 ### copy-deck
 
-Messaging framework — tone of voice, registers, copy decks. Artifact-only — no code, no PR. 10 steps.
+Messaging framework — tone of voice, registers, copy decks. Grounded in interactive discovery and web research. Artifact-only — no code, no PR. 11 steps.
 
 ```
+ I ── INTAKE ─────────────────── stance → questions → intake-brief.md
+ │                                 ↳ research-external spawned in background
+ │
  1 ── research-codebase-arch ────── explore existing copy, brand voice
- 2 ── draft-copy-deck ───────────── delegate to copy/brand-voice plugins, assemble deliverable
+ 2 ── await external research ───── web competitor voice + messaging data
+ 3 ── draft-copy-deck ───────────── synthesize intake + research into copy deck
+ │    CHECKPOINT ────────────────── human approves direction
  │
  │    ┌─ ASSESS (parallel, named) ──────────────────────────────────┐
- 3    │ assess-inversion      assess-dependency     persona-pm      │
+ 4    │ assess-inversion      assess-dependency     persona-pm      │
  │    │ assess-decomposition  assess-outsider       persona-{...}   │
  │    │ assess-analogy                                              │
  │    └────────────────── outputs: *-r1.md (initial round) ────────┘
  │
- 4 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
- 5 ── assess-synthesizer ────────── compile converged positions
+ 5 ── CROSS-TALK ────────────────── SendMessage rounds (max 3)
+ 6 ── assess-synthesizer ────────── compile converged positions
  │
- 6 ── apply-review-fixes ────────── revise copy deck with synthesis
- 7 ── elicit-approach ───────────── 10 methods from registry
- 8 ── apply-review-fixes ────────── revise copy deck with elicitation
+ 7 ── apply-review-fixes ────────── revise copy deck with synthesis
+ 8 ── elicit-approach ───────────── 10 methods from registry
+ 9 ── apply-review-fixes ────────── revise copy deck with elicitation
  │
  │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
- 9    │ requirements-reviewer    adversarial-reviewer                │
+10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ ↻ apply-review-fixes                                        │
  │    └─────────────────────────────────────────────────────────────┘
  │
-10 ── completion
+11 ── completion
 ```
 
 ### Review playbooks
@@ -365,7 +370,7 @@ default (all types)                  implementation-review (override)
 | Agent | Purpose | Playbooks |
 |-------|---------|-----------|
 | research-codebase-arch | Explore architecture, produce context brief for all downstream agents | all |
-| research-external | Gather external context via web research — competitor analysis, market data, visual identity | market-strategy, brand-exploration |
+| research-external | Gather external context via web research — competitor analysis, market data, visual identity, voice/messaging | market-strategy, brand-exploration, copy-deck |
 | draft-prd | Create PRD from ticket — 3-phase MARE process: elicit, derive, structure | product-definition |
 | draft-brand-spec | Structure user-articulated brand direction into creative brief — visual territory, personality, mood references, deliverables | brand-exploration |
 | draft-implementation-plan | Create technical plan — map requirements to file changes, ordered by dependency | implementation |
@@ -374,7 +379,7 @@ default (all types)                  implementation-review (override)
 | capture-screenshots | Screenshot running application at mobile and desktop viewports | product-definition, implementation |
 | draft-strategy | Synthesize user intent + external research + codebase context into strategy document | market-strategy |
 | explore-brand-visuals | Create brand visual system — delegates to Impeccable's design disciplines | brand-exploration |
-| draft-copy-deck | Produce messaging framework — delegates to installed copy/brand-voice plugins, assembles deliverable | copy-deck |
+| draft-copy-deck | Produce messaging framework from user-articulated voice direction (intake brief), external research, and copy/brand-voice plugins | copy-deck |
 
 ### Cognitive assessment agents
 
@@ -441,11 +446,11 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 
 ### Personas
 
-14 domain expert profiles injected into the persona-reviewer agent. PM and Dev are always included; others are selected dynamically based on ticket content.
+14 domain expert profiles injected into the persona-reviewer agent. PM is always included across all playbooks. Dev is always included for code playbooks (code-fix, implementation, product-definition) and dynamically selected for non-code playbooks. Others are selected dynamically based on ticket content.
 
-| Always | Dynamic pool |
-|--------|-------------|
-| pm, dev | analyst, architect, craft, data, devops, end-user, qa, security, sm, tech-lead, tech-writer, ux |
+| Always (all playbooks) | Always (code playbooks) | Dynamic pool |
+|------------------------|------------------------|-------------|
+| pm | dev | analyst, architect, craft, data, devops, end-user, qa, security, sm, tech-lead, tech-writer, ux |
 
 ## Research foundations
 

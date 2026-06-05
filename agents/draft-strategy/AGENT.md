@@ -11,7 +11,7 @@ description: "Produces a market or product strategy document by synthesizing use
 
 1. Ground the strategy in the intake brief first — the user's own words about their strategic question, competitors, audience, and constraints are the primary source of truth. Strategy documents define *what to do and why*, not implementation details.
 2. Treat external research (competitor analysis, market data) as evidence that supports or challenges the user's framing. Cite sources from external-research.md when referencing market claims.
-3. Brand-toolkit skills are optional enrichment — invoke via the Skill tool only when the intake brief suggests brand-adjacent strategic questions (positioning, messaging). Don't use them as the backbone of the analysis.
+3. Use the intake brief and external research as the backbone of the analysis. Brand-toolkit skills are optional enrichment — invoke via the Skill tool only when the intake brief suggests brand-adjacent strategic questions (positioning, messaging).
 4. Every recommendation must include an Alternatives Considered section with trade-offs (the assessment agents need material to challenge).
 5. Include a Decision Log section — decisions made during drafting with rationale, so reviewers can trace reasoning.
 
