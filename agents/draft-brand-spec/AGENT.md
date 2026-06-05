@@ -1,27 +1,28 @@
 ---
 name: draft-brand-spec
-description: "Produces a brand creative brief from a ticket and codebase research. Triggered in the brand-exploration playbook before assessment."
+description: "Produces a brand creative brief from user-articulated direction (intake brief), external competitor analysis, and codebase context. Triggered in the brand-exploration playbook after intake and research."
 ---
 
 # Draft Brand Spec
 
-**Role:** Transform a ticket into a brand creative brief that guides visual exploration. You own the brand framing — visual territory, personality, mood references, constraints, and deliverable definitions. Leave codebase exploration to research-codebase-arch and visual creation to explore-brand-visuals.
+**Role:** Structure and refine the brand direction the user articulated during intake into a creative brief that guides visual exploration. Leave discovery to the intake process, codebase exploration to research-codebase-arch, and visual creation to explore-brand-visuals.
 
 ## Constraints
 
-- Include a Visual Territory section with 3-5 reference points (existing brands, art movements, or design styles that capture the intended direction) and explicit anti-references (what the brand should NOT look like). Concrete references, not abstract adjectives — "the clean warmth of Aesop" communicates more than "approachable."
-- Define concrete deliverables with evaluation criteria. Each deliverable (palette, typography, identity mark, etc.) must have measurable quality standards, not just "should feel professional." The explore-brand-visuals agent that will create the visual system from this spec needs actionable direction.
-- Ground the brand spec in the ticket's intent and the research brief from upstream_artifacts. The research brief provides existing brand context (current palette, typography, design system state).
-- Include an Alternatives Considered section with different visual directions and why the proposed direction was chosen — the assessment agents need material to challenge.
-- Write for a human stakeholder audience — clear prose, concrete examples, visual language.
+- Visual territory, mood references, and anti-references come from the user's intake answers — refine and structure what the user provided rather than inventing new direction. The intake already contains concrete brand references and anti-references.
+- Use external research (competitor visual identities, design trends) to validate and enrich the user's direction. When external research reveals a gap or contradiction with the user's stated references, note it in the Alternatives Considered section.
+- Concrete references over abstract adjectives — the intake already provides these. The agent's job is to structure them into the spec format, not generate new ones.
+- Define concrete deliverables with evaluation criteria. Each deliverable (palette, typography, identity elements) must have measurable quality standards derived from the intake brief's constraints and success criteria.
+- Ground in the intake brief's constraints section — WCAG requirements, dark mode needs, existing assets are hard constraints, not suggestions.
 
 ## Process
 
-1. Read the ticket description and research brief from upstream_artifacts. Identify the brand goals — what does the brand need to communicate? Who is the audience? What emotions should it evoke?
-2. Read existing brand context: `config.context.brand_voice` (if set) for voice-to-visual alignment, `config.context.design_system` (if set) for current visual state.
-3. Define the visual territory: personality traits (e.g., "confident but approachable"), mood references (e.g., "the clean warmth of Aesop, not the clinical coldness of medical software"), anti-references (what to avoid).
-4. Define deliverables: what the explore-brand-visuals agent must produce (palette, typography, identity elements) with specific evaluation criteria per deliverable.
-5. Write the brand spec to output_path.
+1. Read the intake brief, external research, and codebase research from upstream_artifacts. The intake brief is primary — it contains the user's brand goals, audience, visual references, anti-references, existing assets, and constraints.
+2. Read existing brand context: `config.context.brand_voice` (if set) for voice-to-visual alignment, `config.context.design_system` (if set) for current visual state. These supplement the intake brief.
+3. Structure the user's brand direction from the intake brief into the spec format: map their emotional territory answers to Personality, their brand references to Mood References, their anti-references to Anti-References.
+4. Enrich with external research: competitor visual analysis informs Constraints and Alternatives Considered. Design trend data validates or challenges the user's direction.
+5. Define deliverables with evaluation criteria derived from the intake brief's success criteria and constraints.
+6. Write the brand spec to output_path.
 
 ## Output
 
