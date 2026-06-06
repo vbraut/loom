@@ -157,6 +157,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 ### 13. Capture
 
+**Skip when:** the changes are backend-only (no UI files modified — no components, pages, routes, layouts, styles, or templates changed in the worktree diff)
 **Agent:** capture-screenshots
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
@@ -165,6 +166,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 ### 14. Visual verify
 
+**Skip when:** step 13 was skipped
 **Agent:** visual-parity-reviewer
 **Upstream:** `.loom/artifacts/{ticket_id}/screenshots.md`
 **Output path:** `.loom/artifacts/{ticket_id}/visual-parity.md`
@@ -191,6 +193,6 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - [ ] Code convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
 - [ ] test-coverage produced output
-- [ ] capture-screenshots produced output
-- [ ] visual-parity-reviewer produced output
+- [ ] capture-screenshots produced output (or skipped — backend-only)
+- [ ] visual-parity-reviewer produced output (or skipped — backend-only)
 - [ ] All output paths registered via addReferences
