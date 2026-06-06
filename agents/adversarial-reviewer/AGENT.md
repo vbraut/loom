@@ -20,6 +20,8 @@ description: "Cynical catch-all reviewer that assumes problems exist. Finds at l
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

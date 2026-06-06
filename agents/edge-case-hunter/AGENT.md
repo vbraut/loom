@@ -46,6 +46,8 @@ Scope: evaluate only what's in the diff or document. Pre-existing issues and pat
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

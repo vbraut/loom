@@ -49,6 +49,8 @@ Slow connections: are skeleton screens or loading placeholders designed for slow
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

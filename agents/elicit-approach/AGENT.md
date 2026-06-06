@@ -28,6 +28,8 @@ description: "Stress-tests a synthesized approach through structured reasoning m
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

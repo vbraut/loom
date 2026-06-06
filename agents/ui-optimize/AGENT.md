@@ -56,6 +56,8 @@ How many requests does the UI imply above the fold? Are there opportunities to r
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

@@ -42,6 +42,8 @@ For synthesis or elicitation output without line-level findings:
 
 ## Output
 
+Write your summary to `## output_path`.
+
 ```
 ## Inputs Received
 

@@ -68,6 +68,8 @@ Example: **Power User**: No keyboard shortcuts detected. Form requires 8 clicks 
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

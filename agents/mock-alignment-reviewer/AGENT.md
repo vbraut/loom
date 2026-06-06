@@ -25,6 +25,8 @@ description: "Verifies mockups cover all PRD requirements. Returns a VERDICT for
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

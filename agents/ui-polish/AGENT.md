@@ -57,6 +57,8 @@ All breakpoints tested: does the UI specify mobile, tablet, and desktop layouts?
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

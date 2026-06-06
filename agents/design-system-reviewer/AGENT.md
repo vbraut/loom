@@ -33,6 +33,8 @@ description: "Audits code changes for design system compliance. Reads design sys
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 

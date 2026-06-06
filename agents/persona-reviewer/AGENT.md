@@ -29,6 +29,8 @@ description: "Evaluates artifacts through a domain expert's lens. Receives perso
 
 ## Output
 
+Write your assessment to `## output_path`.
+
 ```
 ## Inputs Received
 
