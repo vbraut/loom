@@ -58,8 +58,9 @@ If `{review_playbook}` is empty, run the **default review sequence** instead. Ea
 Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
-2. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
-3. **Agent findings**: reports or summaries from Phase 2.
+2. **PR link**: run `gh pr list --head loom/{ticket_id_lowercase} --json url --jq '.[0].url'` to find the PR URL. If found, display it prominently.
+3. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
+4. **Agent findings**: reports or summaries from Phase 2.
 
 Ask: **Approve or Reject?**
 

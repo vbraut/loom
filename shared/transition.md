@@ -34,6 +34,8 @@ EOF
 )"
 ```
 
+Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for the completion message.
+
 **PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Tradeoffs` sections as the PR body. If it does not exist (e.g., non-code playbook), use the ticket description from `## ticket_notes` instead. Prefix the body with:
 ```
 **Ticket:** {ticket_id} — {ticket_title}
@@ -55,6 +57,8 @@ task_edit(ticket_id, assignee=["@released"])
 ### 5. Stop
 
 Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}`
+
+If `{pr_url}` was captured in step 2, also print: `PR: {pr_url}`
 
 ## Review approval transition (after /loom:review approves)
 
