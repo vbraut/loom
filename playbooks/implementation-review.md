@@ -7,7 +7,7 @@ Review playbook for implementation tickets. Runs before the human gate.
 ### 1. Evaluate standards
 
 **Agent:** standards-reviewer
-**Upstream:** all ticket references registered during the work phase (retrieve via MCP `task_view`, pass each reference path that exists and is non-empty)
+**Upstream:** `.loom/artifacts/{ticket_id}/research.md` (if exists)
 **Output path:** `.loom/artifacts/{ticket_id}/standards-review.md`
 
 ### 2. Summarize
