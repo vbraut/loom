@@ -45,11 +45,11 @@ When a step names an agent to invoke:
 
 ### Named agent spawning
 
-When a playbook step marks agents as `(named, parallel)`, spawn each agent with the `name` parameter set to the agent's name (e.g., `assess-inversion`, `persona-pm`). Named agents can be resumed later via SendMessage for cross-talk rounds. For persona-reviewer instances, use the name format `persona-{persona_name}` (e.g., `persona-pm`, `persona-dev`, `persona-security`).
+When a playbook step marks agents as `(named, parallel)`, spawn each agent with the `name` parameter set to the agent's name (e.g., `assess-inversion`, `persona-pm`). Track the agent ID returned by each Agent tool call — cross-talk rounds resume agents by ID, not by name (agents are no longer addressable by name after completing). For persona-reviewer instances, use the name format `persona-{persona_name}` (e.g., `persona-pm`, `persona-dev`, `persona-security`).
 
 ### Cross-talk handling
 
-When a playbook step contains cross-talk fields (`**Named agents:**`, `**Max rounds:**`), read `shared/cross-talk.md` from the Loom plugin directory and follow it for that step. Cross-talk resumes named agents from the preceding assess step via SendMessage — do not respawn them.
+When a playbook step contains cross-talk fields (`**Named agents:**`, `**Max rounds:**`), read `shared/cross-talk.md` from the Loom plugin directory and follow it for that step. Cross-talk resumes agents from the preceding assess step via SendMessage using their tracked agent IDs — do not respawn them.
 
 ### Quality principles
 

@@ -4,7 +4,7 @@ Handle cross-talk rounds declared in playbooks. Cross-talk uses SendMessage to r
 
 ## Prerequisites
 
-Assessment agents from the preceding step must have been spawned with the `name` parameter (marked `(named, parallel)` in the playbook). Their round 1 output files (the initial assessment) must exist.
+Assessment agents from the preceding step must have been spawned with the `name` parameter (marked `(named, parallel)` in the playbook). The orchestrator must have captured each agent's ID (returned by the Agent tool) alongside its name. Their round 1 output files (the initial assessment) must exist.
 
 ## Steps
 
@@ -18,7 +18,7 @@ Assessment agents from the preceding step must have been spawned with the `name`
 
 3. **Read all agent output files** from the latest round. For round 2, read the `{R}=1` files (initial assessment). For subsequent rounds, read the `{R}=round-1` files.
 
-4. **Send cross-talk messages.** For each named agent, use SendMessage with the agent's name as `to`. Send all messages in parallel (multiple SendMessage calls in a single response). The message to each agent:
+4. **Send cross-talk messages.** For each agent, use SendMessage with the agent's **ID** (not name) as `to`. Agents complete after round 1 and are no longer addressable by name — only the ID can resume them with full context. Send all messages in parallel (multiple SendMessage calls in a single response). The message to each agent:
 
    ```
    ## Cross-talk round {round}
