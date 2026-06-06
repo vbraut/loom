@@ -84,20 +84,22 @@ task_edit(ticket_id, status="done")
 task_edit(ticket_id, assignee=["@released"])
 ```
 
-### 3. Merge and cleanup
+### 3. Wait for PR merge
+
+Ask the human: "Is the PR merged?" Wait for confirmation before proceeding. The PR is the merge mechanism — the orchestrator never merges locally.
+
+### 4. Cleanup
 
 Run these commands from the **project root** (not from a worktree):
 
 ```bash
 git checkout {default_branch}
-git merge loom/{ticket_id_lowercase} --no-edit
+git pull origin {default_branch}
 git worktree remove --force {worktree_path}
 git branch -d loom/{ticket_id_lowercase}
 ```
 
-If `git checkout` fails (dirty working tree or branch checked out elsewhere), stop. The ticket is already `done` and the branch is preserved — the human can merge manually. If `git branch -d` fails (refuses due to unmerged commits), use `git branch -D` only if the merge in the prior step succeeded.
-
-If merge conflicts: prefer default branch for config, dependencies, and infrastructure (conflicts here break builds/deploys). For code files, three-way merge preserving both sides' intent. If unresolvable, `git merge --abort`, stop, and let the human merge manually.
+If `git branch -d` fails (refuses due to unmerged commits), verify the PR was actually merged via `gh pr view --head loom/{ticket_id_lowercase} --json state --jq '.state'`. If `MERGED`, use `git branch -D`. If not merged, stop and tell the human.
 
 ## Review rejection transition
 
