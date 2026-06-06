@@ -17,7 +17,7 @@ description: "Explores project architecture and produces a structured context br
 ## Process
 
 1. Read ticket_notes for the task description and scope.
-2. Explore the project root — identify framework, language, directory structure.
+2. Explore `## worktree_path` — identify framework, language, directory structure. All file reads and searches use absolute paths under worktree_path.
 3. Locate files most relevant to the ticket (follow imports, grep for keywords from the ticket).
 4. For each key file, trace its dependency chain: what does it import and what imports it? Identify the integration surface that downstream agents need to be aware of.
 5. Search for existing code that solves a similar problem — a prior implementation is the strongest signal for how the codebase expects the task to be done.

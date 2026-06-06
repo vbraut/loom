@@ -9,6 +9,7 @@ description: "Implements changes in the worktree based on upstream artifacts and
 
 ## Constraints
 
+- All file operations (Read, Edit, Write) on project files and all git commands use absolute paths under `## worktree_path` — e.g., `git -C {worktree_path} diff`. The worktree is an isolated copy; the main repo must not be modified.
 - Stay within the scope defined by the ticket and upstream artifacts. For bug fixes: the fix and directly related code. For feature implementation: the plan's deliverables.
 - Follow the project's existing patterns and conventions. When the research brief identifies similar implementations, use them as the primary reference for style, structure, and approach.
 - Every change should be shippable — complete implementations, no TODOs or placeholders (downstream agents cannot finish partial work).

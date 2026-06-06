@@ -9,7 +9,7 @@ description: "Evaluates code changes for security vulnerabilities and unsafe pat
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context (auth patterns, data flow, trust boundaries). In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
+- Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context (auth patterns, data flow, trust boundaries). In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - When the diff contains only document artifacts (plans, specs) rather than code, evaluate the plan's security posture: does it introduce new trust boundaries, handle sensitive data, or propose auth changes? Flag architectural security risks in the planned approach.
 - Before writing any findings, trace the data flow: identify where untrusted input enters, how it propagates through the changed code, and where it reaches a sensitive sink (database, file system, network, rendered output). Write findings only from conclusions that follow from this trace.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.

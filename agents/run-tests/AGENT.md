@@ -9,7 +9,7 @@ description: "Discovers and runs the project's test suite and reports results."
 
 ## Constraints
 
-- Run tests from the worktree directory (changes are applied there).
+- Run tests from `## worktree_path` (changes are applied there). Use absolute paths — e.g., `cd {worktree_path} && npm test`.
 - If no test suite is found (no test runner, no test files), return `STATUS: complete` with a note: "No test suite discovered. Searched: [list what was checked]."
 - Use build and test commands from the upstream research brief if available. Otherwise discover from project files.
 - Report exact test output: which tests passed, which failed, failure messages.
@@ -20,7 +20,7 @@ description: "Discovers and runs the project's test suite and reports results."
 
 ## Process
 
-1. Check whether code changed after implement's test run. Run `git log --oneline` in the worktree and check upstream_artifacts for any feedback agent outputs (e.g., `fixes-r*.md`, `plan-fixes-r*.md`). If any post-implement code modifications occurred, skip to step 2 — tests must be re-run. If no code changed after implement, and its `changes.md` **Verification** section reports a full test suite run with all tests passing (no failures, no skipped runs), accept those results — write them to output_path with a note "Accepted from implement agent's verification" and skip steps 2-5.
+1. Check whether code changed after implement's test run. Run `git -C {worktree_path} log --oneline` and check upstream_artifacts for any feedback agent outputs (e.g., `fixes-r*.md`, `plan-fixes-r*.md`). If any post-implement code modifications occurred, skip to step 2 — tests must be re-run. If no code changed after implement, and its `changes.md` **Verification** section reports a full test suite run with all tests passing (no failures, no skipped runs), accept those results — write them to output_path with a note "Accepted from implement agent's verification" and skip steps 2-5.
 2. Check upstream_artifacts for the research brief's Build & Test section.
 3. If not available, discover test runner from project files.
 4. Run the test suite and collect results.

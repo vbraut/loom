@@ -10,6 +10,7 @@ tools: [Bash, Read, Write]
 
 ## Constraints
 
+- All file operations and commands run from `## worktree_path` — start the dev server from there, save screenshots under that root.
 - Capture at two viewports: mobile (390x844) and desktop (1280x800). These match common device dimensions and are the reference standard for visual comparison.
 - Derive the pages to capture from `## ticket_notes` and `## upstream_artifacts` (the change summary describes what was implemented and which files were touched — use that to identify affected routes and components). If no target pages can be determined, report this and return STATUS: complete with a note that no capturable pages were identified.
 - If mock or reference images exist in the upstream artifacts or worktree, note their paths in the output so visual-parity-reviewer can find them.

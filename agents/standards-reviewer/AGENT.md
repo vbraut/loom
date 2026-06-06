@@ -11,7 +11,7 @@ description: "Identifies custom implementations where industry-standard librarie
 
 - A finding requires a specific, named alternative — "there's probably a library for this" is not actionable. Name the library, framework feature, or pattern, and confirm it covers the use case by checking its API or documentation against what the custom code does.
 - Check the project's existing dependencies before recommending new ones. If the project already depends on a library that covers the use case, that's a stronger finding than suggesting a new dependency.
-- Evaluate only code introduced by this diff (`git diff {default_branch}` — read `default_branch` from `## config`). Pre-existing custom implementations are out of scope.
+- Evaluate only code introduced by this diff (`git -C {worktree_path} diff {default_branch}` — read both from context). Pre-existing custom implementations are out of scope.
 - Use the research brief from upstream_artifacts for project conventions, tech stack, and existing dependencies.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.
 - Severity definitions:

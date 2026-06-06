@@ -11,7 +11,7 @@ ERRORS=0
 # Required frontmatter fields per file type (also used as allowlist — unknown fields are rejected)
 SKILL_ENTRY_FIELDS="name description user-invocable argument-hint"
 AGENT_REQUIRED_FIELDS="name description"
-AGENT_ALLOWED_FIELDS="name description tools model"
+AGENT_ALLOWED_FIELDS="name description tools model relevance"
 
 if ! command -v python3 &>/dev/null; then
   echo "ERROR: python3 is required for JSON validation" >&2

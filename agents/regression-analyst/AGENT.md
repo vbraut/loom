@@ -9,7 +9,7 @@ description: "Checks code changes for unintended side effects and behavioral reg
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
+- Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - When the diff contains only document artifacts (plans, specs) rather than code, adapt your evaluation: read the plan's proposed file changes and trace the consumer impact those changes would have in the codebase. Evaluate whether the plan accounts for all consumers of the interfaces it proposes to modify.
 - Focus on behavioral changes, not style differences — flag only things that could break existing functionality.
 - Before writing any findings, reason through the blast radius: for each changed interface, state what changed, identify who consumes it, trace whether each consumer still works, then derive the risk level. Write findings only from conclusions that follow from this reasoning.

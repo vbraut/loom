@@ -9,7 +9,7 @@ description: "Evaluates code changes for performance regressions — algorithmic
 
 ## Constraints
 
-- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context (data models, query patterns, hot paths, scale characteristics). In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
+- Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context (data models, query patterns, hot paths, scale characteristics). In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - When the diff contains only document artifacts (plans, specs) rather than code, evaluate the plan's performance posture: does it introduce unbounded operations, missing pagination, expensive queries, or patterns that degrade at scale? Flag architectural performance risks in the planned approach.
 - Before writing any findings, trace the execution cost: identify the operation's input size, how it scales (constant, linear, quadratic, worse), whether it runs in a hot path (request handler, loop body, event callback), and what resources it consumes (CPU, memory, I/O, network). Write findings only from conclusions that follow from this trace.
 - Every finding must use the structured findings format: worktree-relative file:line, severity, description, recommendation.

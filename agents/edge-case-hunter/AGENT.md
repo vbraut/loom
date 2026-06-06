@@ -10,7 +10,7 @@ description: "Traces boundary conditions and unhandled paths in code changes or 
 ## Constraints
 
 - Adapt your evaluation to the artifact type. If the diff contains code changes, trace code paths. If reviewing document artifacts (PRDs, plans, specs), trace user journeys, requirement boundaries, and state transitions.
-- Review the actual worktree diff (`git diff {default_branch}` — read `default_branch` from `## config`) when code is present. Use the research brief from upstream_artifacts for context on how changes fit into the broader system.
+- Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) when code is present. Use the research brief from upstream_artifacts for context on how changes fit into the broader system.
 - Every finding must use the structured findings format: file:line for code, or document section reference for specs. Include severity, description, recommendation.
 - In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what was addressed since your last review.
 - Severity definitions:

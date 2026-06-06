@@ -35,7 +35,7 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:implement:implement`, `loom:research-codebase-arch:research-codebase-arch`). Include AGENT.md content, `## output_path`, `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). When a step has `**Upstream for {agent}:**`, use that for the named agent instead of the default `**Upstream:**`. All paths passed to agents must be absolute, resolved from the worktree root. Set `cwd` to the worktree.
+2. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:implement:implement`, `loom:research-codebase-arch:research-codebase-arch`). Include AGENT.md content, `## output_path`, `## worktree_path` (absolute path from claim, e.g., `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`), `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). When a step has `**Upstream for {agent}:**`, use that for the named agent instead of the default `**Upstream:**`. All paths passed to agents must be absolute, resolved from the worktree root.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
 5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
@@ -63,6 +63,12 @@ When a step contains a `**When:**` field, evaluate the condition before executin
 When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step. Conditions may reference prior agent output (e.g., "create-mocks output contains 'no UI changes'") — read the referenced output file to evaluate.
 
 When a reviewer line within a convergence step has an inline `(when: ...)` condition, evaluate it the same way. Include the reviewer only if the condition is met.
+
+### Relevance evaluation
+
+Before spawning an agent, check its AGENT.md frontmatter for a `relevance` field. If present, evaluate conditions against the current worktree state:
+
+- `diff_has: [patterns]` — run `git -C {worktree_path} diff --name-only {default_branch}` and check whether at least one changed file matches any of the glob patterns (shell-style: `*.ts` matches `src/foo.ts`). If the diff is empty (no implementation yet — e.g., plan convergence), the condition passes and the agent runs. If the diff is non-empty and no files match, skip the agent — log "Skipping {agent_name}: diff has no files matching relevance patterns." For convergence steps, a skipped agent counts as `VERDICT: pass` — do not create its output file and do not treat the missing output as a failure.
 
 ### Persona-reviewer invocation
 

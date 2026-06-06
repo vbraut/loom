@@ -41,6 +41,8 @@ name: kebab-case-name
 description: "What it does and when to use it, in third person. State triggers, not process — if the description summarizes the workflow, the model may follow the summary instead of reading the full skill."
 tools: [Read, Bash, Grep]  # optional — omit if defaults suffice
 model: sonnet              # optional — omit to inherit from caller
+relevance:                 # optional — skip conditions evaluated by orchestrator before spawning
+  diff_has: ["*.ts", "*.svelte"]  # at least one changed file must match; if diff is empty (plan review), condition passes
 ---
 
 # Agent Name

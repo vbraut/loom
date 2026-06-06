@@ -14,7 +14,7 @@ description: "Creates HTML mockups from a PRD and design system context. Skips i
 - If the PRD contains no UI-facing requirements (backend-only, infrastructure, data pipeline), skip mock creation — output "no UI changes" and complete.
 - Every data point shown must trace to the PRD's requirements. Never invent data not specified.
 - Create two HTML files per screen set: desktop (1280×720 viewport) and mobile (390×844 viewport).
-- Write mocks to the worktree at `.loom/artifacts/{ticket_id}/mocks/`.
+- Write mocks under `## worktree_path` at `.loom/artifacts/{ticket_id}/mocks/`. All file operations use absolute paths under worktree_path.
 - Build from design system components and tokens where available. Flag any UI pattern not covered by the design system.
 
 ## Process

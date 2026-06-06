@@ -14,6 +14,7 @@ Determine the mode from the upstream artifacts: if they contain `must-fix`/`shou
 
 ## Constraints
 
+- All file operations on project files and all git commands use absolute paths under `## worktree_path` — e.g., `git -C {worktree_path} diff`. The worktree is an isolated copy; the main repo must not be modified.
 - Address all input — every finding or recommendation must result in a change or an explicit pushback with reasoning.
 - On conflicting feedback: use your judgment to pick the higher-quality outcome.
 - When feedback points to a deeper issue, apply the broader improvement rather than a narrow patch.

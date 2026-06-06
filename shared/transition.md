@@ -7,8 +7,8 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 ### 1. Commit worktree changes
 
 ```bash
-git add -A -- . ':!.loom'
-git diff --cached --quiet
+git -C {worktree_path} add -A -- . ':!.loom'
+git -C {worktree_path} diff --cached --quiet
 ```
 
 If `git diff --cached --quiet` exits 0, there are no staged changes — skip the commit and step 2.
@@ -16,7 +16,7 @@ If `git diff --cached --quiet` exits 0, there are no staged changes — skip the
 Otherwise, commit:
 
 ```bash
-git commit -m "$(cat <<'EOF'
+git -C {worktree_path} commit -m "$(cat <<'EOF'
 loom({ticket_id}): {ticket_title}
 EOF
 )"
