@@ -150,6 +150,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - run-tests: `.loom/artifacts/{ticket_id}/test-results.md`
 - test-coverage: `.loom/artifacts/{ticket_id}/test-coverage.md`
 
+**Upstream for run-tests:** `.loom/artifacts/{ticket_id}/changes.md`
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Max retries:** 2

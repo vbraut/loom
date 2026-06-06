@@ -20,11 +20,12 @@ description: "Discovers and runs the project's test suite and reports results."
 
 ## Process
 
-1. Check upstream_artifacts for the research brief's Build & Test section.
-2. If not available, discover test runner from project files.
-3. Run the test suite and collect results.
-4. Classify each failure as assertion or infrastructure.
-5. Write the report to output_path.
+1. Check whether code changed after implement's test run. Run `git log --oneline` in the worktree and check upstream_artifacts for any feedback agent outputs (e.g., `fixes-r*.md`, `plan-fixes-r*.md`). If any post-implement code modifications occurred, skip to step 2 — tests must be re-run. If no code changed after implement, and its `changes.md` **Verification** section reports a full test suite run with all tests passing (no failures, no skipped runs), accept those results — write them to output_path with a note "Accepted from implement agent's verification" and skip steps 2-5.
+2. Check upstream_artifacts for the research brief's Build & Test section.
+3. If not available, discover test runner from project files.
+4. Run the test suite and collect results.
+5. Classify each failure as assertion or infrastructure.
+6. Write the report to output_path.
 
 ## Output
 

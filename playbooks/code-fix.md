@@ -50,6 +50,7 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 - run-tests: `.loom/artifacts/{ticket_id}/test-results.md`
 - test-coverage: `.loom/artifacts/{ticket_id}/test-coverage.md`
 
+**Upstream for run-tests:** `.loom/artifacts/{ticket_id}/changes.md`
 **Upstream for test-coverage:** `.loom/artifacts/{ticket_id}/research.md`
 
 **Max retries:** 2
