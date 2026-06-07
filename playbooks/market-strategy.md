@@ -122,7 +122,7 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 
 **Agents:** requirements-reviewer, simplification-reviewer, adversarial-reviewer, edge-case-hunter (parallel)
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:

@@ -1,6 +1,6 @@
 # product-definition
 
-Product definition playbook. Produces a PRD validated through assessment, cross-talk, elicitation, convergence, and optional mocking with elevated quality review.
+Product definition playbook. Produces a PRD validated through assessment, cross-talk, elicitation, convergence, and optional mocking with elevated quality review. Artifact-only — no code changes. Deliverables are committed and PR'd for review.
 
 ## Steps
 
@@ -85,7 +85,7 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -131,7 +131,7 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 **Agents:** mock-alignment-reviewer, ui-critique, ui-optimize, ui-harden, ui-polish (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -154,6 +154,13 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 
 ### 13. Completion
 
+`pr: true`
+
+**Deliverables:**
+- `.loom/artifacts/{ticket_id}/prd.md`
+- `.loom/artifacts/{ticket_id}/mock-manifest.md` (when step 11 ran)
+- `.loom/artifacts/{ticket_id}/mocks/` (when step 11 ran)
+
 ## Pre-completion checklist (verify before transitioning)
 
 - [ ] research-codebase-arch produced output
@@ -168,4 +175,5 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 - [ ] Screenshots captured (or skipped if no existing UI routes)
 - [ ] Mocking completed (or skipped if no UI changes)
 - [ ] Mock convergence ran with all 6 reviewers (or skipped if no mocks)
+- [ ] PR created with deliverables committed
 - [ ] All output paths registered via addReferences

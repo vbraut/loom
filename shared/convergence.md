@@ -31,9 +31,7 @@ Handle convergence loops declared in playbooks.
 
 6. **Evaluate verdict logic.** AND: all agents must have `VERDICT: pass`. OR: at least one.
 
-7. **If verdict satisfied:** increment `consecutive_clean`. Check whether a confirmation round is needed:
-   - **Skip confirmation when R1 is unanimous zero-findings:** if `round` is 1 and every reviewer's output contains zero actionable findings (no code changes requested, no issues raised — only "pass" / "no issues" / "not applicable" commentary), treat `consecutive_clean` as satisfying the **Consecutive clean rounds** requirement regardless of its configured value. Log: "R1 unanimous zero-findings — skipping confirmation round."
-   - **Otherwise:** if `consecutive_clean` >= **Consecutive clean rounds**: convergence is complete — continue with the next playbook step. If not: increment `round`. If `round` > Max rounds, go to step 9. Otherwise go to step 3 (run another clean round to confirm stability).
+7. **If verdict satisfied:** increment `consecutive_clean`. If `consecutive_clean` >= **Consecutive clean rounds**: convergence is complete — continue with the next playbook step. Otherwise: increment `round`. If `round` > Max rounds, go to step 9. Otherwise go to step 3 (run another clean round to confirm stability).
 
 8. **If verdict not satisfied and `round` < Max rounds:** reset `consecutive_clean` to 0. Verify each reviewer output_path file exists and has at least one non-whitespace character (if missing or whitespace-only, treat the reviewer as failed — go to step 5). Spawn the feedback agent from **On needs-work**, passing all reviewer output_path references AND the playbook-defined reviewer upstream artifacts (e.g., research.md, changes.md) as `## upstream_artifacts`. Use the feedback agent output path template with `{N}` = current round. When the feedback agent completes:
    - Check its STATUS line. If `STATUS: failed`: stop — follow the orchestrator's error handling.

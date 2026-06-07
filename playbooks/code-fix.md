@@ -21,7 +21,7 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:

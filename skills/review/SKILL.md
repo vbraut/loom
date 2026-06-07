@@ -59,8 +59,9 @@ Present to the human reviewer:
 
 1. **Ticket summary**: ID, title, type, description.
 2. **PR link**: run `gh pr list --head loom/{ticket_id_lowercase} --json url --jq '.[0].url'` to find the PR URL. If found, display it prominently.
-3. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
-4. **Agent findings**: reports or summaries from Phase 2.
+3. **Mock files**: if `{worktree_path}/.loom/artifacts/{ticket_id}/mocks/` exists, list all HTML files within it with their absolute worktree paths. These can be opened in a browser for visual review.
+4. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
+5. **Agent findings**: reports or summaries from Phase 2.
 
 Ask: **Approve or Reject?**
 

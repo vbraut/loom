@@ -8,10 +8,23 @@ Finalize after playbook execution completes. Use the project's `default_branch` 
 
 ```bash
 git -C {worktree_path} add -A -- . ':!.loom'
+```
+
+If the playbook's completion step declares **Deliverables**, also stage each listed path — these are project deliverables that happen to live under `.loom/`. Skip any path that does not exist (e.g., optional mocks that were skipped):
+
+```bash
+git -C {worktree_path} add --force {deliverable_path_1} {deliverable_path_2} ...
+```
+
+The `--force` flag overrides the `:!.loom` exclusion for these specific files.
+
+Check for staged changes:
+
+```bash
 git -C {worktree_path} diff --cached --quiet
 ```
 
-If `git diff --cached --quiet` exits 0, there are no staged changes — skip the commit and step 2.
+If exit 0, there are no staged changes — skip the commit and step 2.
 
 Otherwise, commit:
 
@@ -22,7 +35,7 @@ EOF
 )"
 ```
 
-Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes all framework artifacts — they are ephemeral process state, not project deliverables.
+Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes framework process artifacts (reviewer outputs, convergence rounds, fix summaries). Deliverables declared by the playbook are committed explicitly.
 
 ### 2. Push and open PR (if `create_pr` is true)
 
@@ -36,7 +49,7 @@ EOF
 
 Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for the completion message.
 
-**PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Tradeoffs` sections as the PR body. If it does not exist (e.g., non-code playbook), use the ticket description from `## ticket_notes` instead. Prefix the body with:
+**PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Tradeoffs` sections as the PR body. If it does not exist (artifact-only playbook), use the ticket description from `## ticket_notes` and list each committed deliverable path under a `## Deliverables` heading so the reviewer knows which files to review. Prefix the body with:
 ```
 **Ticket:** {ticket_id} — {ticket_title}
 **Type:** {ticket_type}

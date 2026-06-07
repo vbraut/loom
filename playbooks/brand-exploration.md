@@ -123,7 +123,7 @@ Note: apply-review-fixes modifies the brand spec in the worktree in place (revis
 **Agents:** requirements-reviewer, simplification-reviewer, adversarial-reviewer, edge-case-hunter (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -159,7 +159,7 @@ Note: Impeccable modifies worktree files directly (CSS, design tokens, SVGs). Re
 **Agents:** ui-critique, ui-polish (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 3
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:

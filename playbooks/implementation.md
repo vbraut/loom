@@ -82,7 +82,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **When:** config.context.design_system → also include design-system-reviewer
 **When:** config.context.architecture_rules → also include architecture-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 5
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
@@ -119,7 +119,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **When:** config.context.design_system → also include design-system-reviewer
 **When:** config.context.architecture_rules → also include architecture-reviewer
 **Verdict logic:** AND
-**Consecutive clean rounds:** 2
+**Consecutive clean rounds:** 1
 **Max rounds:** 6
 **On needs-work:** apply-review-fixes
 **On max rounds:** Proceed to next step. Append to ticket_notes:
