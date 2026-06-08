@@ -19,9 +19,17 @@ tools: [Bash, Read, Write]
 ## Process
 
 1. Read `## ticket_notes` and `## upstream_artifacts` to identify pages/routes to capture.
-2. Identify the dev server start command from the research brief or project config (package.json scripts, Makefile, etc.).
-3. Start the dev server on an available port. Wait for it to be ready.
-4. Write a Playwright script that navigates to each target page and captures screenshots at both viewports. Save screenshots to a `screenshots/` subdirectory next to `## output_path` with descriptive filenames (e.g., `home-desktop.png`, `home-mobile.png`).
+2. **Check for verification config.** If `sdlc.config.yml` defines `project.verification`, use it:
+   - `dev_server.start` — command to start the dev server
+   - `dev_server.cwd` — working directory (relative to project root, resolved against worktree)
+   - `dev_server.port` — port to wait for
+   - `dev_server.ready_pattern` — stdout pattern signaling readiness
+   - `auth.script` — path to auth helper for Playwright (import and call to get an authenticated page/context)
+   - `auth.fixture` — named fixture (e.g., `pooledUser`) to reuse existing test infrastructure for authentication
+   - `viewports` — override default mobile/desktop viewports
+   If no verification config, fall back to the research brief or package.json to identify the dev server command.
+3. Start the dev server. If `auth.script` is defined, use it to authenticate — this avoids the expensive flow of creating a test user, onboarding, and seeding data from scratch. If `auth.fixture` is specified, import the fixture from the project's test infrastructure.
+4. Write a Playwright script that navigates to each target page and captures screenshots at each viewport. Save screenshots to a `screenshots/` subdirectory next to `## output_path` with descriptive filenames (e.g., `home-desktop.png`, `home-mobile.png`).
 5. Run the Playwright script.
 6. Stop the dev server.
 7. Write the capture manifest to `## output_path`.

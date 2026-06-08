@@ -17,13 +17,15 @@ Handle convergence loops declared in playbooks.
 
 2. **Set `round` to 1 and `consecutive_clean` to 0.** Maintain these variables throughout — do not reset them.
 
-3. **Spawn reviewer agents.** For agents marked `(parallel)`, spawn all via multiple Agent tool calls in a single response. Resolve path placeholders: replace `{ticket_id}` with the current ticket ID and `{N}` with the current `round` value. All paths must be absolute (resolved from the worktree root). Include the **Upstream for reviewers** paths (parsed in step 1) as the base `## upstream_artifacts` for each reviewer in every round. For rounds > 1, also include in each reviewer's `## upstream_artifacts`:
+3. **Spawn reviewer agents.** For agents marked `(parallel)`, spawn all via multiple Agent tool calls in a single response. Resolve path placeholders: replace `{ticket_id}` with the current ticket ID and `{N}` with the current `round` value. All paths must be absolute (resolved from the worktree root). Include the **Upstream for reviewers** paths (parsed in step 1) as the base `## upstream_artifacts` for each reviewer in every round. When the convergence target is a plan or spec (not code), append this note to every reviewer prompt: "This is a plan review. Plans describe architecture — what to change and why. Do not flag missing function signatures, mock body shapes, assertion syntax, payload schemas, or other code-level implementation details. Those are the implement agent's responsibility and will be caught during code convergence." For rounds > 1, also include in each reviewer's `## upstream_artifacts`:
    - `{last_feedback_output}` — the feedback agent's summary (only if a feedback agent ran in the prior round; omit for consecutive clean rounds where no feedback was needed)
    - All reviewer output_paths from the prior round — enables cross-examination (each reviewer can see what other reviewers found and whether the feedback agent's response was adequate)
 
    If an agent does not respond (timeout), re-spawn it once. If the retry also fails, treat as `STATUS: failed — agent timeout after retry`.
 
 4. **Parse each STATUS line.** Find the last line beginning exactly with `STATUS: ` (case-sensitive). Extract `VERDICT: pass` or `VERDICT: needs-work` if present. If no VERDICT suffix on a reviewer: treat as `STATUS: failed — missing VERDICT in reviewer response`. If no STATUS line found: treat as `STATUS: failed — no STATUS line in response`.
+
+4b. **Severity-gate the verdict.** A reviewer returning `VERDICT: needs-work` only triggers another round if its findings include at least one `must-fix` or `should-fix` issue. If all findings are `nit`-only, treat the verdict as `pass` for convergence purposes (the nit findings are still written to the reviewer output for the record, but do not block convergence). To evaluate: scan the reviewer's output for lines containing `**must-fix**` or `**should-fix**`. If none are found, override the verdict to `pass`.
 
 5. **Check for failures first.** If any agent returned `STATUS: failed`, stop — follow the orchestrator's error handling. Do not proceed to verdict evaluation or the feedback agent (failure takes precedence over needs-work from other agents).
 

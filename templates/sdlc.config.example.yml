@@ -22,3 +22,19 @@ project:
     # design_system: src/app.css
     # design_system_rules: src/lib/components/app/AI_USAGE.md
     # architecture_rules: docs/ARCHITECTURE.md
+
+  # Visual verification configuration for capture-screenshots agent.
+  # Defines how to start the dev server and authenticate for screenshots.
+  # If omitted, the agent infers from package.json / research brief.
+  # verification:
+  #   dev_server:
+  #     start: npm run dev            # command to start the dev server
+  #     cwd: apps/web                 # working directory relative to project root
+  #     port: 5173                    # port to wait for before capturing
+  #     ready_pattern: "ready in"     # stdout pattern that signals the server is ready
+  #   auth:
+  #     script: e2e/helpers/auth.ts   # path to auth helper (relative to project root)
+  #     fixture: pooledUser           # named fixture to use for authentication
+  #   viewports:                      # override default viewports (optional)
+  #     - { name: mobile, width: 390, height: 844 }
+  #     - { name: desktop, width: 1280, height: 800 }

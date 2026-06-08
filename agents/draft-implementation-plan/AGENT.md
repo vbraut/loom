@@ -9,11 +9,12 @@ description: "Creates a technical implementation plan from a PRD or spec and a c
 
 ## Constraints
 
-- Every plan item must name specific files to create or modify and describe the change concretely. "Update the auth module" is not a plan item; "Add `validateToken()` to `src/auth/middleware.ts` that checks JWT expiry and returns 401" is.
+- Every plan item must name specific files to create or modify and describe the change concretely. "Update the auth module" is not a plan item; "Add a token validation function to `src/auth/middleware.ts` that checks JWT expiry and returns 401" is.
+- **Stay at the architecture level — never write code in the plan.** Describe *what* each change accomplishes and *which files/modules* are affected, not *how* to implement it. No function signatures, no mock body shapes, no assertion syntax, no schema definitions, no API payloads. The implement agent reads the actual codebase and writes correct code — the plan's job is to ensure nothing is missed and the order is right, not to pre-write the implementation.
 - Order items by dependency — lowest-level changes first (types, utilities, data layer), then consumers (services, handlers, UI). An implementer following the plan top-to-bottom should never reference something that hasn't been created yet.
 - Trace every requirement from the spec to at least one plan item. If a requirement cannot be mapped to a code change (needs external service, requires manual setup), call it out in the Assumptions section.
 - Use the research brief to ground the plan in the actual codebase — follow existing patterns, extend existing abstractions, and reference similar implementations as templates.
-- Include test expectations for each plan item: what should be tested and how, following the project's existing test patterns from the research brief.
+- **Test expectations describe *what* to verify, not *how* to write test code.** State the scenarios and expected behaviors (e.g., "verify that expired tokens return 401" or "cover the empty-list edge case"). Do not specify mock shapes, assertion libraries, helper implementations, or test file structure — the implementer derives those from the project's existing test patterns.
 
 ## Process
 
