@@ -13,6 +13,7 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 - Trace requirements from `## ticket_notes` (and upstream specifications if provided). Each requirement gets a row in the coverage matrix — no requirement skipped.
 - Search broadly: unit tests, integration tests, e2e tests, and any test-like validation files. Use `grep` / `find` to locate test files.
 - When a requirement is only testable through manual verification (UI behavior, visual output, external service interaction), mark it `manual` rather than `gap`.
+- Report ALL coverage gaps across ALL test tiers in a single pass — unit tests, component tests, integration tests, and E2E tests. Do not defer any tier to a future round. If unit tests are missing AND E2E tests are missing, report both in the same Gaps section.
 - Use the research brief from upstream_artifacts for project test conventions (test runner, test file locations, naming patterns).
 
 ## Process

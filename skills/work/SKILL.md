@@ -103,6 +103,18 @@ For verify steps with `**On failure:**` blocks, after agents return `STATUS: com
 - For agents with VERDICT: check the VERDICT value (`needs-work` = failure condition met).
 - For run-tests: check if the `### Assertion Failures (if any)` section exists and contains entries.
 
+### Test-only convergence optimization
+
+When a verify step has a `**Test-only optimization:**` field and a retry is triggered:
+
+1. **Track the convergence commit.** When a convergence step completes (pass or max-rounds), record `HEAD` in the worktree as `last_convergence_commit` for that step. This is the baseline for detecting test-only diffs on retry.
+
+2. **Detect test-only diffs.** After the implement agent completes during a retry pass, run `git -C {worktree_path} diff --name-only {last_convergence_commit}`. Check every changed file against the test patterns listed in the `**Test-only optimization:**` field. Use shell glob matching (e.g., `*.test.*` matches `src/foo.test.ts`; `**/test/**` matches `src/test/helpers.ts`).
+
+3. **Apply reduced convergence.** If all changed files match test patterns, execute the convergence step with only the reviewers named in the optimization field (e.g., edge-case-hunter, requirements-reviewer, simplification-reviewer). All other convergence protocol fields (verdict logic, consecutive clean rounds, max rounds, on needs-work, upstream, output paths) remain unchanged — the reduced set follows the same convergence.md protocol. Only create output paths for the reviewers that actually run.
+
+4. **Fall back to full convergence.** If any changed file does not match test patterns, ignore the optimization and run the full reviewer set as defined in the convergence step.
+
 ### Round number placeholders
 
 Playbooks use two distinct round-number placeholders:

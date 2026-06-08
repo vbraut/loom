@@ -55,6 +55,7 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 
 **Max retries:** 2
 **On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 2 with both artifacts and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
+**Test-only optimization:** After the implement agent completes in a retry pass, run `git -C {worktree_path} diff --name-only {last_convergence_commit}` (where `{last_convergence_commit}` is HEAD at the point step 3 last completed). If ALL changed files match test patterns (`*.test.*`, `*.spec.*`, `**/test/**`, `**/tests/**`, `**/__tests__/**`, `**/fixtures/**`, `**/test-helpers/**`, `**/test-utils/**`), use reduced convergence in step 3: replace the full reviewer set with edge-case-hunter, requirements-reviewer, simplification-reviewer only. All other convergence fields (verdict logic, consecutive clean rounds, max rounds, on needs-work, upstream, output paths) remain unchanged. If ANY changed file does not match test patterns, run full convergence as normal.
 
 ### 5. Completion
 
