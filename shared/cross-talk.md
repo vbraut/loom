@@ -67,4 +67,4 @@ Assessment agents from the preceding step must have been spawned with the `name`
 
    **If `round` >= Max rounds (or the debate is exhausted per step 5) and not all converged:** follow the **On max rounds** instruction from the cross-talk block (typically: proceed and append a note to ticket_notes). Go to step 9.
 
-9. **Finalize.** Each agent's final output is its highest-round file (agents may exit at different rounds). Register only these final paths: `task_edit(ticket_id, addReferences=[path])` for each — intermediate rounds stay on disk but are not registered. Downstream steps consume the final paths. Return to the orchestrator — continue with the next playbook step.
+9. **Finalize.** Each agent's final output is its highest-round file (agents may exit at different rounds). Record only these final paths in the step's progress record (see the work skill's Progress tracking) — no backlog call; transition registers recorded paths as ticket references in one batched edit (shared/transition.md). Intermediate rounds stay on disk but are not recorded. Downstream steps consume the final paths. Return to the orchestrator — continue with the next playbook step.

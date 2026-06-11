@@ -2,6 +2,8 @@
 
 Claim a ticket and prepare it for execution: pick, lock, type, worktree.
 
+All backlog commands follow `shared/backlog.md` (explicit `BACKLOG_CWD`, batched mutations, suppressed echo).
+
 ## 1. Pick and lock
 
 ### Auto-pick (no manual_id)
@@ -16,16 +18,19 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
    - **1**: No eligible tickets. Print `No eligible tickets for /loom:{mode}. Nothing to do.` and stop.
    - **2**: Lock contention. Print `Dispatch lock contention — another session is claiming a ticket. Try again shortly.` and stop.
    - **3**: Usage error. This is a framework bug — halt with the error message.
-   - **4**: Claim failed — the task was picked but assignment failed (race condition or MCP error). Print `Claim failed for the selected ticket. Try again.` and stop.
+   - **4**: Claim failed — the task was picked but assignment failed (race condition or CLI error). Print `Claim failed for the selected ticket. Try again.` and stop.
    - **Any other code** (e.g., 127 = script not found): Print the error and stop.
 
-3. If mode is `work`, transition status via MCP:
-   ```
-   task_edit(id, status="active")
-   ```
-   For `review` mode, skip — ticket is already in `review` status.
-
-4. Read full ticket metadata: `task_view(ticket_id)`
+3. Transition status and read the ticket in ONE call — the edit echo is the full view:
+   - `work` mode:
+     ```bash
+     BACKLOG_CWD="{backlog_cwd}" backlog task edit {id} -s active --plain
+     ```
+     Use the printed output as `ticket_data`. Non-zero exit = claim failed (exit code 4 semantics above).
+   - `review` mode (no status change):
+     ```bash
+     BACKLOG_CWD="{backlog_cwd}" backlog task {id} --plain
+     ```
 
 ### Manual pick (manual_id provided)
 
@@ -42,7 +47,7 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
 
 **Important:** If ANY step below (2-7) fails for any reason, release the dispatch lock (`rmdir "$LOCK"`) before reporting the error. The dispatch lock must not outlive the manual pick sequence.
 
-2. Read ticket via MCP: `task_view(manual_id)`
+2. Read the ticket: `BACKLOG_CWD="{backlog_cwd}" backlog task {manual_id} --plain` — use the output as `ticket_data`.
 
 3. Validate status:
    - For `work` mode: must be `todo`. If not: `rmdir "$LOCK"`, then `ERROR: Ticket {id} is in '{status}' status, expected 'todo'.`
@@ -52,14 +57,20 @@ Claim a ticket and prepare it for execution: pick, lock, type, worktree.
    - Must be empty, `@none`, `@released`, or a stale timestamp (>12h old).
    - If locked: `rmdir "$LOCK"`, then `ERROR: Ticket {id} is locked by {assignee}. Wait for the other session to finish or check if it crashed.`
 
-5. Acquire lock via MCP:
-   ```
-   task_edit(id, assignee=["@{mode}-{unix_timestamp}"])
-   ```
+5. Acquire the lock — and for `work` mode, batch the status transition into the same edit:
+   - `work` mode:
+     ```bash
+     ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {id} -a "@work-{unix_timestamp}" -s active --plain 2>&1 >/dev/null)
+     ```
+   - `review` mode:
+     ```bash
+     ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {id} -a "@review-{unix_timestamp}" --plain 2>&1 >/dev/null)
+     ```
+   Non-zero exit: `rmdir "$LOCK"`, then `ERROR: Failed to lock ticket {id}: {ERR}`.
 
 6. Release the dispatch lock: `rmdir "$LOCK"`.
 
-7. Transition status and read metadata (same as auto-pick steps 3-4).
+7. Use the ticket data from step 2 as `ticket_data` — the lock/status edit changes no field the playbook reads.
 
 ## 2. Determine ticket type
 

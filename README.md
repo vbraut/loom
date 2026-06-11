@@ -36,17 +36,7 @@ claude plugin install loom
        design_system: src/app.css
    ```
 
-2. Configure the Backlog.md MCP server in `.mcp.json`:
-   ```json
-   {
-     "mcpServers": {
-       "backlog": {
-         "command": "backlog",
-         "args": ["mcp", "start", "--cwd", "/absolute/path/to/my-project-backlog"]
-       }
-     }
-   }
-   ```
+2. Ensure the Backlog.md CLI is installed and on PATH (`npm i -g backlog.md`). Loom drives it directly via `BACKLOG_CWD` from `sdlc.config.yml` — do **not** register a backlog MCP server; its responses echo the full task body on every call and waste context.
 
 3. Add `.loom/` to your project's `.gitignore`.
 

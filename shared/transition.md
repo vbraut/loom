@@ -2,6 +2,16 @@
 
 Finalize after playbook execution completes. Use the project's `default_branch` from config (defaults to `main`).
 
+All backlog mutations follow `shared/backlog.md`. Each transition writes the ticket exactly ONCE — status, assignee, notes, and references batched into a single `backlog task edit` call with the echo suppressed.
+
+## Gathering references
+
+`--ref` replaces the whole list, so every transition edit that registers references must write the full union:
+
+1. **Existing:** parse the `References:` line from claim's `ticket_data` (already in context — no extra backlog call). Empty if the line is absent.
+2. **New:** every output path recorded in completed-step records of `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` (work phase), plus the `{review_refs}` list (review phase). Convert any absolute path under `{worktree_path}` to its worktree-relative form.
+3. Union both, preserving order and dropping duplicates. Pass each as a separate `--ref` flag.
+
 ## Work transition (after /loom:work playbook completes)
 
 ### 1. Commit worktree changes
@@ -55,19 +65,17 @@ Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for th
 **Type:** {ticket_type}
 ```
 
-### 3. Update ticket status
+### 3. Update ticket — one batched edit
 
-```
-task_edit(ticket_id, status="review")
-```
+Gather references (see "Gathering references" above), then set status, release the lock, and register references in a single call:
 
-### 4. Release lock
-
-```
-task_edit(ticket_id, assignee=["@released"])
+```bash
+ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s review -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
 ```
 
-### 5. Stop
+Non-zero exit: report `backlog edit failed: {ERR}` and follow Failure handling.
+
+### 4. Stop
 
 Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}`
 
@@ -81,20 +89,18 @@ If `{approved_proposals}` is empty (all proposals were rejected, or the proposal
 
 For each approved proposal:
 
-```
-task_create(
-  title={Title},
-  description={Description},
-  labels=["type:{Type}"],
-  dependencies=[ticket_id]
-)
+```bash
+BACKLOG_CWD="{backlog_cwd}" backlog task create "{Title}" -d "{Description}" -l "type:{Type}" --dep {ticket_id} --plain 2>&1 | head -3
 ```
 
-### 2. Transition ticket
+The `head -3` keeps only the file path and new ticket ID for the completion message — the body echo is discarded.
 
-```
-task_edit(ticket_id, status="done")
-task_edit(ticket_id, assignee=["@released"])
+### 2. Transition ticket — one batched edit
+
+Gather references (see "Gathering references" above; include `{review_refs}` from the review run), then:
+
+```bash
+ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s done -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
 ```
 
 ### 3. Wait for PR merge
@@ -116,23 +122,17 @@ If `git branch -d` fails (refuses due to unmerged commits), verify the PR was ac
 
 ## Review rejection transition
 
-### 1. Append feedback
-
-```
-task_edit(ticket_id, notesAppend=["--- REVIEW REJECTION ---\n{feedback_text}"])
-```
-
-Use the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review.
-
-### 2. Reset progress
+### 1. Reset progress
 
 Delete `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` if it exists — rejection means the work must be redone with the feedback, so the next run must execute the full playbook rather than resume.
 
-### 3. Transition ticket
+### 2. Transition ticket — one batched edit
 
-```
-task_edit(ticket_id, status="todo")
-task_edit(ticket_id, assignee=["@released"])
+Append the rejection feedback, set status, release the lock, and register the review-phase references (see "Gathering references"; include `{review_refs}`) in a single call. Use a real newline inside the quoted note string, and keep the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review:
+
+```bash
+ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} --append-notes "--- REVIEW REJECTION ---
+{feedback_text}" -s todo -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
 ```
 
 The worktree is preserved — the next /loom:work run reuses it with feedback in ticket notes.
@@ -141,11 +141,15 @@ The worktree is preserved — the next /loom:work run reuses it with feedback in
 
 On any failure during playbook execution:
 
-1. Attempt BOTH cleanup operations independently (do not skip 1b if 1a fails):
-   a. Revert status so dispatch can re-pick:
-      - If working (`active`): `task_edit(ticket_id, status="todo")`
-      - If reviewing (`review`): status stays (already dispatchable)
-   b. Release lock: `task_edit(ticket_id, assignee=["@released"])`
+1. Revert status (if needed) and release the lock in ONE batched edit:
+   - If working (`active`):
+     ```bash
+     ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s todo -a @released --plain 2>&1 >/dev/null)
+     ```
+   - If reviewing (`review` — status stays, already dispatchable):
+     ```bash
+     ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -a @released --plain 2>&1 >/dev/null)
+     ```
 2. Print the error and stop (include any cleanup failures from step 1)
 4. Skip appending notes to the ticket (the human sees the error in the terminal; ticket notes are for cross-session review feedback, not error logs)
 5. Worktree is preserved with partial artifacts

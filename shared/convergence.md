@@ -31,7 +31,7 @@ Handle convergence loops declared in playbooks.
 
 5. **Check for failures first.** If any agent returned `STATUS: failed`, stop — follow the orchestrator's error handling. Do not proceed to verdict evaluation or the feedback agent (failure takes precedence over needs-work from other agents).
 
-5b. **Track reviewer outputs.** Hold each reviewer's output_path for this round. Do not register intermediate rounds via addReferences — only the final round's reviewer outputs are registered in the exit sequence, so downstream consumers see the verdicts that actually stand. (Feedback agent outputs are registered every round in step 8 — they carry the round history and ledger.)
+5b. **Track reviewer outputs.** Hold each reviewer's output_path for this round. Do not record intermediate rounds — only the final round's reviewer outputs are recorded in the exit sequence, so downstream consumers see the verdicts that actually stand. (Feedback agent outputs are tracked every round in step 8 — they carry the round history and ledger.)
 
 6. **Evaluate verdict logic.** AND: all agents must have `VERDICT: pass`. OR: at least one.
 
@@ -40,24 +40,27 @@ Handle convergence loops declared in playbooks.
 8. **If verdict not satisfied and `round` < Max rounds:** reset `consecutive_clean` to 0. Verify each reviewer output_path file exists and has at least one non-whitespace character (if missing or whitespace-only, treat the reviewer as failed — go to step 5). Spawn the feedback agent from **On needs-work**, passing as `## upstream_artifacts`: all reviewer output_path references from this round, the playbook-defined reviewer upstream artifacts (e.g., research.md, changes.md), and `{last_feedback_output}` from the prior round when one exists (the feedback agent carries its findings ledger forward from it). Use the feedback agent output path template with `{N}` = current round. When the feedback agent completes:
    - Check its STATUS line. If `STATUS: failed`: stop — follow the orchestrator's error handling.
    - Verify its output_path exists and is non-empty. If missing or empty: treat as failed.
-   - Register the feedback agent's output_path: `task_edit(ticket_id, addReferences=[path])`.
+   - Track the feedback agent's output_path for the exit sequence's progress record — no backlog call.
    - Store the feedback agent's output_path as `{last_feedback_output}`.
    - Increment `round`. Go to step 3.
 
-9. **If `round` >= Max rounds and convergence not complete:** follow the **On max rounds** instruction from the convergence block. If the instruction includes "Append to ticket_notes", call `task_edit(ticket_id, notesAppend=[text])` with the quoted text, replacing `{round}` with the current round value. If `consecutive_clean` > 0, append to the note: " (last {consecutive_clean} round(s) clean, awaiting confirmation)". Run the **Exit sequence** below, then return to the orchestrator — continue with the next playbook step.
+9. **If `round` >= Max rounds and convergence not complete:** follow the **On max rounds** instruction from the convergence block. If the instruction includes "Append to ticket_notes", hold the quoted text (replacing `{round}` with the current round value) and write it in the exit sequence's telemetry edit — one batched call with two `--append-notes` flags. If `consecutive_clean` > 0, append to the note: " (last {consecutive_clean} round(s) clean, awaiting confirmation)". Run the **Exit sequence** below, then return to the orchestrator — continue with the next playbook step.
 
 ## Exit sequence
 
 Run once per convergence step, at completion (step 7) or max rounds (step 9):
 
-1. **Register final outputs.** `task_edit(ticket_id, addReferences=[path])` for each reviewer output_path from the final round.
+1. **Record final outputs.** List in this step's progress record (see the work skill's Progress tracking): each reviewer output_path from the final round, plus every round's feedback agent output_path. No backlog call — transition registers all recorded paths as ticket references in one batched edit (shared/transition.md).
 2. **Checkpoint commit.** Commit the converged state so retry detection has an exact baseline:
    ```bash
    git -C {worktree_path} add -A -- . ':!.loom'
    git -C {worktree_path} diff --cached --quiet || git -C {worktree_path} commit -m "loom({ticket_id}): convergence checkpoint — {step title}, round {round}"
    ```
    Record the resulting HEAD as `{last_convergence_commit}` for this step (consumed by Scoped retry convergence below). Document-only convergences (artifacts under `.loom/`) stage nothing and produce no commit — record HEAD as-is.
-3. **Telemetry.** Append one line to ticket notes so panel composition and round caps can be tuned from real runs: `task_edit(ticket_id, notesAppend=["Telemetry — {step title}: {round} round(s), exit: {clean | max-rounds}, contested: {count from the latest ledger, 0 if no feedback ran}"])`.
+3. **Telemetry.** Append one line to ticket notes so panel composition and round caps can be tuned from real runs (shared/backlog.md — include the held max-rounds note from step 9 as a second `--append-notes` flag when one exists):
+   ```bash
+   ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} --append-notes "Telemetry — {step title}: {round} round(s), exit: {clean | max-rounds}, contested: {count from the latest ledger, 0 if no feedback ran}" --plain 2>&1 >/dev/null)
+   ```
 
 ## Scoped retry convergence
 

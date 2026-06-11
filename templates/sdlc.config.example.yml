@@ -7,8 +7,8 @@ version: 1
 
 project:
   # Absolute path to the Backlog.md repository.
-  # Must match the --cwd argument in your .mcp.json backlog server config.
-  # Use a full path — .mcp.json does not expand ~ (tilde).
+  # Loom invokes the backlog CLI with BACKLOG_CWD set to this path —
+  # no MCP server registration is needed. Use a full path (no ~ expansion).
   backlog_cwd: /Users/you/dev/my-project-backlog
 
   # Git default branch name. Omit to use "main".

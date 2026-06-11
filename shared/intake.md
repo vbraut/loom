@@ -26,7 +26,7 @@ If present:
 
    Pass a partial intake brief (playbook type + strategic question/brand goal + competitive context) as upstream. Read `{loom_plugin_dir}/agents/research-external/AGENT.md` for the agent content. If WebSearch tool is unavailable, skip — log "External research skipped (WebSearch unavailable)" and proceed without it.
 
-5. Write the intake brief to `.loom/artifacts/{ticket_id}/intake-brief.md` with sections: `## Playbook Type`, `## Strategic Question / Brand Goal`, `## Audience`, `## Competitive Context`, `## Current State`, `## Constraints & Non-Negotiables`, `## Success Criteria`, `## References & Existing Research`, `## Anti-References` (brand-exploration and copy-deck), `## Orchestrator Notes`. Register via `task_edit(ticket_id, addReferences=[path])`.
+5. Write the intake brief to `.loom/artifacts/{ticket_id}/intake-brief.md` with sections: `## Playbook Type`, `## Strategic Question / Brand Goal`, `## Audience`, `## Competitive Context`, `## Current State`, `## Constraints & Non-Negotiables`, `## Success Criteria`, `## References & Existing Research`, `## Anti-References` (brand-exploration and copy-deck), `## Orchestrator Notes`. No backlog call — the intake progress record covers registration (transition batch-registers all recorded outputs).
 
 ## Checkpoint handling
 

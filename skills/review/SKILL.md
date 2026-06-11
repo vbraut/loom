@@ -15,6 +15,8 @@ Read `shared/config.md` from the Loom plugin directory and follow it.
 
 If config loading fails, stop immediately.
 
+Read `shared/backlog.md` from the Loom plugin directory — every backlog read and mutation in this skill follows it (CLI only, explicit `BACKLOG_CWD`, batched mutations, suppressed echo).
+
 ## Phase 1: CLAIM
 
 Read `shared/claim.md` from the Loom plugin directory and follow it.
@@ -35,22 +37,26 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve each entry independently. Literal paths: resolve to absolute paths from the worktree root. Retrieval instructions (e.g., "retrieve via MCP `task_view`"): execute the retrieval — call `task_view(ticket_id)`, extract the `references` list, verify each path exists and is non-empty, and use the valid paths. A single **Upstream:** block may contain both literal paths and retrieval instructions — process all entries and merge the results into one list.
+2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve each entry independently. Literal paths: resolve to absolute paths from the worktree root. Retrieval instructions (e.g., "all ticket references from the work phase"): use the `References:` list from claim's `ticket_data` (already in context — no extra backlog call), verify each path exists and is non-empty, and use the valid paths. A single **Upstream:** block may contain both literal paths and retrieval instructions — process all entries and merge the results into one list.
 3. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:review-summarizer:review-summarizer`). If the agent's frontmatter declares `model:`, pass that value as the Agent tool's `model` parameter (the explicit parameter guarantees the tier even when the registry holds a stale plugin snapshot). Include AGENT.md content, `## output_path`, `## worktree_path` (absolute path to the worktree from claim), `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` with the resolved paths from step 2. All paths must be absolute.
 4. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 5. If failed: stop (error handling below).
-6. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+6. If complete: add the output_path (worktree-relative) to the run's `{review_refs}` list — no backlog call; references are written in ONE batched edit at transition (shared/transition.md).
 6b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
 7. For parallel agents: spawn all via multiple Agent tool calls.
 8. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
 If `{review_playbook}` is set (from claim.md), read it and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step.
 
-If `{review_playbook}` is empty, run the **default review sequence** instead. Each agent invocation follows the same protocol as above (read AGENT.md, spawn via Agent tool, check STATUS, register output via task_edit):
+If `{review_playbook}` is empty, run the **default review sequence** instead. Each agent invocation follows the same protocol as above (read AGENT.md, spawn via Agent tool, check STATUS, track output in `{review_refs}`):
 
-1. Retrieve work-phase artifact references via MCP `task_view(ticket_id)`.
+1. Take the work-phase artifact references from the `References:` list in claim's `ticket_data` (already in context — no extra backlog call).
 2. Invoke **review-summarizer** (agent invocation protocol): pass all work-phase artifact paths as upstream. Output to `.loom/artifacts/{ticket_id}/review-summary.md`.
-3. Pre-fetch the backlog snapshot: call `task_list()` via MCP, filter client-side to id/title/type/status, truncate to 200 most recent, write to `.loom/artifacts/{ticket_id}/backlog-snapshot.md`. If `task_list()` fails, create the file with: "Backlog snapshot unavailable — proposals may overlap with existing tickets."
+3. Pre-fetch the backlog snapshot straight to disk — its content never needs to enter your context:
+   ```bash
+   BACKLOG_CWD="{backlog_cwd}" backlog task list --plain > "{worktree_path}/.loom/artifacts/{ticket_id}/backlog-snapshot.md" 2>/dev/null \
+     || echo "Backlog snapshot unavailable — proposals may overlap with existing tickets." > "{worktree_path}/.loom/artifacts/{ticket_id}/backlog-snapshot.md"
+   ```
 4. Invoke **ticket-planner** (agent invocation protocol): pass `.loom/artifacts/{ticket_id}/review-summary.md` and `.loom/artifacts/{ticket_id}/backlog-snapshot.md` as upstream. Output to `.loom/artifacts/{ticket_id}/successor-proposals.md`.
 
 ## Phase 3: HUMAN GATE
@@ -92,7 +98,10 @@ Read `shared/transition.md` and follow "Review rejection transition".
 ## Error handling
 
 If anything fails at any point:
-1. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
+1. Release the lock (shared/backlog.md):
+   ```bash
+   ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -a @released --plain 2>&1 >/dev/null)
+   ```
 2. Print the error clearly
 3. Stop — skip appending notes to the ticket (the human sees the failure in the terminal; ticket notes are for cross-session feedback, not error logs)
 4. Worktree preserved
