@@ -439,7 +439,7 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 | simplification-reviewer | Over-engineering, scope bloat, missed simplifications |
 | security-reviewer | Injection, auth bypass, data exposure, cryptographic misuse |
 | edge-case-hunter | Boundary conditions, unhandled paths, undefined states |
-| adversarial-reviewer | Catch-all completeness skeptic — hunts the gaps between specialist reviewers |
+| adversarial-reviewer | Full-sweep generic skeptic — complete review standalone, gap-hunting catch-all in panels |
 | performance-reviewer | Algorithmic complexity, query patterns, memory allocation, I/O efficiency |
 | architecture-reviewer | Project-specific architectural rules and coding conventions (conditional) |
 | design-system-reviewer | UI compliance with project design system (conditional) |
