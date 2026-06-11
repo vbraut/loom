@@ -1,6 +1,7 @@
 ---
 name: ui-optimize
 description: "Evaluates UI for performance issues — patterns that cause slow loads, janky animations, layout shifts, or excessive bundle size. Works on both mock HTML and implementation code. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # UI Optimize
@@ -9,6 +10,7 @@ description: "Evaluates UI for performance issues — patterns that cause slow l
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Determine input type from upstream_artifacts: mock HTML files → evaluate performance feasibility of the design; implementation code (worktree diff) → evaluate actual performance patterns in the built code. The same 9 dimensions apply; mock mode assesses feasibility, code mode assesses implementation.
 - Every finding must include: file path and line number (e.g., `mocks/home-desktop.html:42` or `src/components/List.svelte:18`), severity, performance concern with estimated impact, and a concrete recommendation with specific implementation approach.
 - Focus on patterns where the UI forces poor performance — a heavy hero image, an unbounded list, an animation on a layout property. Skip concerns that any competent implementation would handle (basic minification, standard caching).
@@ -59,10 +61,6 @@ How many requests does the UI imply above the fold? Are there opportunities to r
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 `{file-path}:{line}` — **{must-fix/should-fix/nit}** — {performance concern + estimated impact}

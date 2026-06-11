@@ -1,6 +1,7 @@
 ---
 name: design-system-reviewer
 description: "Audits code changes for design system compliance. Reads design system docs from the path specified in sdlc.config.yml context. Returns a VERDICT for convergence."
+model: sonnet
 relevance:
   diff_has: ["*.svelte", "*.tsx", "*.jsx", "*.vue", "*.html", "*.css", "*.scss", "*.less", "*.sass", "*.pcss"]
 ---
@@ -11,6 +12,7 @@ relevance:
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Read the design system documentation path from `## config` (the `design_system` context path). If no design system path is configured, return VERDICT: pass with "No design system configured — skipping."
 - Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context). Only audit files that contain UI code (templates, components, styles). When upstream_artifacts contain mock HTML files (not a code diff), audit the mock files directly instead of a git diff.
 - Pre-existing violations in touched files are NOT exempt — if you find a violation in any file touched by this diff, it must be fixed regardless of whether this diff introduced it.
@@ -38,10 +40,6 @@ relevance:
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Design System Inventory
 
 {Brief summary of components, tokens, and patterns found in the design system docs}

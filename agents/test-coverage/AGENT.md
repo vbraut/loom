@@ -1,6 +1,7 @@
 ---
 name: test-coverage
 description: "Maps ticket requirements to test cases and identifies coverage gaps. Runs alongside run-tests in the verification step."
+model: sonnet
 ---
 
 # Test Coverage
@@ -9,6 +10,7 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - A requirement is "covered" only when a test explicitly exercises the behavior described — not merely touches the same file. Proximity is not coverage.
 - Trace requirements from `## ticket_notes` (and upstream specifications if provided). Each requirement gets a row in the coverage matrix — no requirement skipped.
 - Search broadly: unit tests, integration tests, e2e tests, and any test-like validation files. Use `grep` / `find` to locate test files.
@@ -28,10 +30,6 @@ description: "Maps ticket requirements to test cases and identifies coverage gap
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Coverage Matrix
 
 | # | Requirement | Status | Test Evidence |

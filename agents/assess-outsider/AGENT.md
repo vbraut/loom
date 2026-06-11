@@ -28,10 +28,6 @@ description: "Naive questioning in approach assessment. Zero assumed context —
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ### Stance
 
 {One sentence: is this approach self-contained enough to execute, or does it depend on unexplained context?}

@@ -1,6 +1,7 @@
 ---
 name: ui-polish
 description: "Catches micro-detail issues in UI — alignment precision, spacing rhythm, state completeness, copy consistency, and responsive behavior. Works on both mock HTML and implementation code. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # UI Polish
@@ -9,6 +10,7 @@ description: "Catches micro-detail issues in UI — alignment precision, spacing
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Determine input type from upstream_artifacts: mock HTML files → evaluate design precision and consistency; implementation code (worktree diff) → evaluate actual values, actual states, actual responsive behavior in the built code.
 - Evaluate systematically dimension by dimension — do not jump between concerns (skipping around causes missed details in the dimensions you skip back to).
 - Every finding must include: file path and line number with viewport if relevant (e.g., `mocks/home-mobile.html:42` or `src/components/Card.svelte:18`), severity, the micro-detail issue, what the UI currently shows, what it should show, and the exact change with property, value, and reasoning.
@@ -60,10 +62,6 @@ All breakpoints tested: does the UI specify mobile, tablet, and desktop layouts?
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 `{file-path}:{line}` — **{must-fix/should-fix/nit}** — {micro-detail issue}

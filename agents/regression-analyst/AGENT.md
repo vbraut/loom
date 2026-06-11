@@ -1,6 +1,7 @@
 ---
 name: regression-analyst
 description: "Checks code changes for unintended side effects and behavioral regressions. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # Regression Analyst
@@ -9,6 +10,7 @@ description: "Checks code changes for unintended side effects and behavioral reg
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context and the change summary for the implementor's reasoning. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - When the diff contains only document artifacts (plans, specs) rather than code, adapt your evaluation: read the plan's proposed file changes and trace the consumer impact those changes would have in the codebase. Evaluate whether the plan accounts for all consumers of the interfaces it proposes to modify.
 - Focus on behavioral changes, not style differences — flag only things that could break existing functionality.
@@ -38,10 +40,6 @@ Scope: evaluate only exported/public interfaces that have external consumers. In
 Write regression analysis to output_path with structured findings.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## At-Risk Consumers
 
 - `src/api/router.ts:45` imports `processRequest` — **direct** — uses old return type, will fail to compile. **No test coverage for this path.**

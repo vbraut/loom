@@ -1,6 +1,7 @@
 ---
 name: mock-alignment-reviewer
 description: "Verifies mockups cover all PRD requirements. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # Mock Alignment Reviewer
@@ -9,6 +10,7 @@ description: "Verifies mockups cover all PRD requirements. Returns a VERDICT for
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Read the PRD and mock HTML files from upstream artifacts.
 - Every alignment finding is `must-fix` severity — partial PRD coverage is not acceptable.
 - Every finding must use the structured findings format: mock file, severity, description, recommendation.
@@ -28,10 +30,6 @@ description: "Verifies mockups cover all PRD requirements. Returns a VERDICT for
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Coverage Matrix
 
 | # | Requirement | Status | Mock Location |

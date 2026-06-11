@@ -1,6 +1,7 @@
 ---
 name: research-external
 description: "Gathers external context via web research — competitor analysis, market data, design trends, voice/messaging patterns. Produces a cited research brief. Triggered during playbook intake, runs in parallel with codebase research."
+model: sonnet
 tools: [WebSearch, WebFetch, Read, Bash]
 ---
 
@@ -28,10 +29,6 @@ tools: [WebSearch, WebFetch, Read, Bash]
 ## Output
 
 ```
-## Inputs Received
-
-{intake brief summary, research focus areas}
-
 ## Competitor Analysis
 
 ### {Competitor Name}

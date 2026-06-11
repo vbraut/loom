@@ -107,8 +107,11 @@ Note: apply-review-fixes modifies the brand spec in the worktree in place (revis
 
 **Agent:** elicit-approach
 **Upstream:**
+- `.loom/artifacts/{ticket_id}/brand-spec.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
+
+Note: Reads the post-synthesis `brand-spec.md` (modified in place by step 7) — elicitation stress-tests the revised spec, with the synthesis as context for what assessment already covered.
 
 ### 9. Revise brand spec with elicitation
 
@@ -186,7 +189,7 @@ Note: Impeccable modifies worktree files directly (CSS, design tokens, SVGs). Re
 - [ ] research-codebase-arch produced output
 - [ ] draft-brand-spec produced brand spec
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
+- [ ] Cross-talk completed (converged, hit max rounds with note, or skipped — no Critical/High concerns)
 - [ ] Synthesis produced
 - [ ] Brand spec revised with synthesis findings
 - [ ] Elicitation completed

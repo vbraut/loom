@@ -22,6 +22,7 @@ Product definition playbook. Produces a PRD validated through assessment, cross-
 **Persona selection:**
   Always: pm, dev
   Dynamic (select 1-3 based on ticket content): ux, security, data, qa, craft, devops, tech-lead, architect, analyst, end-user, sm, tech-writer
+**When rigor is light:** cognitive agents reduced to assess-inversion, assess-decomposition, assess-outsider; persona selection uses Always personas only (skip dynamic selection).
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/prd.md`
@@ -65,13 +66,18 @@ Note: apply-review-fixes modifies `prd.md` in the worktree in place (revision mo
 
 ### 7. Elicit
 
+**Skip when:** rigor is light
 **Agent:** elicit-approach
 **Upstream:**
+- `.loom/artifacts/{ticket_id}/prd.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
 
+Note: Reads the post-synthesis `prd.md` (modified in place by step 6) — elicitation stress-tests the revised PRD, with the synthesis as context for what assessment already covered.
+
 ### 8. Revise PRD with elicitation
 
+**Skip when:** step 7 was skipped
 **Agent:** apply-review-fixes
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/prd.md`
@@ -84,6 +90,7 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
+**When rigor is light:** reviewers reduced to requirements-reviewer, simplification-reviewer, security-reviewer, edge-case-hunter (conditional reviewers above still apply).
 **Verdict logic:** AND
 **Consecutive clean rounds:** 1
 **Max rounds:** 5
@@ -165,12 +172,12 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 
 - [ ] research-codebase-arch produced output
 - [ ] draft-prd produced PRD
-- [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
+- [ ] Assessment completed (cognitive + persona reviewers per rigor, all in parallel)
+- [ ] Cross-talk completed (converged, hit max rounds with note, or skipped — no Critical/High concerns)
 - [ ] Synthesis produced
 - [ ] PRD revised with synthesis findings
-- [ ] Elicitation completed
-- [ ] PRD revised with elicitation findings
+- [ ] Elicitation completed (or skipped — light rigor)
+- [ ] PRD revised with elicitation findings (or skipped — light rigor)
 - [ ] PRD convergence ran (passed or hit max rounds with note)
 - [ ] Screenshots captured (or skipped if no existing UI routes)
 - [ ] Mocking completed (or skipped if no UI changes)

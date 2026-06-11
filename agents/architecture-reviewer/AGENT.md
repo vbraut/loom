@@ -1,6 +1,7 @@
 ---
 name: architecture-reviewer
 description: "Evaluates code changes against project-specific architectural rules, coding conventions, and documented decisions. Reads rules from config.context.architecture_rules. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # Architecture Reviewer
@@ -9,6 +10,7 @@ description: "Evaluates code changes against project-specific architectural rule
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Read the project's rules document from the path provided in `config.context.architecture_rules` (passed in `## config`). This is your primary rule source. If additional rule documents are referenced within it, read those too.
 - Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) as the ground truth for what changed. Use the research brief from upstream_artifacts for architecture context. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - When the diff contains only document artifacts (plans, specs) rather than code, evaluate whether the planned approach respects the project's architectural boundaries and conventions. Flag plans that would require violating documented rules.
@@ -37,10 +39,6 @@ Scope: evaluate only compliance with documented project rules. General best prac
 Write architecture analysis to output_path. If no issues found, write a brief confirmation listing which rules were checked and why the changes pass.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Rules Loaded
 
 {list the architecture rules document and any referenced sub-documents}

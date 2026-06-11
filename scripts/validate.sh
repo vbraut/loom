@@ -121,7 +121,7 @@ done
 echo ""
 echo "--- Shared modules ---"
 
-for module in config claim transition convergence cross-talk; do
+for module in config claim transition convergence cross-talk intake; do
   module_path="$LOOM_ROOT/shared/$module.md"
   if [ -f "$module_path" ]; then
     ok "shared/$module.md"
@@ -345,16 +345,8 @@ echo "--- Personas ---"
 
 persona_count=0
 if [ -d "$LOOM_ROOT/personas" ]; then
-  if [ -f "$LOOM_ROOT/personas/_universal.md" ]; then
-    ok "personas/_universal.md"
-  else
-    err "personas/_universal.md not found (required for quality principles injection)"
-  fi
-
   for persona in "$LOOM_ROOT"/personas/*.md; do
     [ -f "$persona" ] || continue
-    base=$(basename "$persona" .md)
-    [ "$base" = "_universal" ] && continue
     persona_count=$((persona_count + 1))
   done
   echo "  ($persona_count personas found)"

@@ -1,6 +1,7 @@
 ---
 name: simplification-reviewer
 description: "Evaluates changes for unnecessary complexity and scope bloat, in both code and product specifications. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # Simplification Reviewer
@@ -9,6 +10,7 @@ description: "Evaluates changes for unnecessary complexity and scope bloat, in b
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Adapt your evaluation to the artifact type. If the diff contains code changes, look for over-engineered implementations. If reviewing document artifacts (PRDs, plans, specs), look for scope bloat, over-specified requirements, and unnecessary product complexity.
 - Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) when code is present. Use the research brief from upstream_artifacts for architecture context and conventions. In convergence rounds > 1, upstream may include a feedback agent summary (fixes-rN.md) — use it to understand what changed since your last review.
 - Before writing any findings, reason through the complexity: for each change, ask whether a simpler equivalent exists, confirm the simpler version preserves the goal, then derive whether the complexity is justified. Write findings only from conclusions that follow from this reasoning.
@@ -48,10 +50,6 @@ Scope: evaluate only complexity in the diff or document. Domain-inherent complex
 Write simplification analysis to output_path. If the solution is appropriately scoped and simple, write a brief confirmation.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 1. `src/utils/helpers.ts:1-30` — **should-fix** — New helper duplicates `lodash.get` functionality. Behavior preserved because: both handle nested access with undefined fallback.

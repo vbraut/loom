@@ -1,6 +1,7 @@
 ---
 name: edge-case-hunter
 description: "Traces boundary conditions and unhandled paths in code changes or product specifications. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # Edge Case Hunter
@@ -9,6 +10,7 @@ description: "Traces boundary conditions and unhandled paths in code changes or 
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Adapt your evaluation to the artifact type. If the diff contains code changes, trace code paths. If reviewing document artifacts (PRDs, plans, specs), trace user journeys, requirement boundaries, and state transitions.
 - Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context) when code is present. Use the research brief from upstream_artifacts for context on how changes fit into the broader system.
 - Every finding must use the structured findings format: file:line for code, or document section reference for specs. Include severity, description, recommendation.
@@ -49,10 +51,6 @@ Scope: evaluate only what's in the diff or document. Pre-existing issues and pat
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 1. `src/api/handler.ts:34` — **must-fix** — `items.length` is checked but `items` itself can be null when the API returns a 204. The `if (items.length > 0)` on line 34 will throw TypeError.

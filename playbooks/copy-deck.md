@@ -107,8 +107,11 @@ Note: apply-review-fixes modifies the copy deck in the worktree in place (revisi
 
 **Agent:** elicit-approach
 **Upstream:**
+- `.loom/artifacts/{ticket_id}/copy-deck.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
+
+Note: Reads the post-synthesis `copy-deck.md` (modified in place by step 7) — elicitation stress-tests the revised copy deck, with the synthesis as context for what assessment already covered.
 
 ### 9. Revise copy deck with elicitation
 
@@ -152,7 +155,7 @@ Note: apply-review-fixes modifies the copy deck in the worktree in place (revisi
 - [ ] research-codebase-arch produced output
 - [ ] draft-copy-deck produced copy deck
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
+- [ ] Cross-talk completed (converged, hit max rounds with note, or skipped — no Critical/High concerns)
 - [ ] Synthesis produced
 - [ ] Copy deck revised with synthesis findings
 - [ ] Elicitation completed

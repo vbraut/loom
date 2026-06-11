@@ -1,6 +1,7 @@
 ---
 name: ui-critique
 description: "Evaluates UI quality from a UX perspective — visual hierarchy, cognitive load, emotional resonance, discoverability, and AI slop detection. Works on both mock HTML and implementation code. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # UI Critique
@@ -9,6 +10,7 @@ description: "Evaluates UI quality from a UX perspective — visual hierarchy, c
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Determine input type from upstream_artifacts: mock HTML files → evaluate design intent and feasibility; implementation code (worktree diff) → evaluate the actual built UI. The same 11 dimensions apply in both modes; the evidence source changes.
 - Score Nielsen's 10 heuristics honestly — a 4 means genuinely excellent, most real interfaces score 20-32 (inflated scores hide problems that persist into implementation).
 - Evaluate the UI as a designed experience, not a technical artifact — think like a design director giving feedback.
@@ -71,10 +73,6 @@ Example: **Power User**: No keyboard shortcuts detected. Form requires 8 clicks 
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Anti-Patterns Verdict
 
 Pass or Fail — list specific AI-generated tells found, or confirm none detected.

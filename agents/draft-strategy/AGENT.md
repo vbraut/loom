@@ -29,10 +29,6 @@ description: "Produces a market or product strategy document by synthesizing use
 Write the strategy document directly to output_path.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Executive Summary
 
 {1-2 paragraph overview of the strategic question and primary recommendation}

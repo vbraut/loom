@@ -30,10 +30,6 @@ description: "Creates a brand visual system from an assessed brand spec. Trigger
 Write a brand asset manifest to output_path.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Skills Invoked
 
 1. `/impeccable:colorize` — {what was produced, file paths}

@@ -107,8 +107,11 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 
 **Agent:** elicit-approach
 **Upstream:**
+- `.loom/artifacts/{ticket_id}/strategy.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
+
+Note: Reads the post-synthesis `strategy.md` (modified in place by step 7) — elicitation stress-tests the revised strategy, with the synthesis as context for what assessment already covered.
 
 ### 9. Revise strategy with elicitation
 
@@ -152,7 +155,7 @@ Note: apply-review-fixes modifies the strategy document in the worktree in place
 - [ ] research-codebase-arch produced output
 - [ ] draft-strategy produced strategy document
 - [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
+- [ ] Cross-talk completed (converged, hit max rounds with note, or skipped — no Critical/High concerns)
 - [ ] Synthesis produced
 - [ ] Strategy revised with synthesis findings
 - [ ] Elicitation completed

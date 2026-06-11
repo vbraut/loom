@@ -30,10 +30,6 @@ description: "Compiles converged assessment positions into a unified approach. R
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Assessment Summary
 
 | Agent | Method | Evidence Basis | Key Finding |
