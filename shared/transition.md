@@ -10,6 +10,8 @@ No transition passes `--ref`. Loom artifacts are never registered as ticket refe
 
 ## Work transition (after /loom:work playbook completes)
 
+**History rule (MANDATORY):** never run `git reset` against `{default_branch}` or any other moving ref. If the default branch advanced while the ticket was in flight, the worktree's files are a stale snapshot — a reset to the new tip followed by `git add -A` records everything the default branch gained in the meantime as deletions and reversions, silently undoing other tickets' merged work. The merge in step 2 is the only sanctioned sync mechanism; the squash in step 3 targets the merge-base, which is safe by construction.
+
 ### 1. Commit worktree changes
 
 ```bash
@@ -30,7 +32,7 @@ Check for staged changes:
 git -C {worktree_path} diff --cached --quiet
 ```
 
-If exit 0, there are no staged changes — skip the commit and step 2.
+If exit 0, there is nothing new to commit — skip the commit command and continue to step 2. The branch may still be ahead of `{default_branch}` via convergence checkpoint commits; steps 2–4 handle that.
 
 Otherwise, commit:
 
@@ -43,7 +45,41 @@ EOF
 
 Use a heredoc (as shown) to avoid shell metacharacters in the ticket title breaking the command. The pathspec `:!.loom` excludes framework process artifacts (reviewer outputs, convergence rounds, fix summaries). Deliverables declared by the playbook are committed explicitly.
 
-### 2. Push and open PR (if `create_pr` is true)
+### 2. Sync with the default branch
+
+The default branch may have advanced while the ticket was in flight (other tickets merging). Merge it now so the squash base and the PR diff are honest:
+
+```bash
+git -C {worktree_path} merge {default_branch} --no-edit
+```
+
+On merge conflict, follow the conflict policy from `shared/claim.md` § Ensure worktree: prefer the default branch for non-artifact files — config, dependencies, infrastructure; prefer the worktree for artifact files under `.claude/` or `.loom/`; for code files, three-way merge preserving both sides' intent. If unresolvable: `git merge --abort`, report the conflict, stop.
+
+### 3. Squash to a single clean commit
+
+The branch now holds convergence checkpoint commits, possibly a step-1 commit, and possibly a step-2 sync merge. Collapse them into one commit titled for the ticket. Reset **only to the merge-base** — never to `{default_branch}` directly (see History rule):
+
+```bash
+git -C {worktree_path} reset --soft "$(git -C {worktree_path} merge-base {default_branch} HEAD)"
+git -C {worktree_path} diff --cached --quiet || git -C {worktree_path} commit -m "$(cat <<'EOF'
+loom({ticket_id}): {ticket_title}
+EOF
+)"
+```
+
+This is safe because after step 2 the merge-base equals the default branch tip and the working tree already contains the default branch's content — the soft reset stages exactly the ticket's own changes. If nothing is staged after the reset, the ticket produced no changes; the `||` skips the commit and step 4's guard will skip the PR.
+
+### 4. Push and open PR (if `create_pr` is true)
+
+Only when the branch has commits ahead of the default branch:
+
+```bash
+git -C {worktree_path} rev-list --count {default_branch}..HEAD
+```
+
+If the count is 0, there is nothing to push — skip this step.
+
+If the branch was pushed before (re-run after rejection), the squash rewrote history — push with `--force-with-lease` instead of a plain push.
 
 ```bash
 git -C {worktree_path} push -u origin loom/{ticket_id_lowercase}
@@ -53,6 +89,8 @@ EOF
 )"
 ```
 
+If `gh pr create` reports a PR already exists for the branch, that is fine — capture the existing PR URL via `gh pr view --head loom/{ticket_id_lowercase} --json url --jq '.url'`.
+
 Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for the completion message.
 
 **PR body composition:** Read `.loom/artifacts/{ticket_id}/changes.md` (the implement agent's change summary). If it exists, use its `## Approach` and `## Tradeoffs` sections as the PR body. If it does not exist (artifact-only playbook), use the ticket description from `## ticket_notes` and list each committed deliverable path under a `## Deliverables` heading so the reviewer knows which files to review. Prefix the body with:
@@ -61,7 +99,7 @@ Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for th
 **Type:** {ticket_type}
 ```
 
-### 3. Update ticket — one batched edit
+### 5. Update ticket — one batched edit
 
 Set status and release the lock in a single call:
 
@@ -71,11 +109,11 @@ ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s review -a @re
 
 Non-zero exit: report `backlog edit failed: {ERR}` and follow Failure handling.
 
-### 4. Stop
+### 6. Stop
 
 Print: `Ticket {ticket_id} ({ticket_type}) → review. Worktree: {worktree_path}`
 
-If `{pr_url}` was captured in step 2, also print: `PR: {pr_url}`
+If `{pr_url}` was captured in step 4, also print: `PR: {pr_url}`
 
 ## Review approval transition (after /loom:review approves)
 
