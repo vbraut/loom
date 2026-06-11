@@ -52,6 +52,8 @@ claude plugin install loom
 
 4. Ensure tickets have a `type:` label (e.g., `type:code-fix`). Loom routes each ticket to its matching playbook.
 
+5. Optionally add a `rigor:` label (`rigor:light`, `rigor:standard`, `rigor:full` — default standard). Light trims assessment agents, skips elicitation, and runs smaller reviewer panels; full enables everything including the adversarial plan reviewer.
+
 ## Usage
 
 ```
@@ -73,6 +75,9 @@ matches the ticket type to a playbook, and executes it.
 One ticket = one type = one playbook. Complex features span
 multiple tickets chained via successor creation.
 Agents do the work. Humans approve at review gates.
+Failed runs resume: the orchestrator tracks per-step progress, so a
+re-claimed ticket continues from the first incomplete step instead of
+re-running the whole pipeline.
 
 ## Concepts
 
@@ -80,6 +85,7 @@ Agents do the work. Humans approve at review gates.
 - **Personas** — domain expert profiles (PM, UX, Security, Data, etc.) injected into the parameterized persona-reviewer agent for domain-specific assessment
 - **Orchestrator** — glue between backlog, git, and playbooks: picks tickets, manages worktrees, executes the right playbook, transitions state
 - **Playbook** — the authority on what happens for a ticket type: which agents to invoke, in what order, with what context. Supports conditional steps via `**When:**` fields
+- **Rigor** — per-ticket depth control via the `rigor:` label (light / standard / full). Scales the assessment panel, elicitation, and convergence reviewer sets without changing the pipeline shape
 
 ## Ticket types
 
@@ -116,6 +122,8 @@ Shared by all work playbooks. Prevents anchoring bias through independent assess
 
 Cognitive agents apply method diversity (DMAD): inversion, decomposition, analogy, dependency mapping, naive questioning. Persona reviewers apply domain expertise: PM always; Dev always for code playbooks, dynamic for non-code playbooks; plus 1-3 selected dynamically from the [persona pool](#personas).
 
+Cross-talk is skipped entirely when no initial assessment raises Critical/High concerns, and agents that report converged drop out of later rounds — debate tokens are spent only where positions actually conflict.
+
 ### Convergence loops
 
 Used to validate artifacts (PRDs, plans, code) through iterative review.
@@ -134,6 +142,8 @@ Used to validate artifacts (PRDs, plans, code) through iterative review.
 
   Exit: N consecutive clean rounds, or max rounds reached.
 ```
+
+The feedback agent maintains a cumulative findings ledger (fixed / pushed-back / contested). Later-round reviewers receive the ledger instead of every prior reviewer output, focus on the fix delta rather than re-reviewing the full diff, and re-flags without new evidence escalate to the human as contested instead of looping. On exit the orchestrator makes a checkpoint commit (the baseline for scoped retries) and appends a one-line telemetry note to the ticket.
 
 ### product-definition
 
@@ -157,10 +167,10 @@ Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
  5 ── assess-synthesizer ────────── compile converged positions
  │
  6 ── apply-review-fixes ────────── revise PRD with synthesis findings
- 7 ── elicit-approach ───────────── 10 methods from 50-method registry
+ 7 ── elicit-approach ───────────── 5-10 methods from registry
  8 ── apply-review-fixes ────────── revise PRD with elicitation findings
  │
- │    ┌─ CONVERGE PRD (max 5 rounds, 2 consecutive clean) ─────────┐
+ │    ┌─ CONVERGE PRD (max 5 rounds) ─────────┐
  9    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  adversarial-reviewer                │
@@ -170,7 +180,7 @@ Produces a PRD with optional HTML mocks and elevated quality review. 13 steps.
 10 ── capture-screenshots§ ──────── current app state for mock reference
 11 ── create-mocks¶ ─────────────── HTML mockups from PRD
  │
- │    ┌─ CONVERGE MOCKS (max 5 rounds, 2 consecutive clean) ───────┐
+ │    ┌─ CONVERGE MOCKS (max 5 rounds) ───────┐
 12    │ mock-alignment-reviewer  design-system-reviewer†             │
  │    │ ui-critique              ui-optimize                          │
  │    │ ui-harden                ui-polish                           │
@@ -202,10 +212,10 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
  5 ── assess-synthesizer ────────── compile converged positions
  │
  6 ── apply-review-fixes ────────── revise plan with synthesis findings
- 7 ── elicit-approach ───────────── 10 methods from registry
+ 7 ── elicit-approach ───────────── 5-10 methods from registry
  8 ── apply-review-fixes ────────── revise plan with elicitation findings
  │
- │    ┌─ CONVERGE PLAN (max 5 rounds, 2 consecutive clean) ────────┐
+ │    ┌─ CONVERGE PLAN (max 5 rounds) ────────┐
  9    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  adversarial-reviewer                │
@@ -215,7 +225,7 @@ Produces an assessed implementation plan, then code. Requires PR for transition.
  │
 10 ── implement ─────────────────── execute the converged plan
  │
- │    ┌─ CONVERGE CODE (max 6 rounds, 2 consecutive clean) ────────┐
+ │    ┌─ CONVERGE CODE (max 6 rounds) ────────┐
 11    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  performance-reviewer                │
@@ -239,7 +249,7 @@ Bug investigation and fix. Lean pipeline — no assessment overhead. 5 steps.
  1 ── research-codebase-arch ────── locate bug, draft fix approach
  2 ── implement ─────────────────── fix the bug
  │
- │    ┌─ CONVERGE (max 6 rounds, 2 consecutive clean) ─────────────┐
+ │    ┌─ CONVERGE (max 6 rounds) ─────────────┐
  3    │ requirements-reviewer    security-reviewer                   │
  │    │ regression-analyst       edge-case-hunter                    │
  │    │ simplification-reviewer  performance-reviewer                │
@@ -275,10 +285,10 @@ Market and product strategy — positioning, competitive analysis, go-to-market.
  6 ── assess-synthesizer ────────── compile converged positions
  │
  7 ── apply-review-fixes ────────── revise strategy with synthesis
- 8 ── elicit-approach ───────────── 10 methods from registry
+ 8 ── elicit-approach ───────────── 5-10 methods from registry
  9 ── apply-review-fixes ────────── revise strategy with elicitation
  │
- │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
+ │    ┌─ CONVERGE (max 5 rounds) ─────────────┐
 10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ ↻ apply-review-fixes                                        │
@@ -310,10 +320,10 @@ Brand visual system — palette, typography, identity. Grounded in interactive d
  6 ── assess-synthesizer ────────── compile converged positions
  │
  7 ── apply-review-fixes ────────── revise brand spec with synthesis
- 8 ── elicit-approach ───────────── 10 methods from registry
+ 8 ── elicit-approach ───────────── 5-10 methods from registry
  9 ── apply-review-fixes ────────── revise brand spec with elicitation
  │
- │    ┌─ CONVERGE SPEC (max 5 rounds, 2 consecutive clean) ────────┐
+ │    ┌─ CONVERGE SPEC (max 5 rounds) ────────┐
 10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ design-system-reviewer†  ↻ apply-review-fixes               │
@@ -321,7 +331,7 @@ Brand visual system — palette, typography, identity. Grounded in interactive d
  │
 11 ── explore-brand-visuals ─────── delegate to Impeccable (colorize, typeset, arrange)
  │
- │    ┌─ CONVERGE VISUALS (max 3 rounds, 2 consecutive clean) ─────┐
+ │    ┌─ CONVERGE VISUALS (max 3 rounds) ─────┐
 12    │ ui-critique              ui-polish                           │
  │    │ design-system-reviewer†  ↻ apply-review-fixes               │
  │    └─────────────────────────────────────────────────────────────┘
@@ -354,10 +364,10 @@ Messaging framework — tone of voice, registers, copy decks. Grounded in intera
  6 ── assess-synthesizer ────────── compile converged positions
  │
  7 ── apply-review-fixes ────────── revise copy deck with synthesis
- 8 ── elicit-approach ───────────── 10 methods from registry
+ 8 ── elicit-approach ───────────── 5-10 methods from registry
  9 ── apply-review-fixes ────────── revise copy deck with elicitation
  │
- │    ┌─ CONVERGE (max 5 rounds, 2 consecutive clean) ─────────────┐
+ │    ┌─ CONVERGE (max 5 rounds) ─────────────┐
 10    │ requirements-reviewer    adversarial-reviewer                │
  │    │ simplification-reviewer  edge-case-hunter                    │
  │    │ ↻ apply-review-fixes                                        │
@@ -416,7 +426,7 @@ Five methods applied in parallel. Each adapts to artifact type — product-level
 |-------|---------|
 | persona-reviewer | Domain expert review, parameterized with a [persona](#personas) profile |
 | assess-synthesizer | Compile converged positions from cross-talk into unified approach |
-| elicit-approach | Stress-test synthesis through 10 methods from 50-method registry |
+| elicit-approach | Stress-test the revised artifact through 5-10 registry methods (count scales with rigor) |
 
 ### Convergence reviewers
 
@@ -429,7 +439,7 @@ All return `VERDICT: pass` or `VERDICT: needs-work`. Adapt to both code and docu
 | simplification-reviewer | Over-engineering, scope bloat, missed simplifications |
 | security-reviewer | Injection, auth bypass, data exposure, cryptographic misuse |
 | edge-case-hunter | Boundary conditions, unhandled paths, undefined states |
-| adversarial-reviewer | Cynical catch-all — minimum 10 issues per review |
+| adversarial-reviewer | Full-sweep generic skeptic — complete review standalone, gap-hunting catch-all in panels |
 | performance-reviewer | Algorithmic complexity, query patterns, memory allocation, I/O efficiency |
 | architecture-reviewer | Project-specific architectural rules and coding conventions (conditional) |
 | design-system-reviewer | UI compliance with project design system (conditional) |
@@ -485,7 +495,7 @@ Loom's agent design is informed by multi-agent deliberation research. The princi
 
 **Universal quality principles.** All agents receive shared quality principles — quality over speed, pre-existing issues in touched files must be fixed, no partial solutions. These override agent-specific rules when in conflict, ensuring consistent standards across the entire workflow.
 
-**50-method elicitation registry.** After assessment synthesis, the elicit-approach agent selects 10 contextually relevant methods from a 50-method registry spanning 11 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
+**Curated elicitation registry.** After the synthesis revision, the elicit-approach agent stress-tests the revised artifact with 5-10 contextually relevant methods (count scales with ticket rigor) from a 35-method registry spanning 9 categories (core reasoning, risk analysis, creative techniques, competitive analysis, etc.). Methods are applied sequentially, each building on prior findings.
 
 **MARE decomposition for PRD drafting.** MARE — *"Multi-Agents Collaboration Framework for Requirements Engineering"* (arXiv 2405.03256) — decomposes requirements engineering into elicitation → modeling → verification → specification with specialized agents, achieving up to 23.9% improvement in F1 for requirements modeling. Loom's draft-prd agent applies a 3-phase internal process inspired by MARE: Phase 1 elicits stakeholder perspectives, Phase 2 derives traceable requirements with unique identifiers, Phase 3 structures them into the PRD template with traceability.
 

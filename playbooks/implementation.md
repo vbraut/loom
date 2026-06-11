@@ -22,6 +22,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Persona selection:**
   Always: pm, dev
   Dynamic (select 1-3 based on ticket content): architect, security, data, qa, devops, tech-lead, ux, craft, analyst, end-user, sm, tech-writer
+**When rigor is light:** cognitive agents reduced to assess-inversion, assess-decomposition, assess-dependency; persona selection uses Always personas only (skip dynamic selection).
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/research.md`
 - `.loom/artifacts/{ticket_id}/plan.md`
@@ -61,26 +62,36 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan-synthesis-revisions.md`
 
+Note: apply-review-fixes modifies `plan.md` in the worktree in place (revision mode). The output path records what changed. All subsequent steps that reference `plan.md` get the post-synthesis version.
+
 ### 7. Elicit
 
+**Skip when:** rigor is light
 **Agent:** elicit-approach
 **Upstream:**
+- `.loom/artifacts/{ticket_id}/plan.md`
 - `.loom/artifacts/{ticket_id}/assessment-synthesis.md`
 **Output path:** `.loom/artifacts/{ticket_id}/elicitation.md`
 
+Note: Reads the post-synthesis `plan.md` (modified in place by step 6) — elicitation stress-tests the revised plan, with the synthesis as context for what assessment already covered.
+
 ### 8. Revise plan
 
+**Skip when:** step 7 was skipped
 **Agent:** apply-review-fixes
 **Upstream:**
 - `.loom/artifacts/{ticket_id}/plan.md`
 - `.loom/artifacts/{ticket_id}/elicitation.md`
 **Output path:** `.loom/artifacts/{ticket_id}/plan-elicitation-revisions.md`
 
+Note: Reads the post-synthesis `plan.md` (modified in place by step 6). Changes are cumulative.
+
 ### 9. Converge plan
 
-**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer, performance-reviewer (parallel)
+**Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, adversarial-reviewer (when: rigor is full), performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **When:** config.context.architecture_rules → also include architecture-reviewer
+**When rigor is light:** reviewers reduced to requirements-reviewer, regression-analyst, security-reviewer, edge-case-hunter (conditional reviewers above still apply).
 **Verdict logic:** AND
 **Consecutive clean rounds:** 1
 **Max rounds:** 5
@@ -118,6 +129,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 **Agents:** requirements-reviewer, regression-analyst, simplification-reviewer, security-reviewer, edge-case-hunter, performance-reviewer (parallel)
 **When:** config.context.design_system → also include design-system-reviewer
 **When:** config.context.architecture_rules → also include architecture-reviewer
+**When rigor is light:** reviewers reduced to requirements-reviewer, regression-analyst, security-reviewer, edge-case-hunter (conditional reviewers above still apply).
 **Verdict logic:** AND
 **Consecutive clean rounds:** 1
 **Max rounds:** 6
@@ -155,7 +167,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 **Max retries:** 2
 **On failure:** If run-tests reports assertion failures or test-coverage returns `VERDICT: needs-work`, retry from step 10 with both artifacts and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
-**Test-only optimization:** After the implement agent completes in a retry pass, run `git -C {worktree_path} diff --name-only {last_convergence_commit}` (where `{last_convergence_commit}` is HEAD at the point step 11 last completed). If ALL changed files match test patterns (`*.test.*`, `*.spec.*`, `**/test/**`, `**/tests/**`, `**/__tests__/**`, `**/fixtures/**`, `**/test-helpers/**`, `**/test-utils/**`), use reduced convergence in step 11: replace the full reviewer set with edge-case-hunter, requirements-reviewer, simplification-reviewer only. All other convergence fields (verdict logic, consecutive clean rounds, max rounds, on needs-work, upstream, output paths) remain unchanged. If ANY changed file does not match test patterns, run full convergence as normal.
+**Test-only optimization:** patterns `*.test.*`, `*.spec.*`, `**/test/**`, `**/tests/**`, `**/__tests__/**`, `**/fixtures/**`, `**/test-helpers/**`, `**/test-utils/**` — reduced reviewers for step 11: edge-case-hunter, requirements-reviewer, simplification-reviewer. Mechanics: "Scoped retry convergence" in shared/convergence.md.
 
 ### 13. Capture
 
@@ -175,6 +187,7 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 **Max retries:** 2
 **On failure:** If visual-parity-reviewer returns `VERDICT: needs-work`, retry from step 10 with the visual parity artifact and `.loom/artifacts/{ticket_id}/changes.md` added to implement's upstream.
+**UI-only optimization:** patterns `*.css`, `*.scss`, `*.less`, `*.sass`, `*.pcss`, `*.svelte`, `*.tsx`, `*.jsx`, `*.vue`, `*.html` — reduced reviewers for step 11: requirements-reviewer, simplification-reviewer, edge-case-hunter, design-system-reviewer (when: config.context.design_system). Mechanics: "Scoped retry convergence" in shared/convergence.md.
 
 ### 15. Completion
 
@@ -184,12 +197,12 @@ Feature implementation playbook. Produces an implementation plan (assessed, cros
 
 - [ ] research-codebase-arch produced output
 - [ ] draft-implementation-plan produced implementation plan
-- [ ] Assessment completed (5 cognitive + persona reviewers, all in parallel)
-- [ ] Cross-talk completed (converged or hit max rounds with note)
+- [ ] Assessment completed (cognitive + persona reviewers per rigor, all in parallel)
+- [ ] Cross-talk completed (converged, hit max rounds with note, or skipped — no Critical/High concerns)
 - [ ] Synthesis produced
 - [ ] Plan revised with synthesis findings
-- [ ] Elicitation completed
-- [ ] Plan revised with elicitation findings
+- [ ] Elicitation completed (or skipped — light rigor)
+- [ ] Plan revised with elicitation findings (or skipped — light rigor)
 - [ ] Plan convergence ran (passed or hit max rounds with note)
 - [ ] implement produced output and modified worktree
 - [ ] Code convergence ran (passed or hit max rounds with note)

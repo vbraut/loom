@@ -41,10 +41,6 @@ The process follows three phases — elicit implicit needs, derive traceable req
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Summary
 
 {What this feature/change does and why — 1-2 paragraphs, plain language}

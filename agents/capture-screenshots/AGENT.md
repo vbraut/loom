@@ -1,6 +1,7 @@
 ---
 name: capture-screenshots
 description: "Starts the dev server and captures screenshots at standard viewports using Playwright. Used for pre-mock reference capture (product-definition) and post-implementation visual verification (implementation)."
+model: sonnet
 tools: [Bash, Read, Write]
 ---
 
@@ -37,10 +38,6 @@ tools: [Bash, Read, Write]
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Captured Screenshots
 
 | Page | Viewport | Path |

@@ -24,12 +24,16 @@ Determine the mode from the upstream artifacts: if they contain `must-fix`/`shou
 
 For convergence reviewer feedback with severity-tagged, line-referenced findings:
 
-1. Read all upstream reviewer artifacts.
+1. Read all upstream reviewer artifacts. If a prior feedback summary (fixes-r{N-1}.md) is in upstream, read its Findings Ledger — it is your starting state.
 2. Extract findings with file:line references.
 3. For each finding, read surrounding context before changing anything.
 4. Reason through whether the finding is valid. If it doesn't hold up, note it for pushback.
 5. Apply fixes in priority order: `must-fix`, then `should-fix`, then `nit`.
 6. If fixing a flagged line unlocks a broader refactor that genuinely improves quality (naming, structure, duplication), do it.
+7. Update the findings ledger (cumulative across rounds — carry every prior entry forward):
+   - New finding fixed → `fixed`. New finding rejected with reasoning → `pushed-back`.
+   - A reviewer re-flagged a `pushed-back` finding **with new evidence** your pushback didn't address → treat as a new finding on the merits.
+   - A reviewer re-flagged a `pushed-back` finding **without new evidence** → mark `contested`, do not re-process it (contested findings are escalated to the human by the orchestrator, not re-argued).
 
 ## Revision mode
 
@@ -46,10 +50,6 @@ For synthesis or elicitation output without line-level findings:
 Write your summary to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Mode
 
 {Structured findings | Revision}
@@ -58,6 +58,15 @@ Write your summary to `## output_path`.
 
 1. {location} — {what was changed and why}
 2. {location} — {what was changed and why}
+
+## Findings Ledger (structured mode only)
+
+| # | Finding | Severity | Source | Status |
+|---|---|---|---|---|
+| 1 | `src/handler.ts:42` — {short title} | must-fix | edge-case-hunter | fixed |
+| 2 | `src/api/users.ts:15` — {short title} | should-fix | simplification-reviewer | pushed-back |
+
+{Cumulative: carry forward all entries from the prior round's ledger with their current status.}
 
 ## Conflicts Resolved (if any)
 

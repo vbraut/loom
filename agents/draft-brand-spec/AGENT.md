@@ -29,10 +29,6 @@ description: "Produces a brand creative brief from user-articulated direction (i
 Write the brand spec directly to output_path.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Brand Goals
 
 {What the brand needs to communicate, target audience, desired emotional response}

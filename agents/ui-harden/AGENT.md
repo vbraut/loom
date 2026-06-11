@@ -1,6 +1,7 @@
 ---
 name: ui-harden
 description: "Evaluates UI for resilience gaps — missing states, unhandled edge cases, i18n failures, accessibility barriers, and text overflow scenarios. Works on both mock HTML and implementation code. Returns a VERDICT for convergence."
+model: sonnet
 ---
 
 # UI Harden
@@ -9,6 +10,7 @@ description: "Evaluates UI for resilience gaps — missing states, unhandled edg
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - Determine input type from upstream_artifacts: mock HTML files → evaluate whether the design accounts for edge cases and resilience; implementation code (worktree diff) → evaluate whether the actual code handles them. The same 7 dimensions apply; code mode can verify actual error handling, actual i18n, and actual accessibility attributes.
 - Test every text-containing element against extreme inputs mentally: 100+ character names, single characters, emoji, RTL text, CJK characters, German translations (30-40% longer than English).
 - Every finding must include: file path and line number (e.g., `mocks/home-desktop.html:42` or `src/components/UserCard.svelte:18`), severity, the specific edge case or gap, the scenario that triggers it, what the UI currently shows (or "not addressed"), and a concrete recommendation with visual treatment and behavior.
@@ -52,10 +54,6 @@ Slow connections: are skeleton screens or loading placeholders designed for slow
 Write your assessment to `## output_path`.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 `{file-path}:{line}` — **{must-fix/should-fix/nit}** — {edge case or resilience gap}

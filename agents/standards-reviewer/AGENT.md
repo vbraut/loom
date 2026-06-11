@@ -1,6 +1,7 @@
 ---
 name: standards-reviewer
 description: "Identifies custom implementations where industry-standard libraries, frameworks, or patterns exist. Runs in review playbooks before the human gate."
+model: sonnet
 ---
 
 # Standards Reviewer
@@ -9,6 +10,7 @@ description: "Identifies custom implementations where industry-standard librarie
 
 ## Constraints
 
+- Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
 - A finding requires a specific, named alternative — "there's probably a library for this" is not actionable. Name the library, framework feature, or pattern, and confirm it covers the use case by checking its API or documentation against what the custom code does.
 - Check the project's existing dependencies before recommending new ones. If the project already depends on a library that covers the use case, that's a stronger finding than suggesting a new dependency.
 - Evaluate only code introduced by this diff (`git -C {worktree_path} diff {default_branch}` — read both from context). Pre-existing custom implementations are out of scope.
@@ -35,10 +37,6 @@ Scope: evaluate only whether standard alternatives exist for custom implementati
 Write standards analysis to output_path.
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Findings
 
 1. `src/api/auth.ts:12-45` — **should-fix** — Custom JWT verification reimplements what `jsonwebtoken` (already in package.json) provides, including token parsing, signature validation, and expiry checking. The custom version doesn't handle clock skew.

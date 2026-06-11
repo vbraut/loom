@@ -67,6 +67,7 @@ Read the `type:` label from `ticket_data` (e.g., `type:code-fix` → type is `co
 
 - **No `type:` label**: `ERROR: Ticket {ticket_id} has no type: label.`
 - **Multiple `type:` labels**: `ERROR: Ticket {ticket_id} has multiple type: labels: [{values}].`
+- **Rigor**: read the optional `rigor:` label (`rigor:light`, `rigor:standard`, `rigor:full`). Default to `standard` when absent or unrecognized. Expose as `{rigor}` — playbooks scale assessment depth and reviewer panels with it.
 - **Playbook resolution**: resolve the playbook filename based on mode:
   - `work` mode: `{type}.md` — must exist. If not: `ERROR: No playbook for type '{type}' in work mode (expected: playbooks/{type}.md)`
   - `review` mode: `{type}-review.md` — optional. If it exists, set `{review_playbook}` to the path. If not, set `{review_playbook}` to empty (the review orchestrator will run the default review sequence: review-summarizer → ticket-planner).

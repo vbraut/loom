@@ -28,17 +28,27 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 ### Constraints
 
 - Pass output paths to downstream steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
-- Leave all git operations to transition.md (committing mid-playbook creates partial commits that break review)
+- Git commits happen in exactly two places: the convergence checkpoint commits defined in shared/convergence.md, and transition.md. No other mid-playbook git write operations (ad-hoc partial commits break review)
+
+### Progress tracking
+
+The progress file is `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` — an append-only log that makes failed runs resumable instead of re-running the whole pipeline.
+
+- **On Phase 2 start:** if the file exists, resume — a step is complete when its most recent record says `complete`, its output files still exist and are non-empty, and no later `retry from step {M}` line with `M <=` that step number appears. Begin execution at the first incomplete step and log which steps were skipped. If the file doesn't exist, start from the beginning.
+- **After each step completes** (including intake and checkpoint approvals), append: `step {N} — {agent name(s)} — complete — {output path(s)}`. For intake: `intake — complete — intake-brief.md`. Loop steps (convergence, cross-talk) are recorded only on full completion — a partially finished loop restarts from round 1 on resume.
+- **When a retry protocol triggers**, append: `retry from step {N}` (this invalidates completion records for steps >= N, so resume re-executes them).
+- **Cross-talk cannot be resumed cold:** it messages live agents by ID, and a new session has none. If the first incomplete step is a cross-talk step, resume from the preceding assess step instead (re-spawning the named agents).
+- **On resume of an intake playbook:** if intake is recorded complete but `external-research.md` is missing and the await step has not yet run, re-spawn `research-external` in the background using the intake brief — the original background agent died with the failed session.
 
 ### Agent invocation
 
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:implement:implement`, `loom:research-codebase-arch:research-codebase-arch`). Include AGENT.md content, `## output_path`, `## worktree_path` (absolute path from claim, e.g., `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`), `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). When a step has `**Upstream for {agent}:**`, use that for the named agent instead of the default `**Upstream:**`. All paths passed to agents must be absolute, resolved from the worktree root.
+2. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:implement:implement`, `loom:research-codebase-arch:research-codebase-arch`). If the agent's frontmatter declares `model:`, pass that value as the Agent tool's `model` parameter (the explicit parameter guarantees the tier even when the registry holds a stale plugin snapshot). Include AGENT.md content, `## output_path`, `## worktree_path` (absolute path from claim, e.g., `{project_root}/.loom/worktrees/{ticket_id_lowercase}/`), `## ticket_notes`, `## config` (containing `default_branch`, `rigor`, and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` when the playbook step specifies upstream paths (marked with **Upstream:** in the step text). When a step has `**Upstream for {agent}:**`, use that for the named agent instead of the default `**Upstream:**`. All paths passed to agents must be absolute, resolved from the worktree root.
 3. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 4. If failed: stop (error handling below).
-5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`.
+5. If complete: register output via MCP `task_edit(ticket_id, addReferences=[output_path])`. Exception: convergence and cross-talk steps follow their own registration rules (shared/convergence.md, shared/cross-talk.md) — only final-round outputs are registered.
 5b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed. Exception: upstream paths marked `(optional)` in the playbook are silently skipped when missing — do not treat as failure.
 6. For parallel agents: spawn all via multiple Agent tool calls. When a step has `**Agent output paths:**` (keyed per agent name), look up each agent's name in the list and pass its path as `## output_path`. When a step has a single `**Output path:**`, all agents in that step share the same path (only valid for single-agent steps).
 7. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
@@ -59,10 +69,13 @@ Read `{loom_plugin_dir}/shared/quality-principles.md` once at the start of Phase
 
 When a step contains a `**When:**` field, evaluate the condition before executing:
 - `config.context.{key}`: check if the `context.{key}` path is defined in sdlc.config.yml. If not defined, skip the agent or step.
+- `rigor is {value}`: compare against `{rigor}` from claim (light / standard / full).
 
-When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step. Conditions may reference prior agent output (e.g., "create-mocks output contains 'no UI changes'") — read the referenced output file to evaluate.
+When a step contains a `**Skip when:**` field, evaluate the condition. If the condition is true, skip the entire step. Conditions may reference prior agent output (e.g., "create-mocks output contains 'no UI changes'") or `rigor is {value}` — read the referenced output file to evaluate output conditions.
 
 When a reviewer line within a convergence step has an inline `(when: ...)` condition, evaluate it the same way. Include the reviewer only if the condition is met.
+
+When a step contains a `**When rigor is {value}:**` field, apply the modification it describes (reduced agent list, reduced persona selection) only when `{rigor}` matches; otherwise execute the step as written.
 
 ### Relevance evaluation
 
@@ -85,8 +98,8 @@ When a step specifies `persona-reviewer` with a `**Persona selection:**` block:
    - User-facing flows → `end-user`
    - Process-heavy, multi-team coordination → `sm`
    - Public-facing documentation, API docs, help text → `tech-writer`
-3. Read `{loom_plugin_dir}/personas/_universal.md` and the selected persona file `{loom_plugin_dir}/personas/{name}.md`.
-4. Spawn `persona-reviewer` with an additional `## persona` section containing: the universal principles first, then a `---` separator, then the persona file content.
+3. Read the selected persona file `{loom_plugin_dir}/personas/{name}.md`.
+4. Spawn `persona-reviewer` with an additional `## persona` section containing the persona file content (quality principles are already injected as `## quality_principles`, like every agent).
 5. Each persona-reviewer instance gets the output path defined in the playbook's **Agent output paths:** (e.g., `.loom/artifacts/{ticket_id}/persona-{name}-r{R}.md`).
 
 ### Elicit-approach invocation
@@ -103,17 +116,7 @@ For verify steps with `**On failure:**` blocks, after agents return `STATUS: com
 - For agents with VERDICT: check the VERDICT value (`needs-work` = failure condition met).
 - For run-tests: check if the `### Assertion Failures (if any)` section exists and contains entries.
 
-### Test-only convergence optimization
-
-When a verify step has a `**Test-only optimization:**` field and a retry is triggered:
-
-1. **Track the convergence commit.** When a convergence step completes (pass or max-rounds), record `HEAD` in the worktree as `last_convergence_commit` for that step. This is the baseline for detecting test-only diffs on retry.
-
-2. **Detect test-only diffs.** After the implement agent completes during a retry pass, run `git -C {worktree_path} diff --name-only {last_convergence_commit}`. Check every changed file against the test patterns listed in the `**Test-only optimization:**` field. Use shell glob matching (e.g., `*.test.*` matches `src/foo.test.ts`; `**/test/**` matches `src/test/helpers.ts`).
-
-3. **Apply reduced convergence.** If all changed files match test patterns, execute the convergence step with only the reviewers named in the optimization field (e.g., edge-case-hunter, requirements-reviewer, simplification-reviewer). All other convergence protocol fields (verdict logic, consecutive clean rounds, max rounds, on needs-work, upstream, output paths) remain unchanged — the reduced set follows the same convergence.md protocol. Only create output paths for the reviewers that actually run.
-
-4. **Fall back to full convergence.** If any changed file does not match test patterns, ignore the optimization and run the full reviewer set as defined in the convergence step.
+When a verify step declares scoped optimization fields (`**Test-only optimization:**`, `**UI-only optimization:**`) and a retry is triggered, follow "Scoped retry convergence" in `shared/convergence.md` when re-running the convergence step.
 
 ### Round number placeholders
 
@@ -123,47 +126,9 @@ Playbooks use two distinct round-number placeholders:
 
 These are independent counters for different loops and never appear in the same step.
 
-### Intake handling
+### Intake, checkpoint, and await steps
 
-After reading the playbook (but before executing step 1), check for a `## Intake` section. If absent, skip to step 1 as normal.
-
-If present:
-
-1. Read the `### Stance` line. Present the three-stance choice to the user: "(a) Facilitate — I ask structured questions, you provide the vision. (b) Collaborate — we trade ideas back and forth. (c) Autonomous — I infer from the ticket and existing context, ask only if blocked."
-
-2. Based on stance:
-   - **Facilitate:** Read `### Questions`. Ask them one at a time. Each question has a `context:` hint — use it to assess answer sufficiency. If the answer is thin (one word, no specifics), probe once: "Can you say more about [specific aspect from context hint]?" Then move on regardless. After all questions, present a summary: "Here's what I captured: [bullets]. Anything to add or correct?" Loop until the user confirms.
-   - **Collaborate:** Same questions but conversational — offer observations between questions based on what is being learned. "Based on what you said about X, it sounds like Y might also be relevant — is that right?" Still one question at a time.
-   - **Autonomous:** Map each question to the ticket description. A question is "answered" if the ticket contains a concrete response matching the context hint (named entities, specific constraints, measurable criteria — not vague aspirations). Two mandatory questions must always be answered by the ticket regardless of total count: the strategic/brand question (Q1) and the audience question (Q3 for all three playbooks). If either mandatory question is unanswered, or if fewer than 4 of the 7 questions are answered, halt: "Autonomous mode blocked — ticket is too sparse. Missing: [list unanswerable questions]. Switch to facilitate/collaborate, or enrich the ticket." If 4+ are answered (including both mandatory), infer the rest from codebase/config context and note inferences in the Orchestrator Notes section of the intake brief. After completing autonomous inference, spawn `research-external` in the background if the ticket contains competitor/landscape information — use the same spawn mechanics as Parallel fan-out (agent content, upstream format, WebSearch availability check) but trigger on ticket content rather than a user answer. If the ticket lacks competitive context, skip the fan-out and log "External research skipped (no competitive context in ticket)."
-
-3. **Scope policing (two-pass):**
-   - **After Q1 (or after mapping Q1 in autonomous mode):** Check the strategic/brand question for obvious multi-scope signals. If the question spans multiple distinct deliverables (multiple product lines, multiple markets, multiple brands, multiple audience segments requiring separate strategies, exhaustive global competitor analysis), flag immediately: "This sounds like N separate [strategy/brand/copy] tickets. Want to narrow scope before we continue?" This runs before the fan-out trigger. In autonomous mode, run this check after mapping Q1 but before mapping Q2-Q7 — halt inference if scope is flagged.
-   - **After all questions (or after mapping all questions in autonomous mode):** Re-check for emergent scope creep across answers. If combined answers suggest scope that would require multiple distinct deliverables to address adequately, flag: "Based on everything you've described, this looks like N separate tickets. Want to narrow scope, or proceed with everything?"
-
-4. **Parallel fan-out:** After the user answers the competitors/landscape question, spawn `research-external` in the background via Agent tool with `run_in_background: true`. The trigger question by playbook type:
-   - market-strategy: Q2 (competitors and positioning)
-   - brand-exploration: Q2 (competitive visual landscape)
-   - copy-deck: Q2 (competitive voice/tone landscape)
-
-   Pass a partial intake brief (playbook type + strategic question/brand goal + competitive context) as upstream. Read `{loom_plugin_dir}/agents/research-external/AGENT.md` for the agent content. If WebSearch tool is unavailable, skip — log "External research skipped (WebSearch unavailable)" and proceed without it.
-
-5. Write the intake brief to `.loom/artifacts/{ticket_id}/intake-brief.md` with sections: `## Playbook Type`, `## Strategic Question / Brand Goal`, `## Audience`, `## Competitive Context`, `## Current State`, `## Constraints & Non-Negotiables`, `## Success Criteria`, `## References & Existing Research`, `## Anti-References` (brand-exploration and copy-deck), `## Orchestrator Notes`. Register via `task_edit(ticket_id, addReferences=[path])`.
-
-### Checkpoint handling
-
-When a playbook step has a `**Checkpoint:**` field and the agent completes successfully:
-
-1. Read the agent's output artifact.
-2. Extract section headers and first sentence of each section as summary bullets.
-3. Present to user: "Draft [type] ready. Key points: [bullets]. The assessment pipeline runs next — redirecting now is cheap, redirecting after is expensive. Approve, redirect, or abort?"
-4. Responses:
-   - **Approve:** proceed to next step.
-   - **Redirect:** user provides notes on what's wrong. If redirect notes are fewer than 10 words, probe once: "Can you be more specific about what to change? Which sections need work?" Then spawn `apply-review-fixes` with the redirect notes and the draft artifact as upstream. Revise draft in place. Re-present checkpoint. Maximum 3 redirects per checkpoint. After 3: "We've iterated 3 times on this draft. To make progress: (a) provide specific section-level feedback (names sections and what's wrong with each), (b) approve and let the assessment pipeline challenge it, or (c) abort." If the user chooses (a) and provides section-level feedback, reset the counter to 2 (allowing one final redirect with the specific feedback), run apply-review-fixes, and re-present the checkpoint.
-   - **Abort:** follow error handling (revert ticket status, release lock, stop).
-
-### Await step handling
-
-When a playbook step has no `**Agent:**` field but has an `**Output path:**`, it is a synchronization point for a background agent spawned during intake (or skipped entirely in autonomous mode). If no background agent was spawned for this path, treat as gracefully skipped. Otherwise, check if the background agent has completed. If not yet complete, wait for it. When complete: verify the output file exists and is non-empty. If the background agent failed, its output is missing, or no agent was spawned: log the outcome and remove the corresponding path from all downstream steps' `**Upstream:**` lists for the remainder of the playbook. Rule 5b does not apply to await-step artifacts that were gracefully skipped — the pipeline continues without them. The `(optional)` annotations on downstream steps are a safety net in case path removal is missed; the await step's path removal is the primary mechanism.
+If the playbook contains an `## Intake` section, read `shared/intake.md` from the Loom plugin directory before executing step 1 and follow it. It covers the intake conversation, `**Checkpoint:**` fields, and await steps (steps with an `**Output path:**` but no `**Agent:**`) — these mechanisms only occur in intake playbooks.
 
 ### Playbook execution
 
@@ -181,7 +146,7 @@ If anything fails at any point:
 1. Attempt ALL cleanup operations independently (do not skip later steps if earlier ones fail):
    a. Revert status so the ticket is re-claimable: `task_edit(ticket_id, status="todo")`
    b. Release the lock: `task_edit(ticket_id, assignee=["@released"])`
-   c. If a background agent was spawned during intake, it may still be running. Log "Background agent may still be running — output will be stale if ticket is re-claimed." Delete all artifacts in `.loom/artifacts/{ticket_id}/` that were written during the current run to prevent stale files from affecting re-runs. This includes intake-brief.md, external-research.md, and any agent output files (research.md, strategy.md, brand-spec.md, copy-deck.md, etc.) produced before the failure.
+   c. If a background agent was spawned during intake and has not completed, log "Background agent may still be running — its output will be picked up or re-spawned on resume."
 2. Print the error clearly (include any cleanup failures from step 1)
 3. Stop — the human sees the failure in the terminal, so skip appending notes to the ticket (it would duplicate what they already see and clutter the ticket for the next run)
-4. The worktree is preserved with whatever artifacts exist
+4. The worktree, artifacts, and progress file are preserved — the next `/loom:work` run on this ticket resumes from the first incomplete step (see Progress tracking)

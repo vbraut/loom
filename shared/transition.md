@@ -124,7 +124,11 @@ task_edit(ticket_id, notesAppend=["--- REVIEW REJECTION ---\n{feedback_text}"])
 
 Use the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review.
 
-### 2. Transition ticket
+### 2. Reset progress
+
+Delete `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` if it exists — rejection means the work must be redone with the feedback, so the next run must execute the full playbook rather than resume.
+
+### 3. Transition ticket
 
 ```
 task_edit(ticket_id, status="todo")

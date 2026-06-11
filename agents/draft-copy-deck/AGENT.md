@@ -35,10 +35,9 @@ description: "Produces a messaging framework and brand voice document from user-
 Write the copy deck directly to output_path.
 
 ```
-## Inputs Received
+## Context Notes
 
-{list all files from upstream_artifacts}
-{note whether existing brand_voice context was found}
+{only if existing brand_voice context was found — note it and how it constrained the deck; omit otherwise}
 
 ## Voice Principles
 

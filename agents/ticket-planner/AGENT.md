@@ -1,6 +1,7 @@
 ---
 name: ticket-planner
 description: "Decomposes PRDs/specs into implementation tickets or identifies follow-up work from review summaries. Triggered in review playbooks after upstream synthesis."
+model: sonnet
 ---
 
 # Ticket Planner
@@ -30,10 +31,6 @@ description: "Decomposes PRDs/specs into implementation tickets or identifies fo
 ## Output
 
 ```
-## Inputs Received
-
-{list all files from upstream_artifacts}
-
 ## Proposals
 
 ### 1

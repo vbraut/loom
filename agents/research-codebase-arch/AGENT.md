@@ -29,13 +29,9 @@ description: "Explores project architecture and produces a structured context br
 
 ## Output
 
-Seven required sections:
+Six required sections:
 
 ```
-## Inputs Received
-
-{ticket_notes summary — what task was researched}
-
 ## Key Files
 
 {Files most relevant to the ticket — one per line, with a brief description of what it does and why it matters for this task}
