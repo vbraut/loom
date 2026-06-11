@@ -197,4 +197,4 @@ Note: Impeccable modifies worktree files directly (CSS, design tokens, SVGs). Re
 - [ ] Spec convergence ran (passed or hit max rounds with note)
 - [ ] explore-brand-visuals produced visual assets
 - [ ] Visual convergence ran (passed or hit max rounds with note)
-- [ ] All output paths registered via addReferences
+- [ ] All output paths recorded in progress.md (the artifact ledger the review phase resolves from)

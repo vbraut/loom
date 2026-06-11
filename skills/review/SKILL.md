@@ -32,25 +32,34 @@ Read `shared/claim.md` from the Loom plugin directory and follow it.
 - Pass output paths between steps instead of reading file contents (downstream agents need the path, not a summary filtered through the orchestrator's interpretation)
 - Leave all git operations to transition.md
 
+### Work-phase artifact resolution
+
+Work-phase artifacts are resolved from the progress file — `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md`, the work phase's append-only ledger (the worktree persists from work phase to review):
+
+1. For each step in the file, take the output path(s) from its most recent `complete` record — after retries, the latest record supersedes earlier ones. Convergence and cross-talk records already contain only standing outputs (final-round reviewer verdicts plus all feedback rounds; highest-round cross-talk files). **Never glob the artifacts directory instead** — it holds intermediate rounds that are not standing verdicts.
+2. Dedupe, resolve each path to absolute form from the worktree root, and keep only paths that exist and are non-empty.
+3. **Legacy fallback:** if the progress file does not exist (ticket transitioned to review before artifact-ledger resolution existed), use the `.loom/artifacts/` paths from the `References:` line of claim's `ticket_data` (already in context — no extra backlog call), with the same existence check.
+4. If neither source yields any paths, proceed with an empty artifact list and surface this prominently at the human gate — review-summarizer works from the diff and ticket notes alone in that case.
+
 ### Agent invocation
 
 When a step names an agent to invoke:
 
 1. Read `{loom_plugin_dir}/agents/{name}/AGENT.md`. If not found: `ERROR: Agent '{name}' not found at {path}.`
-2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve each entry independently. Literal paths: resolve to absolute paths from the worktree root. Retrieval instructions (e.g., "all ticket references from the work phase"): use the `References:` list from claim's `ticket_data` (already in context — no extra backlog call), verify each path exists and is non-empty, and use the valid paths. A single **Upstream:** block may contain both literal paths and retrieval instructions — process all entries and merge the results into one list.
+2. **Resolve upstream artifacts.** When a playbook step specifies **Upstream:** paths, resolve each entry independently. Literal paths: resolve to absolute paths from the worktree root. Retrieval instructions (e.g., "all work-phase artifacts"): follow "Work-phase artifact resolution" above. A single **Upstream:** block may contain both literal paths and retrieval instructions — process all entries and merge the results into one list.
 3. Spawn via Agent tool with `subagent_type` set to `loom:{name}:{name}` (e.g., `loom:review-summarizer:review-summarizer`). If the agent's frontmatter declares `model:`, pass that value as the Agent tool's `model` parameter (the explicit parameter guarantees the tier even when the registry holds a stale plugin snapshot). Include AGENT.md content, `## output_path`, `## worktree_path` (absolute path to the worktree from claim), `## ticket_notes`, `## config` (containing `default_branch` and context paths), `## quality_principles` (from `shared/quality-principles.md`), and `## upstream_artifacts` with the resolved paths from step 2. All paths must be absolute.
 4. Check response for STATUS line: `complete`, `failed — {reason}`, or `complete — VERDICT: pass|needs-work`.
 5. If failed: stop (error handling below).
-6. If complete: add the output_path (worktree-relative) to the run's `{review_refs}` list — no backlog call; references are written in ONE batched edit at transition (shared/transition.md).
+6. If complete: hold the output_path in the run's artifact list for the human-gate presentation (Phase 3). No backlog call — review outputs are never written to the ticket; they live at the deterministic artifacts path.
 6b. Before passing an output_path to a downstream step as upstream_artifacts, verify the file exists and has at least one non-whitespace character. If missing or whitespace-only, treat the producing agent as failed.
 7. For parallel agents: spawn all via multiple Agent tool calls.
 8. If a step contains a `**Pre-fetch**` block, execute those instructions before spawning the agent for that step.
 
 If `{review_playbook}` is set (from claim.md), read it and follow it. If a step contains convergence fields (`**Agents:**`, `**Verdict logic:**`, `**Max rounds:**`), read `shared/convergence.md` from the Loom plugin directory and follow it for that step.
 
-If `{review_playbook}` is empty, run the **default review sequence** instead. Each agent invocation follows the same protocol as above (read AGENT.md, spawn via Agent tool, check STATUS, track output in `{review_refs}`):
+If `{review_playbook}` is empty, run the **default review sequence** instead. Each agent invocation follows the same protocol as above (read AGENT.md, spawn via Agent tool, check STATUS, hold the output path for Phase 3):
 
-1. Take the work-phase artifact references from the `References:` list in claim's `ticket_data` (already in context — no extra backlog call).
+1. Resolve the work-phase artifact paths via "Work-phase artifact resolution" above.
 2. Invoke **review-summarizer** (agent invocation protocol): pass all work-phase artifact paths as upstream. Output to `.loom/artifacts/{ticket_id}/review-summary.md`.
 3. Pre-fetch the backlog snapshot straight to disk — its content never needs to enter your context:
    ```bash
@@ -68,6 +77,7 @@ Present to the human reviewer:
 3. **Mock files**: if `{worktree_path}/.loom/artifacts/{ticket_id}/mocks/` exists, list all HTML files within it with their absolute worktree paths. These can be opened in a browser for visual review.
 4. **Artifacts**: list all output files produced during Phase 2 — whether from a type-specific review playbook or the default review sequence.
 5. **Agent findings**: reports or summaries from Phase 2.
+6. **Warnings**: if work-phase artifact resolution yielded no paths (Work-phase artifact resolution, step 4), state that the review was performed from the diff and ticket notes alone.
 
 Ask: **Approve or Reject?**
 

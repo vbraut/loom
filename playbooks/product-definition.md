@@ -183,4 +183,4 @@ Note: Reads the post-synthesis `prd.md` (modified in place by step 6). Changes a
 - [ ] Mocking completed (or skipped if no UI changes)
 - [ ] Mock convergence ran with all 6 reviewers (or skipped if no mocks)
 - [ ] PR created with deliverables committed
-- [ ] All output paths registered via addReferences
+- [ ] All output paths recorded in progress.md (the artifact ledger the review phase resolves from)

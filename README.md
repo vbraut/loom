@@ -36,7 +36,7 @@ claude plugin install loom
        design_system: src/app.css
    ```
 
-2. Ensure the Backlog.md CLI is installed and on PATH (`npm i -g backlog.md`). Loom drives it directly via `BACKLOG_CWD` from `sdlc.config.yml` — do **not** register a backlog MCP server; its responses echo the full task body on every call and waste context.
+2. Ensure the Backlog.md CLI is installed and on PATH (`npm i -g backlog.md`). Loom drives it directly via `BACKLOG_CWD` from `sdlc.config.yml` — do **not** register a backlog MCP server; its responses echo the full task body on every call and waste context. Loom never writes ticket references: work-phase artifacts live at the deterministic path `.loom/artifacts/{ticket_id}/` inside the worktree, and the progress file is the ledger the review phase resolves them from — any references your tickets carry (PRD links, doc paths) are preserved untouched.
 
 3. Add `.loom/` to your project's `.gitignore`.
 

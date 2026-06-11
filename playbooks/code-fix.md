@@ -68,4 +68,4 @@ Bug fix playbook. Lean pipeline — research the bug, fix it, validate the fix t
 - [ ] Convergence ran (passed or hit max rounds with note)
 - [ ] run-tests produced output
 - [ ] test-coverage produced output
-- [ ] All output paths registered via addReferences
+- [ ] All output paths recorded in progress.md (the artifact ledger the review phase resolves from)

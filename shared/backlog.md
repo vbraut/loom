@@ -21,7 +21,7 @@ BACKLOG_CWD="{backlog_cwd}" backlog task {id} --plain
 For a single field, filter instead of loading the whole body into context:
 
 ```bash
-BACKLOG_CWD="{backlog_cwd}" backlog task {id} --plain | grep '^References:'
+BACKLOG_CWD="{backlog_cwd}" backlog task {id} --plain | grep '^Status:'
 ```
 
 When a read's output is only consumed by an agent (e.g., a backlog snapshot pre-fetch), redirect it straight to a file — it never needs to enter the orchestrator's context.
@@ -44,11 +44,11 @@ A non-zero exit code means the mutation failed — follow the calling skill's er
 
 ## References
 
-`--ref` REPLACES the entire reference list — it does not append. Never call it with only a new path, or every prior reference is destroyed. Reference registration therefore happens **once per phase**, in the transition (shared/transition.md): collect output paths during the run, then write the union of existing + new references in a single edit:
+Loom never writes ticket references. Work-phase artifacts live at the deterministic path `.loom/artifacts/{ticket_id}/` inside the worktree, and the progress file (`.loom/artifacts/{ticket_id}/progress.md`) records which of them are standing outputs — registering each file as a reference would bloat the task body that every subsequent read and edit echo pays for. The review phase resolves artifacts from the progress file, not from the ticket (skills/review/SKILL.md, "Work-phase artifact resolution").
 
-```bash
-... backlog task edit {id} --ref "{ref_1}" --ref "{ref_2}" ... --ref "{ref_n}" ...
-```
+Whatever references a ticket carries — PRD links and doc paths added at creation, or `.loom/artifacts/` entries written by tickets that transitioned before this protocol — are preserved verbatim, because no loom edit passes `--ref`.
+
+If a reference edit is ever genuinely needed: `--ref` REPLACES the entire reference list — it does not append. Never call it with only a new path, or every prior reference is destroyed. Always write the full union of existing + new as repeated `--ref` flags in one edit.
 
 ## Notes
 

@@ -161,4 +161,4 @@ Note: Reads the post-synthesis `strategy.md` (modified in place by step 7) — e
 - [ ] Elicitation completed
 - [ ] Strategy revised with elicitation findings
 - [ ] Convergence ran (passed or hit max rounds with note)
-- [ ] All output paths registered via addReferences
+- [ ] All output paths recorded in progress.md (the artifact ledger the review phase resolves from)

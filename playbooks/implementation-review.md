@@ -13,7 +13,7 @@ Review playbook for implementation tickets. Runs before the human gate.
 ### 2. Summarize
 
 **Agent:** review-summarizer
-**Upstream:** all ticket references from the work phase (same as step 1), plus `.loom/artifacts/{ticket_id}/standards-review.md`
+**Upstream:** all work-phase artifacts (resolved per the review skill's "Work-phase artifact resolution"), plus `.loom/artifacts/{ticket_id}/standards-review.md`
 **Output path:** `.loom/artifacts/{ticket_id}/review-summary.md`
 
 ### 3. Propose tickets

@@ -50,7 +50,7 @@ Handle convergence loops declared in playbooks.
 
 Run once per convergence step, at completion (step 7) or max rounds (step 9):
 
-1. **Record final outputs.** List in this step's progress record (see the work skill's Progress tracking): each reviewer output_path from the final round, plus every round's feedback agent output_path. No backlog call — transition registers all recorded paths as ticket references in one batched edit (shared/transition.md).
+1. **Record final outputs.** List in this step's progress record (see the work skill's Progress tracking): each reviewer output_path from the final round, plus every round's feedback agent output_path. No backlog call — the progress record is the artifact ledger the review phase resolves upstream from; recording only final-round reviewer outputs keeps intermediate rounds out of downstream consumption.
 2. **Checkpoint commit.** Commit the converged state so retry detection has an exact baseline:
    ```bash
    git -C {worktree_path} add -A -- . ':!.loom'

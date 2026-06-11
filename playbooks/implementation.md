@@ -210,4 +210,4 @@ Note: Reads the post-synthesis `plan.md` (modified in place by step 6). Changes 
 - [ ] test-coverage produced output
 - [ ] capture-screenshots produced output (or skipped — backend-only)
 - [ ] visual-parity-reviewer produced output (or skipped — backend-only)
-- [ ] All output paths registered via addReferences
+- [ ] All output paths recorded in progress.md (the artifact ledger the review phase resolves from)

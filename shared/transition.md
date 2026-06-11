@@ -2,15 +2,11 @@
 
 Finalize after playbook execution completes. Use the project's `default_branch` from config (defaults to `main`).
 
-All backlog mutations follow `shared/backlog.md`. Each transition writes the ticket exactly ONCE — status, assignee, notes, and references batched into a single `backlog task edit` call with the echo suppressed.
+All backlog mutations follow `shared/backlog.md`. Each transition writes the ticket exactly ONCE — status, assignee, and notes batched into a single `backlog task edit` call with the echo suppressed.
 
-## Gathering references
+## References
 
-`--ref` replaces the whole list, so every transition edit that registers references must write the full union:
-
-1. **Existing:** parse the `References:` line from claim's `ticket_data` (already in context — no extra backlog call). Empty if the line is absent.
-2. **New:** every output path recorded in completed-step records of `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` (work phase), plus the `{review_refs}` list (review phase). Convert any absolute path under `{worktree_path}` to its worktree-relative form.
-3. Union both, preserving order and dropping duplicates. Pass each as a separate `--ref` flag.
+No transition passes `--ref`. Loom artifacts are never registered as ticket references — they live at the deterministic path `.loom/artifacts/{ticket_id}/` in the worktree, and the progress file is the ledger the review phase resolves them from (shared/backlog.md, § References). Not touching `--ref` preserves the ticket's existing reference list verbatim, including human-added references and legacy artifact references on tickets that transitioned before this protocol.
 
 ## Work transition (after /loom:work playbook completes)
 
@@ -67,10 +63,10 @@ Capture the PR URL from the `gh pr create` output. Store it as `{pr_url}` for th
 
 ### 3. Update ticket — one batched edit
 
-Gather references (see "Gathering references" above), then set status, release the lock, and register references in a single call:
+Set status and release the lock in a single call:
 
 ```bash
-ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s review -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
+ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s review -a @released --plain 2>&1 >/dev/null)
 ```
 
 Non-zero exit: report `backlog edit failed: {ERR}` and follow Failure handling.
@@ -97,10 +93,8 @@ The `head -3` keeps only the file path and new ticket ID for the completion mess
 
 ### 2. Transition ticket — one batched edit
 
-Gather references (see "Gathering references" above; include `{review_refs}` from the review run), then:
-
 ```bash
-ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s done -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
+ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} -s done -a @released --plain 2>&1 >/dev/null)
 ```
 
 ### 3. Wait for PR merge
@@ -124,15 +118,15 @@ If `git branch -d` fails (refuses due to unmerged commits), verify the PR was ac
 
 ### 1. Reset progress
 
-Delete `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` if it exists — rejection means the work must be redone with the feedback, so the next run must execute the full playbook rather than resume.
+Delete `{worktree_path}/.loom/artifacts/{ticket_id}/progress.md` if it exists — rejection means the work must be redone with the feedback, so the next run must execute the full playbook rather than resume. Deleting it does not break re-review: a rejected ticket can only re-enter review through a fresh work phase (todo → /loom:work), which writes a new progress file for the re-review to resolve artifacts from.
 
 ### 2. Transition ticket — one batched edit
 
-Append the rejection feedback, set status, release the lock, and register the review-phase references (see "Gathering references"; include `{review_refs}`) in a single call. Use a real newline inside the quoted note string, and keep the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review:
+Append the rejection feedback, set status, and release the lock in a single call. Use a real newline inside the quoted note string, and keep the `--- REVIEW REJECTION ---` delimiter so review-summarizer can identify prior rejection feedback on re-review:
 
 ```bash
 ERR=$(BACKLOG_CWD="{backlog_cwd}" backlog task edit {ticket_id} --append-notes "--- REVIEW REJECTION ---
-{feedback_text}" -s todo -a @released --ref "{ref_1}" --ref "{ref_2}" ... --plain 2>&1 >/dev/null)
+{feedback_text}" -s todo -a @released --plain 2>&1 >/dev/null)
 ```
 
 The worktree is preserved — the next /loom:work run reuses it with feedback in ticket notes.
