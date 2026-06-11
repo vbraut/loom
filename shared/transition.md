@@ -47,34 +47,44 @@ Use a heredoc (as shown) to avoid shell metacharacters in the ticket title break
 
 ### 2. Sync with the default branch
 
-The default branch may have advanced while the ticket was in flight (other tickets merging). Merge it now so the squash base and the PR diff are honest:
+The default branch may have advanced while the ticket was in flight (other tickets merging), and the local ref itself lags origin whenever PRs merge remotely. Fetch first so the sync target is current:
 
 ```bash
-git -C {worktree_path} merge {default_branch} --no-edit
+git -C {worktree_path} fetch origin {default_branch}
+```
+
+- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}` for steps 2–4.
+- Fetch fails because the project has no `origin` remote: use the local `{default_branch}` as `{sync_ref}`.
+- Fetch fails for any other reason (network, auth): report the error and stop — finalizing against a stale base produces a PR that silently misses work merged in the meantime.
+
+Merge it now so the squash base and the PR diff are honest:
+
+```bash
+git -C {worktree_path} merge {sync_ref} --no-edit
 ```
 
 On merge conflict, follow the conflict policy from `shared/claim.md` § Ensure worktree: prefer the default branch for non-artifact files — config, dependencies, infrastructure; prefer the worktree for artifact files under `.claude/` or `.loom/`; for code files, three-way merge preserving both sides' intent. If unresolvable: `git merge --abort`, report the conflict, stop.
 
 ### 3. Squash to a single clean commit
 
-The branch now holds convergence checkpoint commits, possibly a step-1 commit, and possibly a step-2 sync merge. Collapse them into one commit titled for the ticket. Reset **only to the merge-base** — never to `{default_branch}` directly (see History rule):
+The branch now holds convergence checkpoint commits, possibly a step-1 commit, and possibly a step-2 sync merge. Collapse them into one commit titled for the ticket. Reset **only to the merge-base** — never to `{default_branch}` or `{sync_ref}` directly (see History rule). Use the same `{sync_ref}` established in step 2 — mixing refs here would fold other tickets' merged work into the squash commit:
 
 ```bash
-git -C {worktree_path} reset --soft "$(git -C {worktree_path} merge-base {default_branch} HEAD)"
+git -C {worktree_path} reset --soft "$(git -C {worktree_path} merge-base {sync_ref} HEAD)"
 git -C {worktree_path} diff --cached --quiet || git -C {worktree_path} commit -m "$(cat <<'EOF'
 loom({ticket_id}): {ticket_title}
 EOF
 )"
 ```
 
-This is safe because after step 2 the merge-base equals the default branch tip and the working tree already contains the default branch's content — the soft reset stages exactly the ticket's own changes. If nothing is staged after the reset, the ticket produced no changes; the `||` skips the commit and step 4's guard will skip the PR.
+This is safe because after step 2 the merge-base equals the `{sync_ref}` tip and the working tree already contains the default branch's content — the soft reset stages exactly the ticket's own changes. If nothing is staged after the reset, the ticket produced no changes; the `||` skips the commit and step 4's guard will skip the PR.
 
 ### 4. Push and open PR (if `create_pr` is true)
 
-Only when the branch has commits ahead of the default branch:
+Only when the branch has commits ahead of the default branch (same `{sync_ref}` as steps 2–3):
 
 ```bash
-git -C {worktree_path} rev-list --count {default_branch}..HEAD
+git -C {worktree_path} rev-list --count {sync_ref}..HEAD
 ```
 
 If the count is 0, there is nothing to push — skip this step.

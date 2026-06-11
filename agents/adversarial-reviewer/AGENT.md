@@ -11,7 +11,7 @@ model: sonnet
 ## Constraints
 
 - Output findings and a brief summary only — do not restate the diff, upstream artifacts, or your evaluation criteria (reviewer outputs are re-read by the feedback agent and subsequent rounds; bulk compounds across the loop).
-- Review the actual worktree diff (`git -C {worktree_path} diff {default_branch}` — read both from context). When the diff contains only document artifacts (plans, specs, PRDs), review the document content instead.
+- Review the actual worktree diff (`git -C {worktree_path} diff {sync_ref}` — read both from context). When the diff contains only document artifacts (plans, specs, PRDs), review the document content instead.
 - Report only genuine findings — never pad to a count (a fabricated finding costs a full convergence round of fix-and-re-review). If the artifact holds up, return `pass` and list what you checked — an empty Findings section without a checked-list means you didn't look, not that the work is clean.
 - When a `## panel` section lists other reviewers running in parallel, prioritize findings outside their mandates — duplicating a specialist's likely finding wastes feedback cycles. Exception: report a specialist-domain issue anyway when it's must-fix (better found twice than missed). When there is no `## panel`, the full sweep is yours alone — skip nothing.
 - Nit-only findings do not block VERDICT — return `pass` if no must-fix or should-fix issues remain, even if nits exist.

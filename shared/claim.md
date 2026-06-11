@@ -92,12 +92,24 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 
 Use the project's `default_branch` from config (defaults to `main`).
 
+**Refresh the default branch first.** The local ref lags origin whenever PRs merge remotely — nothing else in the work phase pulls it. Fetch before any sync or branch creation:
+
+```bash
+git -C {project_root} fetch origin {default_branch}
+```
+
+- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}`.
+- Fetch fails because the project has no `origin` remote: use the local `{default_branch}` as `{sync_ref}`.
+- Fetch fails for any other reason (network, auth): report the error and stop — basing work on a stale snapshot of the default branch is how merged work gets silently missed or reverted.
+
+`{sync_ref}` is the only sanctioned base for branching and syncing. It persists for the session: the work transition and conditional-agent diff checks use it, and it is passed to agents in their `## config` block so reviewer diffs compare against the same base — diffing a stale local `{default_branch}` would count other tickets' merged files as part of this ticket's changes.
+
 **If the worktree already exists** (prior run, rejection, or review pickup):
 - If there are uncommitted changes: `git -C {worktree_path} add -A -- . ':!.loom' && git -C {worktree_path} commit -m "loom: preserve partial artifacts from prior run"` (skip if working tree is clean). The `:!.loom` pathspec keeps .loom/ artifacts ephemeral.
-- Sync: `git -C {worktree_path} merge {default_branch} --no-edit`
+- Sync: `git -C {worktree_path} merge {sync_ref} --no-edit`
 - On merge conflict: prefer default branch for non-artifact files — config, dependencies, infrastructure (conflicts here break builds/deploys). Prefer worktree for artifact files — specs, plans, reviews, mocks under `.claude/` or `.loom/` (these represent the ticket's work-in-progress). For code files, three-way merge preserving both sides' intent.
 - If unresolvable: `git merge --abort`, report the conflict, stop.
 
 **If no worktree exists:**
 - If branch `loom/{ticket_id_lowercase}` already exists (orphaned): `git worktree add {worktree_path} loom/{ticket_id_lowercase}`, then sync as above.
-- Otherwise: `git branch loom/{ticket_id_lowercase} {default_branch}`, then `git worktree add {worktree_path} loom/{ticket_id_lowercase}`
+- Otherwise: `git branch loom/{ticket_id_lowercase} {sync_ref}`, then `git worktree add {worktree_path} loom/{ticket_id_lowercase}`
