@@ -131,11 +131,16 @@ If `{pr_url}` was captured in step 4, also print: `PR: {pr_url}`
 
 If `{approved_proposals}` is empty (all proposals were rejected, or the proposals file was empty), skip this step.
 
-For each approved proposal:
+Create the proposals **in order** — ticket-planner emits them topologically, so every proposal follows the siblings it depends on. Keep a map from each proposal's `### N` number to the backlog ID it receives, so later proposals can name earlier ones as real dependencies.
 
-```bash
-BACKLOG_CWD="{backlog_cwd}" backlog task create "{Title}" -d "{Description}" -l "type:{Type}" --dep {ticket_id} --plain 2>&1 | head -3
-```
+For each approved proposal, in order:
+
+1. **Resolve its dependency list.** Start with `{ticket_id}` — the parent this work descends from. Then, for every sibling number in the proposal's `Dependencies` field, look up its created ID in the map and add it. Skip any sibling that was not created (rejected, or dropped during modify) — the parent edge still anchors the ticket. Join the resolved IDs with commas into `{dep_list}` (e.g., `BL-179,BL-229`).
+2. **Create the ticket** (dependencies become real backlog edges, not just prose in the description, so the board can block a dependent until its prerequisites are done):
+   ```bash
+   BACKLOG_CWD="{backlog_cwd}" backlog task create "{Title}" -d "{Description}" -l "type:{Type}" --dep {dep_list} --plain 2>&1 | head -3
+   ```
+3. **Record the new ID.** Parse the `Task BL-NNN` line from the output and store it in the map under this proposal's `### N` number, so subsequent proposals can depend on it.
 
 The `head -3` keeps only the file path and new ticket ID for the completion message — the body echo is discarded.
 

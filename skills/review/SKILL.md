@@ -83,17 +83,17 @@ Ask: **Approve or Reject?**
 
 ### Proposal handling
 
-If `.loom/artifacts/{ticket_id}/successor-proposals.md` exists and is non-empty, parse it. Extract each `### N` block under `## Proposals` as a proposal — read Title, Type, Description, and Rationale fields. If the file doesn't exist or has no `### N` blocks under `## Proposals`, skip proposal handling.
+If `.loom/artifacts/{ticket_id}/successor-proposals.md` exists and is non-empty, parse it. Extract each `### N` block under `## Proposals` as a proposal — read its `### N` number plus the Title, Type, Dependencies, Description, and Rationale fields. Retain the `### N` number alongside each proposal: the approval transition resolves the Dependencies field (sibling proposal numbers) to the real backlog IDs those siblings receive at creation, so the number is the key that links them. A missing Dependencies field means no sibling dependencies. If the file doesn't exist or has no `### N` blocks under `## Proposals`, skip proposal handling.
 
 For each proposal:
 
 1. **Validate Type** — check that `playbooks/{Type}.md` exists. If not, flag the proposal to the human as having an invalid type.
-2. **Present** — show Title, Type, Description, and Rationale.
+2. **Present** — show Title, Type, Dependencies (by sibling number), Description, and Rationale.
 3. **Ask** — approve, modify, or reject.
 4. **On modify** — accept the human's changes, then re-validate (non-empty Title, valid Type). Loop until valid or rejected.
 5. **On reject** — drop the proposal silently.
 
-Collect only approved (possibly modified) proposals. Pass them to Phase 4 as `{approved_proposals}`.
+Collect only approved (possibly modified) proposals, each keeping its `### N` number and Dependencies field. Pass them to Phase 4 as `{approved_proposals}`. The transition links a dependency edge only when the depended-on sibling was itself approved — dependencies on rejected proposals are dropped there.
 
 ## Phase 4: ROUTE
 

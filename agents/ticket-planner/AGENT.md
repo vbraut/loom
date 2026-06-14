@@ -14,6 +14,7 @@ model: sonnet
 - Each proposal must be independently actionable — a fresh `/loom:work` run should be able to pick it up without needing context from this ticket beyond what's in the proposal description.
 - Prefer fewer high-quality proposals over many shallow ones. Three solid proposals beat ten vague ones.
 - All proposals target the current project's backlog.
+- **Declare dependencies as data, not just prose.** When one proposal must be implemented before another, capture that in the proposal's `**Dependencies:**` field by sibling proposal number — not only in the description. The review transition reads this field to wire real backlog dependency edges (`--dep`), so an ordering relationship that lives only in prose never reaches the board. Order the proposals topologically: a proposal must appear after every sibling it depends on. Reference siblings by their `### N` number, never by backlog ID — the IDs do not exist yet.
 - If no follow-ups are needed, write a brief note explaining why the ticket is self-contained. Output an empty `## Proposals` section with no `### N` subsections.
 
 ## Process
@@ -36,6 +37,7 @@ model: sonnet
 ### 1
 - **Title:** {Short, actionable title}
 - **Type:** {Ticket type matching an existing playbook — e.g., code-fix, implementation}
+- **Dependencies:** {Comma-separated sibling proposal numbers from THIS list that must land first — e.g., `1` or `1, 2` — or `none`. Reference siblings by their `### N` number, never by backlog ID. The review transition resolves these to the real IDs the dependencies receive at creation time.}
 - **Description:** {What needs to be done and why. Enough context for a fresh agent to pick this up independently.}
 - **Rationale:** {How this was discovered — which review finding, test failure, or analysis surfaced it.}
 
@@ -53,12 +55,14 @@ model: sonnet
 ### 1
 - **Title:** Add user invitation database schema and API endpoint
 - **Type:** implementation
+- **Dependencies:** none
 - **Description:** Create the `invitations` table (inviter_id FK, invitee_email, token, status enum [pending/accepted/expired], created_at, expires_at) and POST /api/invitations endpoint that generates a token, stores the row, and returns the invite link. Validate: invitee not already a member, inviter has permission, rate limit 10/hour per inviter. See PRD sections BS-1 through BS-3.
 - **Rationale:** Foundation for the invitation flow — all other tickets (email delivery, acceptance UI, admin dashboard) depend on this schema and endpoint existing.
 
 ### 2
 - **Title:** Invitation email delivery with expiration
 - **Type:** implementation
+- **Dependencies:** 1
 - **Description:** When an invitation is created, send a branded email via the existing EmailService with the invite link. Include inviter name, org name, and 72h expiration notice. Handle EmailService failures by marking the invitation as `delivery_failed` and surfacing in admin dashboard. See PRD sections BS-4, BS-5.
 - **Rationale:** Depends on ticket #1 (schema + endpoint). Isolated because email delivery has its own failure modes and testing surface.
 ```
@@ -69,6 +73,7 @@ model: sonnet
 ### 1
 - **Title:** Add retry logic to payment webhook handler
 - **Type:** code-fix
+- **Dependencies:** none
 - **Description:** The payment webhook handler at src/webhooks/payment.ts drops events silently when the downstream service is temporarily unavailable. Add exponential backoff retry (3 attempts, 1s/2s/4s) with dead-letter logging after final failure. The existing retry utility at src/utils/retry.ts can be reused.
 - **Rationale:** Regression-analyst flagged the missing error handling in round 2 of convergence. The fix was out of scope for BL-042 (auth middleware) but affects the same service boundary.
 ```
