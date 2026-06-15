@@ -47,13 +47,13 @@ Use a heredoc (as shown) to avoid shell metacharacters in the ticket title break
 
 ### 2. Sync with the default branch
 
-The default branch may have advanced while the ticket was in flight (other tickets merging), and the local ref itself lags origin whenever PRs merge remotely. Fetch first so the sync target is current:
+The default branch may have advanced while the ticket was in flight (other tickets merging), and the local ref itself lags origin whenever PRs merge remotely. Fetch with an **explicit refspec** so the remote-tracking ref actually advances. A bare `git fetch origin {default_branch}` updates only `FETCH_HEAD`, leaving `refs/remotes/origin/{default_branch}` stale — so the `merge {sync_ref}` below would run against an out-of-date base, report "Already up to date," and the merge-base squash in step 3 would then **revert** whatever merged into the default branch in the meantime. The colon refspec forces the tracking ref to the fetched tip:
 
 ```bash
-git -C {worktree_path} fetch origin {default_branch}
+git -C {worktree_path} fetch origin {default_branch}:refs/remotes/origin/{default_branch}
 ```
 
-- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}` for steps 2–4.
+- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}` for steps 2–4 (the refspec guarantees it points at the just-fetched tip).
 - Fetch fails because the project has no `origin` remote: use the local `{default_branch}` as `{sync_ref}`.
 - Fetch fails for any other reason (network, auth): report the error and stop — finalizing against a stale base produces a PR that silently misses work merged in the meantime.
 
@@ -78,6 +78,14 @@ EOF
 ```
 
 This is safe because after step 2 the merge-base equals the `{sync_ref}` tip and the working tree already contains the default branch's content — the soft reset stages exactly the ticket's own changes. If nothing is staged after the reset, the ticket produced no changes; the `||` skips the commit and step 4's guard will skip the PR.
+
+**Revert guard (MANDATORY).** The squash must sit *on top of* the current default branch — `{sync_ref}` must be an ancestor of `HEAD`:
+
+```bash
+git -C {worktree_path} merge-base --is-ancestor {sync_ref} HEAD
+```
+
+A non-zero exit means step 2's sync did not actually incorporate `{sync_ref}` — almost always a stale remote-tracking ref (see step 2's refspec note) — so the squashed diff against `{sync_ref}` would **revert** everything merged into the default branch since this branch diverged. Do NOT push. Stop and report; re-run step 2's fetch with the explicit refspec, redo the merge and squash, then re-check. This invariant holds by construction for a correct transition (after step 2 merges `{sync_ref}` in, the step-3 squash parents on `merge-base({sync_ref}, HEAD)` which equals the `{sync_ref}` tip), so a failure here is always a real defect, never a false positive.
 
 ### 4. Push and open PR (if `create_pr` is true)
 
