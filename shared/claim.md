@@ -92,13 +92,13 @@ Worktree path is relative to the **project root** (the directory containing `sdl
 
 Use the project's `default_branch` from config (defaults to `main`).
 
-**Refresh the default branch first.** The local ref lags origin whenever PRs merge remotely — nothing else in the work phase pulls it. Fetch before any sync or branch creation:
+**Refresh the default branch first.** The local ref lags origin whenever PRs merge remotely — nothing else in the work phase pulls it. Fetch with an **explicit refspec** before any sync or branch creation. A bare `git fetch origin {default_branch}` updates only `FETCH_HEAD`, leaving the remote-tracking ref `refs/remotes/origin/{default_branch}` stale — so a later `merge {sync_ref}` would sync against an out-of-date base and report "Already up to date" even after the branch advanced, and the transition squash would then revert whatever merged in the meantime. The colon refspec forces the tracking ref to the fetched tip:
 
 ```bash
-git -C {project_root} fetch origin {default_branch}
+git -C {project_root} fetch origin {default_branch}:refs/remotes/origin/{default_branch}
 ```
 
-- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}`.
+- Fetch succeeds: use `origin/{default_branch}` as `{sync_ref}` (the refspec guarantees it now points at the just-fetched tip).
 - Fetch fails because the project has no `origin` remote: use the local `{default_branch}` as `{sync_ref}`.
 - Fetch fails for any other reason (network, auth): report the error and stop — basing work on a stale snapshot of the default branch is how merged work gets silently missed or reverted.
 
