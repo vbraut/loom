@@ -1,7 +1,7 @@
 {
   "name": "loom",
   "description": "AI-driven SDLC framework. One plugin, any project.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "dependencies": [
     "impeccable",
     "brand-toolkit",
