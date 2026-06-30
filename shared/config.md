@@ -18,3 +18,8 @@ Load and validate the project's `sdlc.config.yml`.
    - `project.default_branch` is optional. If omitted, defaults to `main`.
 
 4. **Verify backlog directory exists.** If not: `ERROR: Backlog directory not found: {resolved_path}`
+
+5. **Load conventions (optional).** If `project.conventions` is defined:
+   - Resolve the path relative to the project root.
+   - Verify the file exists and is non-empty. If not: `ERROR: Conventions file not found or empty: {resolved_path}`
+   - Read the file content and store it as `{conventions_content}` for injection into agent prompts (see agent invocation protocol in the skill files).

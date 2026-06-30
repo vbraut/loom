@@ -23,6 +23,13 @@ project:
     # design_system_rules: src/lib/components/app/AI_USAGE.md
     # architecture_rules: docs/ARCHITECTURE.md
 
+  # Free-form project conventions file. If defined, its content is injected as
+  # ## project_conventions into every agent prompt — alongside quality_principles.
+  # Use this for project-specific standards that agents should follow but that
+  # don't fit into code, config, or playbook definitions (e.g., mock methodology,
+  # naming conventions, delivery standards, review bar expectations).
+  # conventions: docs/conventions.md
+
   # Visual verification configuration for capture-screenshots agent.
   # Defines how to start the dev server and authenticate for screenshots.
   # If omitted, the agent infers from package.json / research brief.
