@@ -23,12 +23,18 @@ project:
     # design_system_rules: src/lib/components/app/AI_USAGE.md
     # architecture_rules: docs/ARCHITECTURE.md
 
-  # Free-form project conventions file. If defined, its content is injected as
-  # ## project_conventions into every agent prompt — alongside quality_principles.
-  # Use this for project-specific standards that agents should follow but that
-  # don't fit into code, config, or playbook definitions (e.g., mock methodology,
-  # naming conventions, delivery standards, review bar expectations).
-  # conventions: docs/conventions.md
+  # Project conventions directory. Each .md file in this directory declares
+  # which agents it targets via a frontmatter `agents:` list, and its content
+  # is injected as ## project_conventions into matching agent prompts.
+  # Use `agents: ["*"]` to target all agents.
+  #
+  # Example file (docs/conventions/mock-methodology.md):
+  #   ---
+  #   agents: [create-mocks, mock-alignment-reviewer]
+  #   ---
+  #   Mocks must use the shared _kit/ methodology...
+  #
+  # conventions: docs/conventions/
 
   # Visual verification configuration for capture-screenshots agent.
   # Defines how to start the dev server and authenticate for screenshots.
